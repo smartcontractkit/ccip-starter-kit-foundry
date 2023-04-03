@@ -1,0 +1,113 @@
+[
+  {
+    "network_name": "Sepolia Testnet",
+    "lane_config": {
+      "is_native_fee_token" : true,
+      "fee_token": "0x097D90c9d3E0B50Ca60e1ae45F6A81010f9FB534",
+      "fee_token_pool": "0x03319347bb6db2f3158a8f8c68b4ad562cef8279",
+      "bridge_tokens": [
+        "0x779877A7B0D9E8603169DdbD7836e478b4624789"
+      ],
+      "bridge_tokens_pools": [
+        "0xf1686d99f337fd5b02ed0dda8a3f9e31bf17b447"
+      ],
+      "afn": "0xdaebcfbf1a27bd416ebe20207495a9086a52c22d",
+      "router": "0x0a36795b3006f50088c11ea45b960a1b0406f03b",
+      "price_registry": "0xda9dfa4408514f90c4f42c76147596c55584c59d",
+      "src_contracts": {
+        "43113": {
+          "on_ramp": "0x35a926bc94654627443e436bb3d197d62821cf05"
+        },
+        "420": {
+          "on_ramp": "0x473336c120f463a7295921754deda0455c8c80e9"
+        }
+      },
+      "dest_contracts": {
+        "43113": {
+          "off_ramp": "0x6a14cfb4ee9b0a3950cbf731c5634ffec32a324f",
+          "commit_store": "0x4f1e580043e9c01c78ce615cb7eda4ba49a42dfa",
+          "receiver_dapp": "0x27f1a2da89a86d7d5c91bea303d5109d5641fa2f"
+        },
+        "420": {
+          "off_ramp": "0xd194a706e49750e9bfd77f2fc067f10e1c719213",
+          "commit_store": "0x94301e622996ab441fd632fcc8e971116be02b87",
+          "receiver_dapp": "0x17b9417224e1bec23bb7208f4d5aac4ba797e701"
+        }
+      }
+    }
+  },
+  {
+    "network_name": "Avalanche Fuji",
+    "lane_config": {
+      "is_native_fee_token" : true,
+      "fee_token": "0xd00ae08403B9bbb9124bB305C09058E32C39A48c",
+      "fee_token_pool": "0x286d7515bd5e9f6c963090f660b4ee9aa0f29ac4",
+      "bridge_tokens": [
+        "0x0b9d5D9136855f6FEc3c0993feE6E9CE8a297846"
+      ],
+      "bridge_tokens_pools": [
+        "0x04f85da238f09c51bd93c9a45e941560b606e9bb"
+      ],
+      "afn": "0x4d896d80eec6e9dabd7acd4ec5933e5a39e2ad94",
+      "router": "0xb352e636f4093e4f5a4ac903064881491926aaa9",
+      "price_registry": "0x819f8c1d44fc6e65610116d81a905abaa1f37c38",
+      "src_contracts": {
+        "11155111": {
+          "on_ramp": "0x14774a07faaba3d3187abb0da4c45b7aa327375f"
+        },
+        "420": {
+          "on_ramp": "0x31847ecd838ca440dd381ac36fc246c56930c4db"
+        }
+      },
+      "dest_contracts": {
+        "11155111": {
+          "off_ramp": "0xbd434a2f962610788493906979602cdeaa5d3f75",
+          "commit_store": "0x2ba225e475b514ae4ae32451e8c5b781bfb3f101",
+          "receiver_dapp": "0x65cbea8db87e4719ec21963e93fc2161a5b80c0e"
+        },
+        "420": {
+          "off_ramp": "0x1a037df369ae8fe3de497735714652b776162ea8",
+          "commit_store": "0x78816a5477d1a8328833a8835481297540cf12e7",
+          "receiver_dapp": "0x1b5c3f26275b8d5fe2b082d40f199c7194a466b4"
+        }
+      }
+    }
+  },
+  {
+    "network_name": "Optimism Goerli",
+    "is_native_fee_token" : true,
+    "lane_config": {
+      "fee_token": "0xdc2CC710e42857672E7907CF474a69B63B93089f",
+      "fee_token_pool": "0x9d5adc4348a28df5786e8be10d494402369e6a1e",
+      "bridge_tokens": [
+        "0xdc2CC710e42857672E7907CF474a69B63B93089f"
+      ],
+      "bridge_tokens_pools": [
+        "0x9d5adc4348a28df5786e8be10d494402369e6a1e"
+      ],
+      "afn": "0x7556ada51ac7d8f319f90f05d5837349c0d6ebd4",
+      "router": "0xec6d1ec94d518be47da1cb35f5d43286558d8b62",
+      "price_registry": "0x3150c882f21cf670a01073002d8e10cd56db44cf",
+      "src_contracts": {
+        "11155111": {
+          "on_ramp": "0xfc6617f3dfa5500203f00ddf83c2212f376176bd"
+        },
+        "43113": {
+          "on_ramp": "0x40f4795eee96dc3e11f931e7b4132a930a3245d0"
+        }
+      },
+      "dest_contracts": {
+        "11155111": {
+          "off_ramp": "0x1df4cdcf2e021c3490f9f81f629ec4d5669855e8",
+          "commit_store": "0x88bf90e3de10b69a8cc4525b5944240aa5f534dc",
+          "receiver_dapp": "0xacf9f41f1a92ac3b996d215fcaf1968c3232ccff"
+        },
+        "43113": {
+          "off_ramp": "0x0ac393e07cea97acb3eef27a828917020f8c9edb",
+          "commit_store": "0xea26b9007d790db00956fb3972c69fff7836b879",
+          "receiver_dapp": "0xebd05f8d74c9cabfc4b6ef8835fd7c5fad4c9883"
+        }
+      }
+    }
+  }
+]
