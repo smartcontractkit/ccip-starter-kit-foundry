@@ -14,7 +14,7 @@ contract PingPongDappSetup is EVM2EVMOnRampSetup {
     PingPongDemo s_pingPong;
     IERC20 s_feeToken;
 
-    address immutable i_pongContract = address(10);
+    address immutable i_pongContract = makeAddr("pong");
 
     function setUp() public virtual override {
         EVM2EVMOnRampSetup.setUp();

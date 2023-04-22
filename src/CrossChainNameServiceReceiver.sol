@@ -8,12 +8,13 @@ import {IERC165} from "chainlink-ccip/contracts/src/v0.8/vendor/IERC165.sol";
 
 import {ICrossChainNameServiceLookup} from "./ICrossChainNameServiceLookup.sol";
 
+/**
+ * EDUCATIONAL EXAMPLE, DO NOT USE IN PRODUCTION
+ */
 contract CrossChainNameServiceReceiver is IAny2EVMMessageReceiver, IERC165 {
-    IRouterClient private immutable i_router;
-    ICrossChainNameServiceLookup private immutable i_lookup;
-    // uint256 private commitReveal = 1;
-
-    uint64 constant SEPOLIA_CHAIN_ID = 11155111;
+    IRouterClient public immutable i_router;
+    ICrossChainNameServiceLookup public immutable i_lookup;
+    uint64 public immutable i_sourceChainId;
 
     error InvalidRouter(address router);
     error InvalidSourceChain(uint64 chainId);
@@ -23,21 +24,20 @@ contract CrossChainNameServiceReceiver is IAny2EVMMessageReceiver, IERC165 {
         _;
     }
 
-    modifier onlyFromSepolia(uint64 chainId) {
-        if (chainId != SEPOLIA_CHAIN_ID) revert InvalidSourceChain(chainId);
+    modifier onlyFromSourceChain(uint64 chainId) {
+        if (chainId != i_sourceChainId) revert InvalidSourceChain(chainId);
         _;
     }
 
-    constructor(address router, address lookup) {
-        if (router == address(0)) revert InvalidRouter(address(0));
+    constructor(address router, address lookup, uint64 sourceChainId) {
         i_router = IRouterClient(router);
         i_lookup = ICrossChainNameServiceLookup(lookup);
+        i_sourceChainId = sourceChainId;
     }
 
     function ccipReceive(
         Client.Any2EVMMessage calldata message
-    ) external override onlyRouter onlyFromSepolia(message.sourceChainId) {
-        // commitReveal = 1;
+    ) external override onlyRouter onlyFromSourceChain(message.sourceChainId) {
         (string memory _name, address _address) = abi.decode(
             message.data,
             (string, address)
@@ -52,9 +52,5 @@ contract CrossChainNameServiceReceiver is IAny2EVMMessageReceiver, IERC165 {
         return
             interfaceId == type(IAny2EVMMessageReceiver).interfaceId ||
             interfaceId == type(IERC165).interfaceId;
-    }
-
-    function getRouterAddress() external view returns (address) {
-        return address(i_router);
     }
 }
