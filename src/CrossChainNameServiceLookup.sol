@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import {Ownable2Step} from "@openzeppelin/contracts/access/Ownable2Step.sol";
+import {OwnerIsCreator} from "chainlink-ccip/contracts/src/v0.8/ccip/OwnerIsCreator.sol";
 
 /**
  * EDUCATIONAL EXAMPLE, DO NOT USE IN PRODUCTION
  */
-contract CrossChainNameServiceLookup is Ownable2Step {
+contract CrossChainNameServiceLookup is OwnerIsCreator {
     mapping(string => address) public lookup;
 
     address internal s_crossChainNameService;

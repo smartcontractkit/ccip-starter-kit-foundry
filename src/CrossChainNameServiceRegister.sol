@@ -3,14 +3,14 @@ pragma solidity ^0.8.4;
 
 import {IRouterClient} from "chainlink-ccip/contracts/src/v0.8/ccip/interfaces/IRouterClient.sol";
 import {Client} from "chainlink-ccip/contracts/src/v0.8/ccip/models/Client.sol";
-import {Ownable2Step} from "@openzeppelin/contracts/access/Ownable2Step.sol";
+import {OwnerIsCreator} from "chainlink-ccip/contracts/src/v0.8/ccip/OwnerIsCreator.sol";
 
 import {ICrossChainNameServiceLookup} from "./ICrossChainNameServiceLookup.sol";
 
 /**
  * EDUCATIONAL EXAMPLE, DO NOT USE IN PRODUCTION
  */
-contract CrossChainNameServiceRegister is Ownable2Step {
+contract CrossChainNameServiceRegister is OwnerIsCreator {
     struct Chain {
         // --- slot 0 ---
         uint64 chainId;
