@@ -82,7 +82,9 @@ contract CrossChainNameServiceTest is EVM2EVMOnRampSetup {
         });
         destinationChainReceiver.ccipReceive(message);
 
-        address aliceccnsDestination = sourceChainLookup.lookup("alice.ccns");
+        address aliceccnsDestination = destinationChainLookup.lookup(
+            "alice.ccns"
+        );
         assertEq(alice, aliceccnsDestination);
     }
 }
