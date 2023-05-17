@@ -1,7 +1,0 @@
-type PaginationMetadata {
-    total: Int!
-}
-
-interface PaginatedPayload {
-    metadata: PaginationMetadata!
-}
