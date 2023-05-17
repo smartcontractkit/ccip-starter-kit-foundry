@@ -4,7 +4,7 @@ pragma solidity ^0.8.4;
 import {IRouterClient} from "chainlink-ccip/contracts/src/v0.8/ccip/interfaces/IRouterClient.sol";
 import {IAny2EVMMessageReceiver} from "chainlink-ccip/contracts/src/v0.8/ccip/interfaces/IAny2EVMMessageReceiver.sol";
 
-import {Client} from "chainlink-ccip/contracts/src/v0.8/ccip/models/Client.sol";
+import {Client} from "chainlink-ccip/contracts/src/v0.8/ccip/libraries/Client.sol";
 
 import {IERC165} from "chainlink-ccip/contracts/src/v0.8/vendor/IERC165.sol";
 import {IERC20} from "chainlink-ccip/contracts/src/v0.8/vendor/IERC20.sol";
@@ -66,7 +66,7 @@ contract ImmutableExample is IAny2EVMMessageReceiver, IERC165 {
 
     function ccipReceive(
         Client.Any2EVMMessage calldata message
-    ) external override onlyRouter validChain(message.sourceChainId) {
+    ) external override onlyRouter validChain(message.sourceChainSelector) {
         // Extremely important to ensure only router calls this.
         // Tokens in message if any will be transferred to this contract
         // TODO: Validate sender/origin chain and process message and/or tokens.

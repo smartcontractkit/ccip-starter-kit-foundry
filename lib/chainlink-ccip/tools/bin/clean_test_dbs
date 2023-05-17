@@ -1,2 +1,0 @@
-#!/usr/bin/env bash
-psql -l --csv | awk -F, '{print$1}' | grep chainlink_test_ | xargs -n 1 -J % dropdb %

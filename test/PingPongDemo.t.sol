@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.15;
+pragma solidity ^0.8.0;
 
 import "chainlink-ccip/contracts/src/v0.8/ccip/test/onRamp/EVM2EVMOnRampSetup.t.sol";
-import "chainlink-ccip/contracts/src/v0.8/ccip/models/Client.sol";
+import "chainlink-ccip/contracts/src/v0.8/ccip/libraries/Client.sol";
 
 import {PingPongDemo} from "../src/PingPongDemo.sol";
 
@@ -53,7 +53,7 @@ contract PingPong_startPingPong is PingPongDappSetup {
         Internal.EVM2EVMMessage memory message = Internal.EVM2EVMMessage({
             sequenceNumber: 1,
             feeTokenAmount: expectedFee,
-            sourceChainId: SOURCE_CHAIN_ID,
+            sourceChainSelector: SOURCE_CHAIN_ID,
             sender: address(s_pingPong),
             receiver: i_pongContract,
             nonce: 1,
@@ -87,7 +87,7 @@ contract PingPong_ccipReceive is PingPongDappSetup {
 
         Client.Any2EVMMessage memory message = Client.Any2EVMMessage({
             messageId: bytes32("a"),
-            sourceChainId: DEST_CHAIN_ID,
+            sourceChainSelector: DEST_CHAIN_ID,
             sender: abi.encode(i_pongContract),
             data: abi.encode(pingPongNumber),
             destTokenAmounts: tokenAmounts

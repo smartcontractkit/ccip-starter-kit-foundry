@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.15;
+pragma solidity ^0.8.0;
 
 import "chainlink-ccip/contracts/src/v0.8/ccip/test/onRamp/EVM2EVMOnRampSetup.t.sol";
-import "chainlink-ccip/contracts/src/v0.8/ccip/models/Client.sol";
+import "chainlink-ccip/contracts/src/v0.8/ccip/libraries/Client.sol";
 
 import {CrossChainNameServiceLookup} from "../src/CrossChainNameServiceLookup.sol";
 import {CrossChainNameServiceRegister} from "../src/CrossChainNameServiceRegister.sol";
@@ -75,7 +75,7 @@ contract CrossChainNameServiceTest is EVM2EVMOnRampSetup {
         changePrank(address(s_sourceRouter));
         Client.Any2EVMMessage memory message = Client.Any2EVMMessage({
             messageId: bytes32(""),
-            sourceChainId: SOURCE_CHAIN_ID,
+            sourceChainSelector: SOURCE_CHAIN_ID,
             sender: abi.encode(sourceChainRegister),
             data: abi.encode("alice.ccns", alice),
             destTokenAmounts: new Client.EVMTokenAmount[](0)
