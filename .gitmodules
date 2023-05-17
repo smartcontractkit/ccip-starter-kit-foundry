@@ -1,9 +1,10 @@
+[submodule "lib/forge-std"]
+	path = lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
 [submodule "lib/chainlink-ccip"]
 	path = lib/chainlink-ccip
 	url = https://github.com/smartcontractkit/chainlink-ccip
 [submodule "lib/openzeppelin-contracts"]
 	path = lib/openzeppelin-contracts
 	url = https://github.com/OpenZeppelin/openzeppelin-contracts
-[submodule "lib/forge-std"]
-	path = lib/forge-std
-	url = https://github.com/foundry-rs/forge-std
+
