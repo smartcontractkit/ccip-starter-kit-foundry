@@ -8,5 +8,6 @@ ethereumSepolia = "${ETHEREUM_SEPOLIA_RPC_URL}"
 optimismGoerli = "${OPTIMISM_GOERLI_RPC_URL}"
 avalancheFuji = "${AVALANCHE_FUJI_RPC_URL}"
 arbitrumTestnet = "${ARBITRUM_TESTNET_RPC_URL}"
+polygonMumbai = "${POLYGON_MUMBAI_RPC_URL}"
 
 # See more config options https://github.com/foundry-rs/foundry/tree/master/config
