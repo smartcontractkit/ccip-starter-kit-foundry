@@ -39,21 +39,9 @@ contract MessengerTest is EVM2EVMOnRampSetup {
 
     function testCommunication() public {
         string memory message = "Hello World!";
-        uint256 fees = s_messenger.getFees(
-            DEST_CHAIN_ID,
-            address(s_receiver),
-            message
-        );
 
-        console.log(
-            "fees for sending message '%s' to '%s' are '%d'",
-            message,
-            address(s_receiver),
-            fees
-        );
-
-        vm.expectEmit(false, true, true, true);
-        emit MessageSent("", DEST_CHAIN_ID, address(s_receiver), message, fees);
+        vm.expectEmit(false, true, true, false);
+        emit MessageSent("", DEST_CHAIN_ID, address(s_receiver), message, 0);
 
         bytes32 messageId = s_messenger.sendMessage(
             DEST_CHAIN_ID,

@@ -13,6 +13,8 @@ import {IERC20} from "chainlink-ccip/contracts/src/v0.8/vendor/IERC20.sol";
 contract MessengerDemo is CCIPReceiver, OwnerIsCreator {
     error IndexOutOfBound(uint256 providedIndex, uint256 maxIndex);
     error MessageIdNotExist(bytes32 messageId);
+    error NothingToWithdraw();
+    error FailedToWithdrawEth(address owner, address target, uint256 value);
     event MessageSent(
         bytes32 indexed messageId,
         uint64 indexed destinationChainSelector,
@@ -39,29 +41,6 @@ contract MessengerDemo is CCIPReceiver, OwnerIsCreator {
     mapping(bytes32 => Message) public messageDetail;
 
     constructor(address router) CCIPReceiver(router) {}
-
-    /// @notice get fees in native tokens for sending `message` to `receiver` in `destinationChainSelector`
-    function getFees(
-        uint64 destinationChainSelector,
-        address receiver,
-        string calldata message
-    ) external view returns (uint256 fees) {
-        Client.EVM2AnyMessage memory evm2AnyMessage = Client.EVM2AnyMessage({
-            receiver: abi.encode(receiver),
-            data: abi.encode(message),
-            tokenAmounts: new Client.EVMTokenAmount[](0), // empty array indicating we won't send tokens
-            extraArgs: Client._argsToBytes(
-                Client.EVMExtraArgsV1({gasLimit: 200_000, strict: false})
-            ),
-            feeToken: address(0) // We leave the feeToken empty indicating we'll pay raw native.
-        });
-
-        return
-            IRouterClient(this.getRouter()).getFee(
-                destinationChainSelector,
-                evm2AnyMessage
-            );
-    }
 
     /// @notice sends data to receiver on dest chain. Assumes address(this) has sufficient native asset.
     function sendMessage(
@@ -154,5 +133,12 @@ contract MessengerDemo is CCIPReceiver, OwnerIsCreator {
             detail.sender,
             detail.message
         );
+    }
+
+    function withdraw(address beneficiary) public onlyOwner {
+        uint256 amount = address(this).balance;
+        if (amount == 0) revert NothingToWithdraw();
+        (bool sent, ) = beneficiary.call{value: amount}("");
+        if (!sent) revert FailedToWithdrawEth(msg.sender, beneficiary, amount);
     }
 }
