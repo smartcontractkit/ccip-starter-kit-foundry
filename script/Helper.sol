@@ -27,7 +27,7 @@ contract Helper {
     address constant linkOptimismGoerli =
         0xdc2CC710e42857672E7907CF474a69B63B93089f;
     address constant linkAvalancheFuji =
-        0xdc2CC710e42857672E7907CF474a69B63B93089f;
+        0x0b9d5D9136855f6FEc3c0993feE6E9CE8a297846;
     address constant linkArbitrumTestnet =
         0xd14838A68E8AFBAdE5efb411d5871ea0011AFd28;
     address constant linkPolygonMumbai =
