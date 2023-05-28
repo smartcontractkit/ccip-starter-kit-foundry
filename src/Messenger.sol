@@ -135,6 +135,8 @@ contract MessengerDemo is CCIPReceiver, OwnerIsCreator {
         );
     }
 
+    receive() external payable {}
+
     function withdraw(address beneficiary) public onlyOwner {
         uint256 amount = address(this).balance;
         if (amount == 0) revert NothingToWithdraw();

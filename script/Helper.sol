@@ -2,6 +2,14 @@
 pragma solidity ^0.8.0;
 
 contract Helper {
+    // Supported Networks
+    enum SupportedNetworks {
+        ETHEREUM_SEPOLIA,
+        OPTIMISM_GOERLI,
+        AVALANCHE_FUJI,
+        ARBITRUM,
+        POLYGON_MUMBAI
+    }
     // Chain IDs
     uint64 constant chainIdEthereumSepolia = 16015286601757825753;
     uint64 constant chainIdOptimismGoerli = 2664363617261496610;
@@ -44,4 +52,54 @@ contract Helper {
         0x32d5D5978905d9c6c2D4C417F0E06Fe768a4FB5a;
     address constant wmaticPolygonMumbai =
         0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889;
+
+    function getConfigFromNetwork(
+        SupportedNetworks network
+    )
+        internal
+        pure
+        returns (
+            address router,
+            address linkToken,
+            address wrappedNative,
+            uint64 chainId
+        )
+    {
+        if (network == SupportedNetworks.ETHEREUM_SEPOLIA) {
+            return (
+                routerEthereumSepolia,
+                linkEthereumSepolia,
+                wethEthereumSepolia,
+                chainIdEthereumSepolia
+            );
+        } else if (network == SupportedNetworks.OPTIMISM_GOERLI) {
+            return (
+                routerOptimismGoerli,
+                linkOptimismGoerli,
+                wethOptimismGoerli,
+                chainIdOptimismGoerli
+            );
+        } else if (network == SupportedNetworks.ARBITRUM) {
+            return (
+                routerArbitrumTestnet,
+                linkArbitrumTestnet,
+                wethArbitrumTestnet,
+                chainIdArbitrumTestnet
+            );
+        } else if (network == SupportedNetworks.AVALANCHE_FUJI) {
+            return (
+                routerAvalancheFuji,
+                linkAvalancheFuji,
+                wavaxAvalancheFuji,
+                chainIdAvalancheFuji
+            );
+        } else if (network == SupportedNetworks.POLYGON_MUMBAI) {
+            return (
+                routerPolygonMumbai,
+                linkPolygonMumbai,
+                wmaticPolygonMumbai,
+                chainIdPolygonMumbai
+            );
+        }
+    }
 }
