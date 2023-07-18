@@ -1,0 +1,18 @@
+[profile.default]
+src = 'src'
+out = 'out'
+libs = ['node_modules', 'lib']
+remappings = [
+    '@chainlink/contracts/=node_modules/@chainlink/contracts',
+    '@chainlink/contracts-ccip/=node_modules/@chainlink/contracts-ccip',
+]
+solc = '0.8.19'
+
+[rpc_endpoints]
+ethereumSepolia = "${ETHEREUM_SEPOLIA_RPC_URL}"
+optimismGoerli = "${OPTIMISM_GOERLI_RPC_URL}"
+avalancheFuji = "${AVALANCHE_FUJI_RPC_URL}"
+arbitrumTestnet = "${ARBITRUM_TESTNET_RPC_URL}"
+polygonMumbai = "${POLYGON_MUMBAI_RPC_URL}"
+
+# See more config options https://github.com/foundry-rs/foundry/tree/master/config
