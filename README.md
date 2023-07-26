@@ -146,7 +146,7 @@ forge script ./script/Example01.s.sol -vvv --broadcast --rpc-url avalancheFuji -
 
 To transfer tokens from EOA from the source blockchain to the smart contract on the destination blockchain, follow the next steps:
 
-1. Deploy [`BasicMessageReceiver.sol`](./contracts/BasicMessageReceiver.sol) to the **destination blockchain**, using the `script/Example02.s.sol:DeployBasicMessageReceiver` smart contract:
+1. Deploy [`BasicMessageReceiver.sol`](./src/BasicMessageReceiver.sol) to the **destination blockchain**, using the `script/Example02.s.sol:DeployBasicMessageReceiver` smart contract:
 
 ```solidity
 function run(SupportedNetworks destination) external;
@@ -189,7 +189,7 @@ For example,
 forge script ./script/Example02.s.sol:GetLatestMessageDetails -vvv --broadcast --rpc-url ethereumSepolia --sig "run(address)" -- <BASIC_MESSAGE_RECEIVER_ADDRESS>
 ```
 
-4. Finally, you can always withdraw received tokens from the [`BasicMessageReceiver.sol`](./contracts/BasicMessageReceiver.sol) smart contract using the `cast send` command.
+4. Finally, you can always withdraw received tokens from the [`BasicMessageReceiver.sol`](./src/BasicMessageReceiver.sol) smart contract using the `cast send` command.
 
 For example, to withdraw 100 units of LINK previously sent, run:
 
@@ -201,7 +201,7 @@ cast send <BASIC_MESSAGE_RECEIVER_ADDRESS> --rpc-url ethereumSepolia --private-k
 
 To transfer a token or batch of tokens from a single, universal, smart contract to any address on the destination blockchain follow the next steps:
 
-1. Deploy [`BasicTokenSender.sol`](./contracts/BasicTokenSender.sol) to the **source blockchain**, using the `script/Example03.s.sol:DeployBasicTokenSender` smart contract:
+1. Deploy [`BasicTokenSender.sol`](./src/BasicTokenSender.sol) to the **source blockchain**, using the `script/Example03.s.sol:DeployBasicTokenSender` smart contract:
 
 ```solidity
 function run(SupportedNetworks source) external;
@@ -213,7 +213,7 @@ For example, if you want to send tokens from Avalanche Fuji to Ethereum Sepolia,
 forge script ./script/Example03.s.sol:DeployBasicTokenSender -vvv --broadcast --rpc-url avalancheFuji --sig "run(uint8)" -- 2
 ```
 
-2. [OPTIONAL] If you want to send tokens to the smart contract, instead of EOA, you will need to deploy [`BasicMessageReceiver.sol`](./contracts/BasicMessageReceiver.sol) to the **destination blockchain**. For this purpose, you can reuse the `script/Example02.s.sol:DeployBasicMessageReceiver` smart contract from the previous example:
+2. [OPTIONAL] If you want to send tokens to the smart contract, instead of EOA, you will need to deploy [`BasicMessageReceiver.sol`](./src/BasicMessageReceiver.sol) to the **destination blockchain**. For this purpose, you can reuse the `script/Example02.s.sol:DeployBasicMessageReceiver` smart contract from the previous example:
 
 ```solidity
 function run(SupportedNetworks destination) external;
@@ -225,29 +225,29 @@ For example, to deploy it to Ethereum Sepolia, run:
 forge script ./script/Example02.s.sol:DeployBasicMessageReceiver -vvv --broadcast --rpc-url ethereumSepolia --sig "run(uint8)" -- 0
 ```
 
-3. Fill the [`BasicTokenSender.sol`](./contracts/BasicTokenSender.sol) with tokens/coins for fees (you can always withdraw it later). You can do it manually from your wallet or by using the `cast send` command.
+3. Fill the [`BasicTokenSender.sol`](./src/BasicTokenSender.sol) with tokens/coins for fees (you can always withdraw it later). You can do it manually from your wallet or by using the `cast send` command.
 
-For example, if you want to pay for Chainlink CCIP Fees in LINK tokens, you can fill the [`BasicTokenSender.sol`](./contracts/BasicTokenSender.sol) smart contract with 0.01 Avalanche Fuji LINK by running:
+For example, if you want to pay for Chainlink CCIP Fees in LINK tokens, you can fill the [`BasicTokenSender.sol`](./src/BasicTokenSender.sol) smart contract with 0.01 Avalanche Fuji LINK by running:
 
 ```shell
 cast send 0x0b9d5D9136855f6FEc3c0993feE6E9CE8a297846 "transfer(address,uint256)" <BASIC_TOKEN_SENDER_ADDRESS> 10000000000000000 --rpc-url avalancheFuji --private-key=$PRIVATE_KEY
 ```
 
-Or, if you want to pay for Chainlink CCIP Fees in Native coins, you can fill the [`BasicTokenSender.sol`](./contracts/BasicTokenSender.sol) smart contract with 0.1 Avalanche Fuji AVAX by running:
+Or, if you want to pay for Chainlink CCIP Fees in Native coins, you can fill the [`BasicTokenSender.sol`](./src/BasicTokenSender.sol) smart contract with 0.1 Avalanche Fuji AVAX by running:
 
 ```shell
 cast send <BASIC_TOKEN_SENDER_ADDRESS> --rpc-url avalancheFuji --private-key=$PRIVATE_KEY --value 0.1ether
 ```
 
-4. For each token you want to send, you will need to approve the [`BasicTokenSender.sol`](./contracts/BasicTokenSender.sol) to spend it on your behalf, by using the `cast send` command.
+4. For each token you want to send, you will need to approve the [`BasicTokenSender.sol`](./src/BasicTokenSender.sol) to spend it on your behalf, by using the `cast send` command.
 
-For example, if you want to send 0.0000000000000001 CCIP-BnM using the [`BasicTokenSender.sol`](./contracts/BasicTokenSender.sol) you will first need to approve that amount:
+For example, if you want to send 0.0000000000000001 CCIP-BnM using the [`BasicTokenSender.sol`](./src/BasicTokenSender.sol) you will first need to approve that amount:
 
 ```shell
 cast send 0xD21341536c5cF5EB1bcb58f6723cE26e8D8E90e4 "approve(address,uint256)" <BASIC_TOKEN_SENDER_ADDRESS> 100 --rpc-url avalancheFuji --private-key=$PRIVATE_KEY
 ```
 
-Or, if you want to send 0.0000000000000001 LINK using the [`BasicTokenSender.sol`](./contracts/BasicTokenSender.sol) you will first need to approve that amount:
+Or, if you want to send 0.0000000000000001 LINK using the [`BasicTokenSender.sol`](./src/BasicTokenSender.sol) you will first need to approve that amount:
 
 ```shell
 cast send 0x0b9d5D9136855f6FEc3c0993feE6E9CE8a297846 "approve(address,uint256)" <BASIC_TOKEN_SENDER_ADDRESS> 100 --rpc-url avalancheFuji --private-key=$PRIVATE_KEY
@@ -271,7 +271,7 @@ For example, to send CCIP-BnM and LINK token amounts you previously approved fro
 forge script ./script/Example03.s.sol:SendBatch -vvv --broadcast --rpc-url avalancheFuji --sig "run(uint8,address,address,(address,uint256)[],uint8)" -- 0 <BASIC_TOKEN_SENDER_ADDRESS> <RECEIVER> "[(0xD21341536c5cF5EB1bcb58f6723cE26e8D8E90e4,100),(0x0b9d5D9136855f6FEc3c0993feE6E9CE8a297846,100)]" 1
 ```
 
-6. Of course, you can always withdraw tokens you sent to the [`BasicTokenSender.sol`](./contracts/BasicTokenSender.sol) for fees, or from [`BasicMessageReceiver.sol`](./contracts/BasicMessageReceiver.sol) if you received them there.
+6. Of course, you can always withdraw tokens you sent to the [`BasicTokenSender.sol`](./src/BasicTokenSender.sol) for fees, or from [`BasicMessageReceiver.sol`](./src/BasicMessageReceiver.sol) if you received them there.
 
 For example, to withdraw ERC20 tokens, run:
 
@@ -289,7 +289,7 @@ cast send <CONTRACT_WITH_FUNDS_ADDRESS> --rpc-url <RPC_ENDPOINT> --private-key=$
 
 To transfer tokens and data across multiple chains, follow the next steps:
 
-1. Deploy the [`ProgrammableTokenTransfers.sol`](./contracts/ProgrammableTokenTransfers.sol) smart contract to the **source blockchain**, using the `script/Example04.s.sol:DeployProgrammableTokenTransfers` smart contract:
+1. Deploy the [`ProgrammableTokenTransfers.sol`](./src/ProgrammableTokenTransfers.sol) smart contract to the **source blockchain**, using the `script/Example04.s.sol:DeployProgrammableTokenTransfers` smart contract:
 
 ```solidity
 function run(SupportedNetworks network) external;
@@ -313,7 +313,7 @@ cast send <PROGRAMMABLE_TOKEN_TRANSFERS_ADDRESS> --rpc-url avalancheFuji --priva
 cast send 0x0b9d5D9136855f6FEc3c0993feE6E9CE8a297846 "transfer(address,uint256)" <PROGRAMMABLE_TOKEN_TRANSFERS_ADDRESS> 10000000000000000 --rpc-url avalancheFuji --private-key=$PRIVATE_KEY
 ```
 
-4. Deploy the [`ProgrammableTokenTransfers.sol`](./contracts/ProgrammableTokenTransfers.sol) smart contract to the **destination blockchain**, using the `script/Example04.s.sol:DeployProgrammableTokenTransfers` smart contract, as you did in step number one.
+4. Deploy the [`ProgrammableTokenTransfers.sol`](./src/ProgrammableTokenTransfers.sol) smart contract to the **destination blockchain**, using the `script/Example04.s.sol:DeployProgrammableTokenTransfers` smart contract, as you did in step number one.
 
 For example, if you want to receive a message from Avalanche Fuji on Ethereum Sepolia type:
 
@@ -321,7 +321,7 @@ For example, if you want to receive a message from Avalanche Fuji on Ethereum Se
 forge script ./script/Example04.s.sol:DeployProgrammableTokenTransfers -vvv --broadcast --rpc-url ethereumSepolia --sig "run(uint8)" -- 0
 ```
 
-At this point, you have one **sender** contract on the source blockchain, and one **receiver** contract on the destination blockchain. Please note that [`ProgrammableTokenTransfers.sol`](./contracts/ProgrammableTokenTransfers.sol) can both send & receive tokens and data, hence we have two identical instances on both source and destination blockchains.
+At this point, you have one **sender** contract on the source blockchain, and one **receiver** contract on the destination blockchain. Please note that [`ProgrammableTokenTransfers.sol`](./src/ProgrammableTokenTransfers.sol) can both send & receive tokens and data, hence we have two identical instances on both source and destination blockchains.
 
 5. Send a message, using the `script/Example04.s.sol:SendTokensAndData` smart contract:
 
@@ -352,7 +352,7 @@ cast call <PROGRAMMABLE_TOKEN_TRANSFERS_ADDRESS_ON_DESTINATION_BLOCKCHAIN> "getL
 
 To send simple Text Cross-Chain Messages and pay for CCIP fees in Native Tokens, follow the next steps:
 
-1. Deploy the [`BasicMessageSender.sol`](./contracts/BasicMessageSender.sol) smart contract on the **source blockchain**, using the `script/Example05.s.sol:DeployBasicMessageSender` smart contract:
+1. Deploy the [`BasicMessageSender.sol`](./src/BasicMessageSender.sol) smart contract on the **source blockchain**, using the `script/Example05.s.sol:DeployBasicMessageSender` smart contract:
 
 ```solidity
 function run(SupportedNetworks source) external;
@@ -364,13 +364,13 @@ For example, if you want to send a simple cross-chain message from Avalanche Fuj
 forge script ./script/Example05.s.sol:DeployBasicMessageSender -vvv --broadcast --rpc-url avalancheFuji --sig "run(uint8)" -- 2
 ```
 
-2. Fund the [`BasicMessageSender.sol`](./contracts/BasicMessageSender.sol) smart contract with Native Coins, either manually using your wallet or by using the `cast send` command. For example, if you want to send 0.1 Fuji AVAX, run:
+2. Fund the [`BasicMessageSender.sol`](./src/BasicMessageSender.sol) smart contract with Native Coins, either manually using your wallet or by using the `cast send` command. For example, if you want to send 0.1 Fuji AVAX, run:
 
 ```shell
 cast send <BASIC_MESSAGE_SENDER_ADDRESS> --rpc-url avalancheFuji --private-key=$PRIVATE_KEY --value 0.1ether
 ```
 
-3. Deploy the [`BasicMessageReceiver.sol`](./contracts/BasicMessageReceiver.sol) smart contract to the **destination blockchain**. For this purpose, you can reuse the `script/Example02.s.sol:DeployBasicMessageReceiver` smart contract from the second example:
+3. Deploy the [`BasicMessageReceiver.sol`](./src/BasicMessageReceiver.sol) smart contract to the **destination blockchain**. For this purpose, you can reuse the `script/Example02.s.sol:DeployBasicMessageReceiver` smart contract from the second example:
 
 ```solidity
 function run(SupportedNetworks destination) external;
@@ -414,7 +414,7 @@ For example,
 forge script ./script/Example02.s.sol:GetLatestMessageDetails -vvv --broadcast --rpc-url ethereumSepolia --sig "run(address)" -- <BASIC_MESSAGE_RECEIVER_ADDRESS>
 ```
 
-6. You can always withdraw tokens for Chainlink CCIP fees from the [`BasicMessageSender.sol`](./contracts/BasicMessageSender.sol) smart contract using the `cast send` command:
+6. You can always withdraw tokens for Chainlink CCIP fees from the [`BasicMessageSender.sol`](./src/BasicMessageSender.sol) smart contract using the `cast send` command:
 
 ```shell
 cast send <BASIC_MESSAGE_SENDER_ADDRESS> --rpc-url avalancheFuji --private-key=$PRIVATE_KEY "withdraw(address)" <BENEFICIARY_ADDRESS>
@@ -424,7 +424,7 @@ cast send <BASIC_MESSAGE_SENDER_ADDRESS> --rpc-url avalancheFuji --private-key=$
 
 To send simple Text Cross-Chain Messages and pay for CCIP fees in LINK Tokens, follow the next steps:
 
-1. Deploy the [`BasicMessageSender.sol`](./contracts/BasicMessageSender.sol) smart contract on the **source blockchain**, using the `script/Example05.s.sol:DeployBasicMessageSender` smart contract:
+1. Deploy the [`BasicMessageSender.sol`](./src/BasicMessageSender.sol) smart contract on the **source blockchain**, using the `script/Example05.s.sol:DeployBasicMessageSender` smart contract:
 
 ```solidity
 function run(SupportedNetworks source) external;
@@ -436,13 +436,13 @@ For example, if you want to send a simple cross-chain message from Avalanche Fuj
 forge script ./script/Example05.s.sol:DeployBasicMessageSender -vvv --broadcast --rpc-url avalancheFuji --sig "run(uint8)" -- 2
 ```
 
-2. Fund the [`BasicMessageSender.sol`](./contracts/BasicMessageSender.sol) smart contract with Testnet LINKs, either manually using your wallet or by using the `cast send` command. For example, if you want to send 0.01 Fuji LINK, run:
+2. Fund the [`BasicMessageSender.sol`](./src/BasicMessageSender.sol) smart contract with Testnet LINKs, either manually using your wallet or by using the `cast send` command. For example, if you want to send 0.01 Fuji LINK, run:
 
 ```shell
 cast send 0x0b9d5D9136855f6FEc3c0993feE6E9CE8a297846 "transfer(address,uint256)" <BASIC_MESSAGE_SENDER_ADDRESS> 10000000000000000 --rpc-url avalancheFuji --private-key=$PRIVATE_KEY
 ```
 
-3. Deploy the [`BasicMessageReceiver.sol`](./contracts/BasicMessageReceiver.sol) smart contract to the **destination blockchain**. For this purpose, you can reuse the `script/Example02.s.sol:DeployBasicMessageReceiver` smart contract from the second example:
+3. Deploy the [`BasicMessageReceiver.sol`](./src/BasicMessageReceiver.sol) smart contract to the **destination blockchain**. For this purpose, you can reuse the `script/Example02.s.sol:DeployBasicMessageReceiver` smart contract from the second example:
 
 ```solidity
 function run(SupportedNetworks destination) external;
@@ -486,7 +486,7 @@ For example,
 forge script ./script/Example02.s.sol:GetLatestMessageDetails -vvv --broadcast --rpc-url ethereumSepolia --sig "run(address)" -- <BASIC_MESSAGE_RECEIVER_ADDRESS>
 ```
 
-6. You can always withdraw tokens for Chainlink CCIP fees from the [`BasicMessageSender.sol`](./contracts/BasicMessageSender.sol) smart contract using the `cast send` command:
+6. You can always withdraw tokens for Chainlink CCIP fees from the [`BasicMessageSender.sol`](./src/BasicMessageSender.sol) smart contract using the `cast send` command:
 
 ```shell
 cast send <BASIC_MESSAGE_SENDER_ADDRESS> --rpc-url avalancheFuji --private-key=$PRIVATE_KEY "withdrawToken(address,address)" <BENEFICIARY_ADDRESS> 0x0b9d5D9136855f6FEc3c0993feE6E9CE8a297846
@@ -514,7 +514,7 @@ e("DestinationMinter.sol") -- "`call mint(to)`" --> f("MyNFT.sol")
 end
 ```
 
-1. Deploy the [`MyNFT.sol`](./contracts/cross-chain-nft-minter/MyNFT.sol) and [`DestinationMinter.sol`](./contracts/cross-chain-nft-minter/DestinationMinter.sol) smart contracts from the `./src/cross-chain-nft-minter` folder on the **destination blockchain**, by using the `script/CrossChainNFT.s.sol:DeployDestination` smart contract:
+1. Deploy the [`MyNFT.sol`](./src/cross-chain-nft-minter/MyNFT.sol) and [`DestinationMinter.sol`](./src/cross-chain-nft-minter/DestinationMinter.sol) smart contracts from the `./src/cross-chain-nft-minter` folder on the **destination blockchain**, by using the `script/CrossChainNFT.s.sol:DeployDestination` smart contract:
 
 ```solidity
 function run(SupportedNetworks destination) external;
@@ -526,7 +526,7 @@ For example, if you want to have an NFT collection on Ethereum Sepolia, run:
 forge script ./script/CrossChainNFT.s.sol:DeployDestination -vvv --broadcast --rpc-url ethereumSepolia --sig "run(uint8)" -- 0
 ```
 
-2. Deploy the [`SourceMinter.sol`](./contracts/cross-chain-nft-minter/SourceMinter.sol) smart contract on the **source blockchain**, by using the `script/CrossChainNFT.s.sol:DeploySource` smart contract:
+2. Deploy the [`SourceMinter.sol`](./src/cross-chain-nft-minter/SourceMinter.sol) smart contract on the **source blockchain**, by using the `script/CrossChainNFT.s.sol:DeploySource` smart contract:
 
 ```solidity
 function run(SupportedNetworks source) external;
@@ -538,11 +538,11 @@ For example, if you want to mint NFTs on Ethereum Sepolia from Avalanche Fuji, r
 forge script ./script/CrossChainNFT.s.sol:DeploySource -vvv --broadcast --rpc-url avalancheFuji --sig "run(uint8)" -- 2
 ```
 
-3. Fund the [`SourceMinter.sol`](./contracts/cross-chain-nft-minter/SourceMinter.sol) smart contract with tokens for CCIP fees.
+3. Fund the [`SourceMinter.sol`](./src/cross-chain-nft-minter/SourceMinter.sol) smart contract with tokens for CCIP fees.
 
 - If you want to pay for CCIP fees in Native tokens:
 
-  Open Metamask and fund your contract with Native tokens. For example, if you want to mint from Avalanche Fuji to Ethereum Sepolia, you can send 0.1 Fuji AVAX to the [`SourceMinter.sol`](./contracts/cross-chain-nft-minter/SourceMinter.sol) smart contract.
+  Open Metamask and fund your contract with Native tokens. For example, if you want to mint from Avalanche Fuji to Ethereum Sepolia, you can send 0.1 Fuji AVAX to the [`SourceMinter.sol`](./src/cross-chain-nft-minter/SourceMinter.sol) smart contract.
 
   Or, you can use the `cast send` command:
 
@@ -552,7 +552,7 @@ forge script ./script/CrossChainNFT.s.sol:DeploySource -vvv --broadcast --rpc-ur
 
 - If you want to pay for CCIP fees in LINK tokens:
 
-  Open Metamask and fund your contract with LINK tokens. For example, if you want to mint from Avalanche Fuji to Ethereum Sepolia, you can send 0.01 Fuji LINK to the [`SourceMinter.sol`](./contracts/cross-chain-nft-minter/SourceMinter.sol) smart contract.
+  Open Metamask and fund your contract with LINK tokens. For example, if you want to mint from Avalanche Fuji to Ethereum Sepolia, you can send 0.01 Fuji LINK to the [`SourceMinter.sol`](./src/cross-chain-nft-minter/SourceMinter.sol) smart contract.
 
   Or, you can use the `cast send` command:
 
@@ -560,7 +560,7 @@ forge script ./script/CrossChainNFT.s.sol:DeploySource -vvv --broadcast --rpc-ur
   cast send 0x0b9d5D9136855f6FEc3c0993feE6E9CE8a297846 "transfer(address,uint256)" <SOURCE_MINTER_ADDRESS> 10000000000000000 --rpc-url avalancheFuji --private-key=$PRIVATE_KEY
   ```
 
-4. Mint NFTs by calling the `mint()` function of the [`SourceMinter.sol`](./contracts/cross-chain-nft-minter/SourceMinter.sol) smart contract on the **source blockchain**. It will send the CCIP Cross-Chain Message with the ABI-encoded mint function signature from the [`MyNFT.sol`](./contracts/cross-chain-nft-minter/MyNFT.sol) smart contract. The [`DestinationMinter.sol`](./contracts/cross-chain-nft-minter/DestinationMinter.sol) smart contracts will receive the CCIP Cross-Chain Message with the ABI-encoded mint function signature as a payload and call the [`MyNFT.sol`](./contracts/cross-chain-nft-minter/MyNFT.sol) smart contract using it. The [`MyNFT.sol`](./contracts/cross-chain-nft-minter/MyNFT.sol) smart contract will then mint the new NFT to the `msg.sender` account from the `mint()` function of the [`SourceMinter.sol`](./contracts/cross-chain-nft-minter/SourceMinter.sol) smart contract, a.k.a to the account from which you will call the following command:
+4. Mint NFTs by calling the `mint()` function of the [`SourceMinter.sol`](./src/cross-chain-nft-minter/SourceMinter.sol) smart contract on the **source blockchain**. It will send the CCIP Cross-Chain Message with the ABI-encoded mint function signature from the [`MyNFT.sol`](./src/cross-chain-nft-minter/MyNFT.sol) smart contract. The [`DestinationMinter.sol`](./src/cross-chain-nft-minter/DestinationMinter.sol) smart contracts will receive the CCIP Cross-Chain Message with the ABI-encoded mint function signature as a payload and call the [`MyNFT.sol`](./src/cross-chain-nft-minter/MyNFT.sol) smart contract using it. The [`MyNFT.sol`](./src/cross-chain-nft-minter/MyNFT.sol) smart contract will then mint the new NFT to the `msg.sender` account from the `mint()` function of the [`SourceMinter.sol`](./src/cross-chain-nft-minter/SourceMinter.sol) smart contract, a.k.a to the account from which you will call the following command:
 
 ```solidity
 function run(
@@ -592,7 +592,7 @@ Of course, you can see your newly minted NFT on popular NFT Marketplaces, like O
 
 ![opensea](./img/opensea.png)
 
-6. You can always withdraw tokens for Chainlink CCIP fees from the [`SourceMinter.sol`](./contracts/cross-chain-nft-minter/SourceMinter.sol) smart contract using the `cast send` command.
+6. You can always withdraw tokens for Chainlink CCIP fees from the [`SourceMinter.sol`](./src/cross-chain-nft-minter/SourceMinter.sol) smart contract using the `cast send` command.
 
 For example, to withdraw tokens previously sent for Chainlink CCIP fees, run:
 
@@ -606,4 +606,4 @@ or
 cast send <SOURCE_MINTER_ADDRESS> --rpc-url avalancheFuji --private-key=$PRIVATE_KEY "withdrawToken(address,address)" <BENEFICIARY_ADDRESS> 0x0b9d5D9136855f6FEc3c0993feE6E9CE8a297846
 ```
 
-depending on whether you filled the [`SourceMinter.sol`](./contracts/cross-chain-nft-minter/SourceMinter.sol) contract with `Native (0)` or `LINK (1)` in step number 3.
+depending on whether you filled the [`SourceMinter.sol`](./src/cross-chain-nft-minter/SourceMinter.sol) contract with `Native (0)` or `LINK (1)` in step number 3.
