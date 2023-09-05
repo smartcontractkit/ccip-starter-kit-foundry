@@ -51,7 +51,7 @@ contract BasicTokenSender is Withdraw {
             "Maximum 5 different tokens can be sent per CCIP Message"
         );
 
-        for (uint256 i = 0; i < length; ) {
+        for (uint256 i; i < length; ) {
             IERC20(tokensToSendDetails[i].token).transferFrom(
                 msg.sender,
                 address(this),
