@@ -7,8 +7,10 @@ contract Helper {
         ETHEREUM_SEPOLIA,
         OPTIMISM_GOERLI,
         AVALANCHE_FUJI,
-        ARBITRUM_GOERLI,
-        POLYGON_MUMBAI
+        ARBITRUM_SEPOLIA,
+        POLYGON_MUMBAI,
+        BNB_CHAIN_TESTNET,
+        BASE_GOERLI
     }
 
     mapping(SupportedNetworks enumValue => string humanReadableName)
@@ -23,20 +25,26 @@ contract Helper {
     uint64 constant chainIdEthereumSepolia = 16015286601757825753;
     uint64 constant chainIdOptimismGoerli = 2664363617261496610;
     uint64 constant chainIdAvalancheFuji = 14767482510784806043;
-    uint64 constant chainIdArbitrumTestnet = 6101244977088475029;
+    uint64 constant chainIdArbitrumSepolia = 3478487238524512106;
     uint64 constant chainIdPolygonMumbai = 12532609583862916517;
+    uint64 constant chainIdBnbChainTestnet = 13264668187771770619;
+    uint64 constant chainIdBaseGoerli = 5790810961207155433;
 
     // Router addresses
     address constant routerEthereumSepolia =
-        0xD0daae2231E9CB96b94C8512223533293C3693Bf;
+        0x0BF3dE8c5D3e8A2B34D2BEeB17ABfCeBaf363A59;
     address constant routerOptimismGoerli =
-        0xEB52E9Ae4A9Fb37172978642d4C141ef53876f26;
+        0xcc5a0B910D9E9504A7561934bed294c51285a78D;
     address constant routerAvalancheFuji =
-        0x554472a2720E5E7D5D3C817529aBA05EEd5F82D8;
-    address constant routerArbitrumTestnet =
-        0x88E492127709447A5ABEFdaB8788a15B4567589E;
+        0xF694E193200268f9a4868e4Aa017A0118C9a8177;
+    address constant routerArbitrumSepolia =
+        0x2a9C5afB0d0e4BAb2BCdaE109EC4b0c4Be15a165;
     address constant routerPolygonMumbai =
-        0x70499c328e1E2a3c41108bd3730F6670a44595D1;
+        0x1035CabC275068e0F4b745A29CEDf38E13aF41b1;
+    address constant routerBnbChainTestnet =
+        0xE1053aE1857476f36A3C62580FF9b016E8EE8F6f;
+    address constant routerBaseGoerli =
+        0x80AF2F44ed0469018922c9F483dc5A909862fdc2;
 
     // Link addresses (can be used as fee)
     address constant linkEthereumSepolia =
@@ -45,10 +53,14 @@ contract Helper {
         0xdc2CC710e42857672E7907CF474a69B63B93089f;
     address constant linkAvalancheFuji =
         0x0b9d5D9136855f6FEc3c0993feE6E9CE8a297846;
-    address constant linkArbitrumTestnet =
-        0xd14838A68E8AFBAdE5efb411d5871ea0011AFd28;
+    address constant linkArbitrumSepolia =
+        0xb1D4538B4571d411F07960EF2838Ce337FE1E80E;
     address constant linkPolygonMumbai =
         0x326C977E6efc84E512bB9C30f76E30c160eD06FB;
+    address constant linkBnbChainTestnet =
+        0x84b9B910527Ad5C03A9Ca831909E21e236EA7b06;
+    address constant linkBaseGoerli =
+        0xD886E2286Fd1073df82462ea1822119600Af80b6;
 
     // Wrapped native addresses
     address constant wethEthereumSepolia =
@@ -57,41 +69,65 @@ contract Helper {
         0x4200000000000000000000000000000000000006;
     address constant wavaxAvalancheFuji =
         0xd00ae08403B9bbb9124bB305C09058E32C39A48c;
-    address constant wethArbitrumTestnet =
-        0x32d5D5978905d9c6c2D4C417F0E06Fe768a4FB5a;
+    address constant wethArbitrumSepolia =
+        0xE591bf0A0CF924A0674d7792db046B23CEbF5f34;
     address constant wmaticPolygonMumbai =
         0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889;
+    address constant wbnbBnbChainTestnet =
+        0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd;
+    address constant wethBaseGoerli =
+        0x4200000000000000000000000000000000000006;
 
     // CCIP-BnM addresses
     address constant ccipBnMEthereumSepolia =
         0xFd57b4ddBf88a4e07fF4e34C487b99af2Fe82a05;
     address constant ccipBnMOptimismGoerli =
         0xaBfE9D11A2f1D61990D1d253EC98B5Da00304F16;
-    address constant ccipBnMArbitrumTestnet =
-        0x0579b4c1C8AcbfF13c6253f1B10d66896Bf399Ef;
+    address constant ccipBnMArbitrumSepolia =
+        0xA8C0c11bf64AF62CDCA6f93D3769B88BdD7cb93D;
     address constant ccipBnMAvalancheFuji =
         0xD21341536c5cF5EB1bcb58f6723cE26e8D8E90e4;
     address constant ccipBnMPolygonMumbai =
         0xf1E3A5842EeEF51F2967b3F05D45DD4f4205FF40;
+    address constant ccipBnMBnbChainTestnet =
+        0xbFA2ACd33ED6EEc0ed3Cc06bF1ac38d22b36B9e9;
+    address constant ccipBnMBaseGoerli =
+        0xbf9036529123DE264bFA0FC7362fE25B650D4B16;
 
     // CCIP-LnM addresses
     address constant ccipLnMEthereumSepolia =
         0x466D489b6d36E7E3b824ef491C225F5830E81cC1;
     address constant clCcipLnMOptimismGoerli =
         0x835833d556299CdEC623e7980e7369145b037591;
-    address constant clCcipLnMArbitrumTestnet =
-        0x0E14dBe2c8e1121902208be173A3fb91Bb125CDB;
+    address constant clCcipLnMArbitrumSepolia =
+        0x139E99f0ab4084E14e6bb7DacA289a91a2d92927;
     address constant clCcipLnMAvalancheFuji =
         0x70F5c5C40b873EA597776DA2C21929A8282A3b35;
     address constant clCcipLnMPolygonMumbai =
         0xc1c76a8c5bFDE1Be034bbcD930c668726E7C1987;
+    address constant clCcipLnMBnbChainTestnet =
+        0x79a4Fc27f69323660f5Bfc12dEe21c3cC14f5901;
+    address constant clCcipLnMBaseGoerli =
+        0x73ed16c1a61b098fd6924CCE5cC6a9A30348D944;
+
+    // USDC addresses
+    address constant usdcOptimismGoerli =
+        0xe05606174bac4A6364B31bd0eCA4bf4dD368f8C6;
+    address constant usdcAvalancheFuji =
+        0x5425890298aed601595a70AB815c96711a31Bc65;
+    address constant usdcPolygonMumbai =
+        0x9999f7Fea5938fD3b1E26A12c3f2fb024e194f97;
+    address constant usdcBaseGoerli =
+        0xF175520C52418dfE19C8098071a252da48Cd1C19;
 
     constructor() {
         networks[SupportedNetworks.ETHEREUM_SEPOLIA] = "Ethereum Sepolia";
         networks[SupportedNetworks.OPTIMISM_GOERLI] = "Optimism Goerli";
         networks[SupportedNetworks.AVALANCHE_FUJI] = "Avalanche Fuji";
-        networks[SupportedNetworks.ARBITRUM_GOERLI] = "Arbitrum Goerli";
+        networks[SupportedNetworks.ARBITRUM_SEPOLIA] = "Arbitrum Sepolia";
         networks[SupportedNetworks.POLYGON_MUMBAI] = "Polygon Mumbai";
+        networks[SupportedNetworks.BNB_CHAIN_TESTNET] = "BNB Chain Testnet";
+        networks[SupportedNetworks.BASE_GOERLI] = "Base Goerli";
     }
 
     function getDummyTokensFromNetwork(
@@ -101,12 +137,16 @@ contract Helper {
             return (ccipBnMEthereumSepolia, ccipLnMEthereumSepolia);
         } else if (network == SupportedNetworks.OPTIMISM_GOERLI) {
             return (ccipBnMOptimismGoerli, clCcipLnMOptimismGoerli);
-        } else if (network == SupportedNetworks.ARBITRUM_GOERLI) {
-            return (ccipBnMArbitrumTestnet, clCcipLnMArbitrumTestnet);
+        } else if (network == SupportedNetworks.ARBITRUM_SEPOLIA) {
+            return (ccipBnMArbitrumSepolia, clCcipLnMArbitrumSepolia);
         } else if (network == SupportedNetworks.AVALANCHE_FUJI) {
             return (ccipBnMAvalancheFuji, clCcipLnMAvalancheFuji);
         } else if (network == SupportedNetworks.POLYGON_MUMBAI) {
             return (ccipBnMPolygonMumbai, clCcipLnMPolygonMumbai);
+        } else if (network == SupportedNetworks.BNB_CHAIN_TESTNET) {
+            return (ccipBnMBnbChainTestnet, clCcipLnMBnbChainTestnet);
+        } else if (network == SupportedNetworks.BASE_GOERLI) {
+            return (ccipBnMBaseGoerli, clCcipLnMBaseGoerli);
         }
     }
 
@@ -136,12 +176,12 @@ contract Helper {
                 wethOptimismGoerli,
                 chainIdOptimismGoerli
             );
-        } else if (network == SupportedNetworks.ARBITRUM_GOERLI) {
+        } else if (network == SupportedNetworks.ARBITRUM_SEPOLIA) {
             return (
-                routerArbitrumTestnet,
-                linkArbitrumTestnet,
-                wethArbitrumTestnet,
-                chainIdArbitrumTestnet
+                routerArbitrumSepolia,
+                linkArbitrumSepolia,
+                wethArbitrumSepolia,
+                chainIdArbitrumSepolia
             );
         } else if (network == SupportedNetworks.AVALANCHE_FUJI) {
             return (
@@ -156,6 +196,20 @@ contract Helper {
                 linkPolygonMumbai,
                 wmaticPolygonMumbai,
                 chainIdPolygonMumbai
+            );
+        } else if (network == SupportedNetworks.BNB_CHAIN_TESTNET) {
+            return (
+                routerBnbChainTestnet,
+                linkBnbChainTestnet,
+                wbnbBnbChainTestnet,
+                chainIdBnbChainTestnet
+            );
+        } else if (network == SupportedNetworks.BASE_GOERLI) {
+            return (
+                routerBaseGoerli,
+                linkBaseGoerli,
+                wethBaseGoerli,
+                chainIdBaseGoerli
             );
         }
     }
