@@ -2,7 +2,8 @@
 pragma solidity 0.8.19;
 
 import {OwnerIsCreator} from "@chainlink/contracts-ccip/src/v0.8/shared/access/OwnerIsCreator.sol";
-import {IERC20} from "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.0/token/ERC20/IERC20.sol";
+import {IERC20} from "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.0/contracts/token/ERC20/IERC20.sol";
+import {SafeERC20} from "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.0/contracts/token/ERC20/utils/SafeERC20.sol";
 
 /**
  * THIS IS AN EXAMPLE CONTRACT THAT USES HARDCODED VALUES FOR CLARITY.
@@ -10,6 +11,8 @@ import {IERC20} from "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-sol
  * DO NOT USE THIS CODE IN PRODUCTION.
  */
 contract Withdraw is OwnerIsCreator {
+    using SafeERC20 for IERC20;
+
     error FailedToWithdrawEth(address owner, address target, uint256 value);
 
     function withdraw(address beneficiary) public onlyOwner {
@@ -23,6 +26,6 @@ contract Withdraw is OwnerIsCreator {
         address token
     ) public onlyOwner {
         uint256 amount = IERC20(token).balanceOf(address(this));
-        IERC20(token).transfer(beneficiary, amount);
+        IERC20(token).safeTransfer(beneficiary, amount);
     }
 }

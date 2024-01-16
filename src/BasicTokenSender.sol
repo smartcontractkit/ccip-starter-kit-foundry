@@ -2,7 +2,8 @@
 pragma solidity 0.8.19;
 
 import {LinkTokenInterface} from "@chainlink/contracts/src/v0.8/interfaces/LinkTokenInterface.sol";
-import {IERC20} from "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.0/token/ERC20/IERC20.sol";
+import {IERC20} from "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.0/contracts/token/ERC20/IERC20.sol";
+import {SafeERC20} from "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.0/contracts/token/ERC20/utils/SafeERC20.sol";
 import {IRouterClient} from "@chainlink/contracts-ccip/src/v0.8/ccip/interfaces/IRouterClient.sol";
 import {Client} from "@chainlink/contracts-ccip/src/v0.8/ccip/libraries/Client.sol";
 import {Withdraw} from "./utils/Withdraw.sol";
@@ -13,6 +14,8 @@ import {Withdraw} from "./utils/Withdraw.sol";
  * DO NOT USE THIS CODE IN PRODUCTION.
  */
 contract BasicTokenSender is Withdraw {
+    using SafeERC20 for IERC20;
+
     enum PayFeesIn {
         Native,
         LINK
@@ -20,15 +23,12 @@ contract BasicTokenSender is Withdraw {
 
     address immutable i_router;
     address immutable i_link;
-    uint16 immutable i_maxTokensLength;
 
     event MessageSent(bytes32 messageId);
 
     constructor(address router, address link) {
         i_router = router;
         i_link = link;
-        i_maxTokensLength = 5;
-        LinkTokenInterface(i_link).approve(i_router, type(uint256).max);
     }
 
     receive() external payable {}
@@ -46,13 +46,9 @@ contract BasicTokenSender is Withdraw {
         PayFeesIn payFeesIn
     ) external {
         uint256 length = tokensToSendDetails.length;
-        require(
-            length <= i_maxTokensLength,
-            "Maximum 5 different tokens can be sent per CCIP Message"
-        );
 
         for (uint256 i = 0; i < length; ) {
-            IERC20(tokensToSendDetails[i].token).transferFrom(
+            IERC20(tokensToSendDetails[i].token).safeTransferFrom(
                 msg.sender,
                 address(this),
                 tokensToSendDetails[i].amount
@@ -83,7 +79,7 @@ contract BasicTokenSender is Withdraw {
         bytes32 messageId;
 
         if (payFeesIn == PayFeesIn.LINK) {
-            // LinkTokenInterface(i_link).approve(i_router, fee);
+            LinkTokenInterface(i_link).approve(i_router, fee);
             messageId = IRouterClient(i_router).ccipSend(
                 destinationChainSelector,
                 message

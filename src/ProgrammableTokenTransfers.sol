@@ -5,7 +5,8 @@ import {IRouterClient} from "@chainlink/contracts-ccip/src/v0.8/ccip/interfaces/
 import {OwnerIsCreator} from "@chainlink/contracts-ccip/src/v0.8/shared/access/OwnerIsCreator.sol";
 import {Client} from "@chainlink/contracts-ccip/src/v0.8/ccip/libraries/Client.sol";
 import {CCIPReceiver} from "@chainlink/contracts-ccip/src/v0.8/ccip/applications/CCIPReceiver.sol";
-import {IERC20} from "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.0/token/ERC20/IERC20.sol";
+import {IERC20} from "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.0/contracts/token/ERC20/IERC20.sol";
+import {SafeERC20} from "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.0/contracts/token/ERC20/utils/SafeERC20.sol";
 
 /**
  * THIS IS AN EXAMPLE CONTRACT THAT USES HARDCODED VALUES FOR CLARITY.
@@ -16,6 +17,8 @@ import {IERC20} from "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-sol
 /// @title - A simple messenger contract for sending/receiving messages and tokens across chains.
 /// Pay using native tokens (e.g, ETH in Ethereum)
 contract ProgrammableTokenTransfers is CCIPReceiver, OwnerIsCreator {
+    using SafeERC20 for IERC20;
+
     // Custom errors to provide more descriptive revert messages.
     error NoMessageReceived(); // Used when trying to access a message but no messages have been received.
     error IndexOutOfBound(uint256 providedIndex, uint256 maxIndex); // Used when the provided index is out of bounds.
@@ -88,7 +91,7 @@ contract ProgrammableTokenTransfers is CCIPReceiver, OwnerIsCreator {
             data: abi.encode(message), // ABI-encoded string message
             tokenAmounts: tokenAmounts, // Tokens amounts
             extraArgs: Client._argsToBytes(
-                Client.EVMExtraArgsV1({gasLimit: 200_000, strict: false}) // Additional arguments, setting gas limit and non-strict sequency mode
+                Client.EVMExtraArgsV1({gasLimit: 200_000}) // Additional arguments, setting gas limit and non-strict sequency mode
             ),
             feeToken: address(0) // Setting feeToken to zero address, indicating native asset will be used for fees
         });
@@ -308,6 +311,6 @@ contract ProgrammableTokenTransfers is CCIPReceiver, OwnerIsCreator {
         // Revert if there is nothing to withdraw
         if (amount == 0) revert NothingToWithdraw();
 
-        IERC20(token).transfer(beneficiary, amount);
+        IERC20(token).safeTransfer(beneficiary, amount);
     }
 }
