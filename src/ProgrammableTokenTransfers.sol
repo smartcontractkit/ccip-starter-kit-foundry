@@ -25,6 +25,7 @@ contract ProgrammableTokenTransfers is CCIPReceiver, OwnerIsCreator {
     error MessageIdNotExist(bytes32 messageId); // Used when the provided message ID does not exist.
     error NothingToWithdraw(); // Used when trying to withdraw Ether but there's nothing to withdraw.
     error FailedToWithdrawEth(address owner, address target, uint256 value); // Used when the withdrawal of Ether fails.
+    error InsufficientFeeTokenAmount(); // Used when the contract balance isn't enough to pay fees.
 
     // Event emitted when a message is sent to another chain.
     event MessageSent(
@@ -104,6 +105,9 @@ contract ProgrammableTokenTransfers is CCIPReceiver, OwnerIsCreator {
 
         // Get the fee required to send the message
         uint256 fees = router.getFee(destinationChainSelector, evm2AnyMessage);
+
+        // Reverts if this Contract doesn't have enough native tokens
+        if (address(this).balance < fees) revert InsufficientFeeTokenAmount();
 
         // Send the message through the router and store the returned message ID
         messageId = router.ccipSend{value: fees}(
