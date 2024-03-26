@@ -1,16 +1,18 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.19;
+pragma solidity ^0.8.19;
 
 contract Helper {
     // Supported Networks
     enum SupportedNetworks {
-        ETHEREUM_SEPOLIA,
-        OPTIMISM_GOERLI,
-        AVALANCHE_FUJI,
-        ARBITRUM_SEPOLIA,
-        POLYGON_MUMBAI,
-        BNB_CHAIN_TESTNET,
-        BASE_GOERLI
+        ETHEREUM_SEPOLIA, // 0
+        OPTIMISM_GOERLI, // 1
+        AVALANCHE_FUJI, // 2
+        ARBITRUM_SEPOLIA, // 3
+        POLYGON_MUMBAI, // 4
+        BNB_CHAIN_TESTNET, // 5
+        BASE_GOERLI, // 6
+        OPTIMISM_SEPOLIA, // 7
+        BASE_SEPOLIA // 8
     }
 
     mapping(SupportedNetworks enumValue => string humanReadableName)
@@ -29,6 +31,8 @@ contract Helper {
     uint64 constant chainIdPolygonMumbai = 12532609583862916517;
     uint64 constant chainIdBnbChainTestnet = 13264668187771770619;
     uint64 constant chainIdBaseGoerli = 5790810961207155433;
+    uint64 constant chainIdOptimismSepolia = 5224473277236331295;
+    uint64 constant chainIdBaseSepolia = 10344971235874465080;
 
     // Router addresses
     address constant routerEthereumSepolia =
@@ -45,6 +49,10 @@ contract Helper {
         0xE1053aE1857476f36A3C62580FF9b016E8EE8F6f;
     address constant routerBaseGoerli =
         0x80AF2F44ed0469018922c9F483dc5A909862fdc2;
+    address constant routerOptimismSepolia =
+        0x114A20A10b43D4115e5aeef7345a1A71d2a60C57;
+    address constant routerBaseSepolia =
+        0xD3b06cEbF099CE7DA4AcCf578aaebFDBd6e88a93;
 
     // Link addresses (can be used as fee)
     address constant linkEthereumSepolia =
@@ -61,6 +69,10 @@ contract Helper {
         0x84b9B910527Ad5C03A9Ca831909E21e236EA7b06;
     address constant linkBaseGoerli =
         0xD886E2286Fd1073df82462ea1822119600Af80b6;
+    address constant linkOptimismSepolia =
+        0xE4aB69C077896252FAFBD49EFD26B5D171A32410;
+    address constant linkBaseSepolia =
+        0xE4aB69C077896252FAFBD49EFD26B5D171A32410;
 
     // Wrapped native addresses
     address constant wethEthereumSepolia =
@@ -76,6 +88,10 @@ contract Helper {
     address constant wbnbBnbChainTestnet =
         0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd;
     address constant wethBaseGoerli =
+        0x4200000000000000000000000000000000000006;
+    address constant wethOptimismSepolia =
+        0x4200000000000000000000000000000000000006;
+    address constant wethBaseSepolia =
         0x4200000000000000000000000000000000000006;
 
     // CCIP-BnM addresses
@@ -93,6 +109,10 @@ contract Helper {
         0xbFA2ACd33ED6EEc0ed3Cc06bF1ac38d22b36B9e9;
     address constant ccipBnMBaseGoerli =
         0xbf9036529123DE264bFA0FC7362fE25B650D4B16;
+    address constant ccipBnMOptimismSepolia =
+        0x8aF4204e30565DF93352fE8E1De78925F6664dA7;
+    address constant ccipBnMBaseSepolia =
+        0x88A2d74F47a237a62e7A51cdDa67270CE381555e;
 
     // CCIP-LnM addresses
     address constant ccipLnMEthereumSepolia =
@@ -109,6 +129,10 @@ contract Helper {
         0x79a4Fc27f69323660f5Bfc12dEe21c3cC14f5901;
     address constant clCcipLnMBaseGoerli =
         0x73ed16c1a61b098fd6924CCE5cC6a9A30348D944;
+    address constant clCcipLnMOptimismSepolia =
+        0x044a6B4b561af69D2319A2f4be5Ec327a6975D0a;
+    address constant clCcipLnMBaseSepolia =
+        0xA98FA8A008371b9408195e52734b1768c0d1Cb5c;
 
     // USDC addresses
     address constant usdcOptimismGoerli =
@@ -119,6 +143,16 @@ contract Helper {
         0x9999f7Fea5938fD3b1E26A12c3f2fb024e194f97;
     address constant usdcBaseGoerli =
         0xF175520C52418dfE19C8098071a252da48Cd1C19;
+    address constant usdcOptimismSepolia =
+        0x5fd84259d66Cd46123540766Be93DFE6D43130D7;
+    address constant usdcBaseSepolia =
+        0x036CbD53842c5426634e7929541eC2318f3dCF7e;
+
+    // GHO Addresses
+    address constant ghoEthereumSepolia =
+        0xc4bF5CbDaBE595361438F8c6a187bDc330539c60;
+    address constant ghoArbitrumSepolia =
+        0xb13Cfa6f8B2Eed2C37fB00fF0c1A59807C585810;
 
     constructor() {
         networks[SupportedNetworks.ETHEREUM_SEPOLIA] = "Ethereum Sepolia";
@@ -128,6 +162,8 @@ contract Helper {
         networks[SupportedNetworks.POLYGON_MUMBAI] = "Polygon Mumbai";
         networks[SupportedNetworks.BNB_CHAIN_TESTNET] = "BNB Chain Testnet";
         networks[SupportedNetworks.BASE_GOERLI] = "Base Goerli";
+        networks[SupportedNetworks.OPTIMISM_SEPOLIA] = "Optimism Sepolia";
+        networks[SupportedNetworks.BASE_SEPOLIA] = "Base Sepolia";
     }
 
     function getDummyTokensFromNetwork(
@@ -147,6 +183,10 @@ contract Helper {
             return (ccipBnMBnbChainTestnet, clCcipLnMBnbChainTestnet);
         } else if (network == SupportedNetworks.BASE_GOERLI) {
             return (ccipBnMBaseGoerli, clCcipLnMBaseGoerli);
+        } else if (network == SupportedNetworks.OPTIMISM_SEPOLIA) {
+            return (ccipBnMOptimismSepolia, clCcipLnMOptimismSepolia);
+        } else if (network == SupportedNetworks.BASE_GOERLI) {
+            return (ccipBnMBaseSepolia, clCcipLnMBaseSepolia);
         }
     }
 
@@ -210,6 +250,20 @@ contract Helper {
                 linkBaseGoerli,
                 wethBaseGoerli,
                 chainIdBaseGoerli
+            );
+        } else if (network == SupportedNetworks.OPTIMISM_SEPOLIA) {
+            return (
+                routerOptimismSepolia,
+                linkOptimismSepolia,
+                wethOptimismSepolia,
+                chainIdOptimismSepolia
+            );
+        } else if (network == SupportedNetworks.BASE_SEPOLIA) {
+            return (
+                routerBaseSepolia,
+                linkBaseSepolia,
+                wethBaseSepolia,
+                chainIdBaseSepolia
             );
         }
     }
