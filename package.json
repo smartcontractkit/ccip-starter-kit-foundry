@@ -2,6 +2,7 @@
   "name": "ccip-starter-kit-foundry",
   "devDependencies": {
     "@chainlink/contracts": "^0.6.1",
-    "@chainlink/contracts-ccip": "^1.4.0"
+    "@chainlink/contracts-ccip": "^1.4.0",
+    "@chainlink/local": "github:smartcontractkit/chainlink-local"
   }
 }
