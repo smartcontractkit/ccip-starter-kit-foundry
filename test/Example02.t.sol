@@ -24,15 +24,21 @@ contract Example02Test is Test {
     function setUp() public {
         ccipLocalSimulator = new CCIPLocalSimulator();
 
-        (uint64 chainSelector, IRouterClient sourceRouter,,, LinkToken link, BurnMintERC677Helper ccipBnM,) =
-            ccipLocalSimulator.configuration();
+        (
+            uint64 chainSelector,
+            IRouterClient sourceRouter,
+            IRouterClient destinationRouter,
+            ,
+            LinkToken link,
+            BurnMintERC677Helper ccipBnM,
+        ) = ccipLocalSimulator.configuration();
 
         router = sourceRouter;
         destinationChainSelector = chainSelector;
         ccipBnMToken = ccipBnM;
         linkToken = link;
 
-        basicMessageReceiver = new BasicMessageReceiver(address(router));
+        basicMessageReceiver = new BasicMessageReceiver(address(destinationRouter));
 
         alice = makeAddr("alice");
     }
