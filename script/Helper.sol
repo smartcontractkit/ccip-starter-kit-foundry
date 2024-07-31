@@ -13,7 +13,8 @@ contract Helper {
         BASE_SEPOLIA, // 6
         WEMIX_TESTNET, // 7
         KROMA_SEPOLIA_TESTNET, // 8
-        METIS_SEPOLIA // 9
+        METIS_SEPOLIA, // 9
+        ZKSYNC_SEPOLIA // 10
     }
 
     mapping(SupportedNetworks enumValue => string humanReadableName)
@@ -35,6 +36,7 @@ contract Helper {
     uint64 constant chainIdWemixTestnet = 9284632837123596123;
     uint64 constant chainIdKromaSepoliaTestnet = 5990477251245693094;
     uint64 constant chainIdMetisSepolia = 3777822886988675105;
+    uint64 constant chainIdZksyncSepolia = 6898391096552792247;
 
     // Router addresses
     address constant routerEthereumSepolia =
@@ -57,6 +59,8 @@ contract Helper {
         0xA8C0c11bf64AF62CDCA6f93D3769B88BdD7cb93D;
     address constant routerMetisSepolia =
         0xaCdaBa07ECad81dc634458b98673931DD9d3Bc14;
+    address constant routerZksyncSepolia =
+        0xA1fdA8aa9A8C4b945C45aD30647b01f07D7A0B16;
 
     // Link addresses (can be used as fee)
     address constant linkEthereumSepolia =
@@ -79,6 +83,8 @@ contract Helper {
         0xa75cCA5b404ec6F4BB6EC4853D177FE7057085c8;
     address constant linkMetisSepolia =
         0x9870D6a0e05F867EAAe696e106741843F7fD116D;
+    address constant linkZksyncSepolia =
+        0x23A1aFD896c8c8876AF46aDc38521f4432658d1e;
 
     // Wrapped native addresses
     address constant wethEthereumSepolia =
@@ -101,6 +107,8 @@ contract Helper {
         0x4200000000000000000000000000000000000001;
     address constant wethMetisSepolia =
         0x5c48e07062aC4E2Cf4b9A768a711Aef18e8fbdA0;
+    address constant wethZksyncSepolia =
+        0x4317b2eCD41851173175005783322D29E9bAee9E;
 
     // CCIP-BnM addresses
     address constant ccipBnMEthereumSepolia =
@@ -173,6 +181,7 @@ contract Helper {
         networks[SupportedNetworks.WEMIX_TESTNET] = "Wemix Testnet";
         networks[SupportedNetworks.KROMA_SEPOLIA_TESTNET] = "Kroma Sepolia Testnet";
         networks[SupportedNetworks.METIS_SEPOLIA] = "Metis Sepolia";
+        networks[SupportedNetworks.ZKSYNC_SEPOLIA] = "zkSync Sepolia";
     }
 
     function getDummyTokensFromNetwork(
@@ -280,6 +289,13 @@ contract Helper {
                 linkMetisSepolia,
                 wethMetisSepolia,
                 chainIdMetisSepolia
+            );
+        } else if (network == SupportedNetworks.ZKSYNC_SEPOLIA) {
+            return (
+                routerZksyncSepolia,
+                linkZksyncSepolia,
+                wethZksyncSepolia,
+                chainIdZksyncSepolia
             );
         }
     }
