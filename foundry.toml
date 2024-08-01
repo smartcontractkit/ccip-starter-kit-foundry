@@ -16,7 +16,7 @@ avalancheFuji = "${AVALANCHE_FUJI_RPC_URL}"
 arbitrumSepolia = "${ARBITRUM_SEPOLIA_RPC_URL}"
 polygonMumbai = "${POLYGON_MUMBAI_RPC_URL}"
 bnbChainTestnet = "${BNB_CHAIN_TESTNET_RPC_URL}"
-baseGoerli = "${BASE_GOERLI_RPC_URL}"
+baseSepolia = "${BASE_SEPOLIA_RPC_URL}"
 metisSepolia = "${METIS_SEPOLIA_RPC_URL}"
 zksyncSepolia = "${ZKSYNC_SEPOLIA_RPC_URL}"
 
