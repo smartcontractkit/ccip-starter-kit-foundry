@@ -3,10 +3,10 @@ pragma solidity ^0.8.19;
 
 import {Test} from "forge-std/Test.sol";
 import {CCIPLocalSimulator, IRouterClient, LinkToken} from "@chainlink/local/src/ccip/CCIPLocalSimulator.sol";
-import {BasicMessageSender} from "../src/BasicMessageSender.sol";
-import {BasicMessageReceiver} from "../src/BasicMessageReceiver.sol";
+import {BasicMessageSender} from "../../src/BasicMessageSender.sol";
+import {BasicMessageReceiver} from "../../src/BasicMessageReceiver.sol";
 
-contract Example06Test is Test {
+contract Example05Test is Test {
     CCIPLocalSimulator public ccipLocalSimulator;
     BasicMessageSender public sender;
     BasicMessageReceiver public receiver;
@@ -25,8 +25,8 @@ contract Example06Test is Test {
         destinationChainSelector = chainSelector;
     }
 
-    function test_sendAndReceiveCrossChainMessagePayFeesInLink() external {
-        ccipLocalSimulator.requestLinkFromFaucet(address(sender), 5 ether);
+    function test_sendAndReceiveCrossChainMessagePayFeesInNative() external {
+        deal(address(sender), 1 ether);
 
         string memory messageToSend = "Hello, World!";
 
