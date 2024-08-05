@@ -5,7 +5,7 @@ import {Test} from "forge-std/Test.sol";
 import {
     CCIPLocalSimulator, IRouterClient, BurnMintERC677Helper
 } from "@chainlink/local/src/ccip/CCIPLocalSimulator.sol";
-import {ProgrammableTokenTransfers} from "../src/ProgrammableTokenTransfers.sol";
+import {ProgrammableTokenTransfers} from "../../src/ProgrammableTokenTransfers.sol";
 
 contract Example04Test is Test {
     CCIPLocalSimulator public ccipLocalSimulator;

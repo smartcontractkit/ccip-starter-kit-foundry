@@ -109,6 +109,24 @@ enum PayFeesIn {
 
 So, if you want to pay for Chainlink CCIP fees in LINK token, you will pass `1 (uint8)` as a function argument.
 
+### Local testing
+
+The test files are located in the `test` folder. Note that there are two types of tests:
+
+- **Test with [CCIPLocalSimulator](https://github.com/smartcontractkit/chainlink-local/blob/main/src/ccip/CCIPLocalSimulator.sol)**: These tests are used to test the CCIP functionality in your local environment. They are located in the `test/no-fork` folder. To run these tests, run the following command:
+
+  ```shell
+  forge test --no-match-contract ".*ForkTest$"
+  ```
+
+- **Test with [CCIPLocalSimulatorFork](https://github.com/smartcontractkit/chainlink-local/blob/main/src/ccip/CCIPLocalSimulatorFork.sol)**: These tests are used to test the CCIP functionality in a forked environment. They are located in the test/fork folder. To run these tests, run the following command:
+
+  ```shell
+  forge test --match-contract ".*ForkTest$"
+  ```
+
+  **Note**: The fork tests send CCIP messages from Arbitrum Sepolia to Ethereum Sepolia, so make sure you have the _ETHEREUM_SEPOLIA_RPC_URL_ and _ARBITRUM_SEPOLIA_RPC_URL_ set in your .env file.
+
 ### Faucet
 
 You will need test tokens for some of the examples in this Starter Kit. Public faucets sometimes limit how many tokens a user can create and token pools might not have enough liquidity. To resolve these issues, CCIP supports two test tokens that you can mint permissionlessly so you don't run out of tokens while testing different scenarios.

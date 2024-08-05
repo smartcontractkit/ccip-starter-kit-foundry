@@ -9,7 +9,7 @@ import {
     BurnMintERC677Helper
 } from "@chainlink/local/src/ccip/CCIPLocalSimulator.sol";
 import {Client} from "@chainlink/contracts-ccip/src/v0.8/ccip/libraries/Client.sol";
-import {BasicTokenSender} from "../src/BasicTokenSender.sol";
+import {BasicTokenSender} from "../../src/BasicTokenSender.sol";
 
 contract Example03Test is Test {
     CCIPLocalSimulator public ccipLocalSimulator;
