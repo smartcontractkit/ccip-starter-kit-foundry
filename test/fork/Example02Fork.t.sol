@@ -82,14 +82,13 @@ contract Example02ForkTest is Test {
         assertEq(aliceBalanceBefore, 1e18);
 
         ccipLocalSimulatorFork.requestLinkFromFaucet(alice, 10 ether);
-        console.log("Alice Link Balance on Source:", sourceLinkToken.balanceOf(alice)); // TODO
 
         vm.startPrank(alice);
         Client.EVM2AnyMessage memory message = Client.EVM2AnyMessage({
             receiver: abi.encode(basicMessageReceiver),
             data: abi.encode(""),
             tokenAmounts: tokensToSendDetails,
-            extraArgs: Client._argsToBytes(Client.EVMExtraArgsV1({gasLimit: 0})),
+            extraArgs: Client._argsToBytes(Client.EVMExtraArgsV1({gasLimit: 100_000})),
             feeToken: address(sourceLinkToken)
         });
 
@@ -128,7 +127,7 @@ contract Example02ForkTest is Test {
             receiver: abi.encode(basicMessageReceiver),
             data: abi.encode(""),
             tokenAmounts: tokensToSendDetails,
-            extraArgs: Client._argsToBytes(Client.EVMExtraArgsV1({gasLimit: 0})),
+            extraArgs: Client._argsToBytes(Client.EVMExtraArgsV1({gasLimit: 100_000})),
             feeToken: address(0)
         });
 
