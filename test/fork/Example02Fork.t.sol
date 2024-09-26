@@ -81,14 +81,15 @@ contract Example02ForkTest is Test {
         uint256 aliceBalanceBefore = sourceCCIPBnMToken.balanceOf(alice);
         assertEq(aliceBalanceBefore, 1e18);
 
-        ccipLocalSimulatorFork.requestLinkFromFaucet(alice, 10 ether);
+        uint256 linkRequestQty = 20 ether; // 10 LINK is generally enough but network spikes can cause "ERC20: transfer amount exceeds balance" on some networks.
+        ccipLocalSimulatorFork.requestLinkFromFaucet(alice, linkRequestQty);
 
         vm.startPrank(alice);
         Client.EVM2AnyMessage memory message = Client.EVM2AnyMessage({
             receiver: abi.encode(basicMessageReceiver),
             data: abi.encode(""),
             tokenAmounts: tokensToSendDetails,
-            extraArgs: Client._argsToBytes(Client.EVMExtraArgsV1({gasLimit: 100_000})),
+            extraArgs: "", //  using Client._argsToBytes(Client.EVMExtraArgsV1({gasLimit: 0})) causes out of gas errors,
             feeToken: address(sourceLinkToken)
         });
 
@@ -100,7 +101,7 @@ contract Example02ForkTest is Test {
 
         uint256 aliceBalanceAfter = sourceCCIPBnMToken.balanceOf(alice);
         assertEq(aliceBalanceBefore - amountToSend, aliceBalanceAfter);
-        assertEq(sourceLinkToken.balanceOf(alice), 10 ether - fees);
+        assertEq(sourceLinkToken.balanceOf(alice), linkRequestQty - fees);
 
         ccipLocalSimulatorFork.switchChainAndRouteMessage(destinationFork);
 
@@ -108,7 +109,7 @@ contract Example02ForkTest is Test {
         assertEq(receiverContractBalanceAfter, receiverContractBalanceBefore + amountToSend);
     }
 
-    function test_transferTokensFromEoaToContractPayFeesInNative() external {
+    function test_transferTokensEoaToContractPayFeesInNative() external {
         (Client.EVMTokenAmount[] memory tokensToSendDetails, uint256 amountToSend) = buildSendTokenData();
 
         vm.selectFork(destinationFork);
@@ -127,7 +128,7 @@ contract Example02ForkTest is Test {
             receiver: abi.encode(basicMessageReceiver),
             data: abi.encode(""),
             tokenAmounts: tokensToSendDetails,
-            extraArgs: Client._argsToBytes(Client.EVMExtraArgsV1({gasLimit: 100_000})),
+            extraArgs: "",
             feeToken: address(0)
         });
 
