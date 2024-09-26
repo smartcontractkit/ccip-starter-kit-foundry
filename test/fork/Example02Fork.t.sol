@@ -8,8 +8,6 @@ import {Client} from "@chainlink/contracts-ccip/src/v0.8/ccip/libraries/Client.s
 import {IRouterClient} from "@chainlink/contracts-ccip/src/v0.8/ccip/interfaces/IRouterClient.sol";
 import {BasicMessageReceiver} from "../../src/BasicMessageReceiver.sol";
 
-import "forge-std/console.sol";
-
 contract Example02ForkTest is Test {
     CCIPLocalSimulatorFork public ccipLocalSimulatorFork;
     uint256 public sourceFork;
