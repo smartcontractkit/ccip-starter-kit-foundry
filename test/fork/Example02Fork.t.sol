@@ -71,7 +71,7 @@ contract Example02ForkTest is Test {
         vm.stopPrank();
     }
 
-    function test_transferTokensEoaToContractPayFeesInLink() external {
+    function test_fork_transferTokensEoaToContractPayFeesInLink() external {
         (Client.EVMTokenAmount[] memory tokensToSendDetails, uint256 amountToSend) = buildSendTokenData();
 
         vm.selectFork(destinationFork);
@@ -89,7 +89,7 @@ contract Example02ForkTest is Test {
             receiver: abi.encode(basicMessageReceiver),
             data: abi.encode(""),
             tokenAmounts: tokensToSendDetails,
-            extraArgs: "", //  using Client._argsToBytes(Client.EVMExtraArgsV1({gasLimit: 0})) causes out of gas errors,
+            extraArgs: "", //  This will use default gas limit of 200k gas.
             feeToken: address(sourceLinkToken)
         });
 
@@ -109,7 +109,7 @@ contract Example02ForkTest is Test {
         assertEq(receiverContractBalanceAfter, receiverContractBalanceBefore + amountToSend);
     }
 
-    function test_transferTokensEoaToContractPayFeesInNative() external {
+    function test_fork_transferTokensEoaToContractPayFeesInNative() external {
         (Client.EVMTokenAmount[] memory tokensToSendDetails, uint256 amountToSend) = buildSendTokenData();
 
         vm.selectFork(destinationFork);
@@ -128,7 +128,7 @@ contract Example02ForkTest is Test {
             receiver: abi.encode(basicMessageReceiver),
             data: abi.encode(""),
             tokenAmounts: tokensToSendDetails,
-            extraArgs: "",
+            extraArgs: "", //  This will use default gas limit of 200k gas.
             feeToken: address(0)
         });
 
