@@ -14,7 +14,8 @@ contract Helper {
         WEMIX_TESTNET, // 7
         KROMA_SEPOLIA_TESTNET, // 8
         METIS_SEPOLIA, // 9
-        ZKSYNC_SEPOLIA // 10
+        ZKSYNC_SEPOLIA, // 10
+        SCROLL_SEPOLIA // 11
     }
 
     mapping(SupportedNetworks enumValue => string humanReadableName)
@@ -37,6 +38,7 @@ contract Helper {
     uint64 constant chainIdKromaSepoliaTestnet = 5990477251245693094;
     uint64 constant chainIdMetisSepolia = 3777822886988675105;
     uint64 constant chainIdZksyncSepolia = 6898391096552792247;
+    uint64 constant chainIdScrollSepolia = 2279865765895943307;
 
     // Router addresses
     address constant routerEthereumSepolia =
@@ -61,6 +63,8 @@ contract Helper {
         0xaCdaBa07ECad81dc634458b98673931DD9d3Bc14;
     address constant routerZksyncSepolia =
         0xA1fdA8aa9A8C4b945C45aD30647b01f07D7A0B16;
+    address constant routerScrollSepolia =
+        0x6aF501292f2A33C81B9156203C9A66Ba0d8E3D21;
 
     // Link addresses (can be used as fee)
     address constant linkEthereumSepolia =
@@ -85,6 +89,8 @@ contract Helper {
         0x9870D6a0e05F867EAAe696e106741843F7fD116D;
     address constant linkZksyncSepolia =
         0x23A1aFD896c8c8876AF46aDc38521f4432658d1e;
+    address constant linkScrollSepolia =
+        0x7273ebbB21F8D8AcF2bC12E71a08937712E9E40c;
 
     // Wrapped native addresses
     address constant wethEthereumSepolia =
@@ -109,6 +115,8 @@ contract Helper {
         0x5c48e07062aC4E2Cf4b9A768a711Aef18e8fbdA0;
     address constant wethZksyncSepolia =
         0x4317b2eCD41851173175005783322D29E9bAee9E;
+    address constant wethScrollSepolia =
+        0x5300000000000000000000000000000000000004;
 
     // CCIP-BnM addresses
     address constant ccipBnMEthereumSepolia =
@@ -131,6 +139,8 @@ contract Helper {
         0x6AC3e353D1DDda24d5A5416024d6E436b8817A4e;
     address constant ccipBnMMetisSepolia =
         0x20Aa09AAb761e2E600d65c6929A9fd1E59821D3f;
+    address constant ccipBnMScrollSepolia =
+        0x231d45b53C905c3d6201318156BDC725c9c3B9B1;
 
     // CCIP-LnM addresses
     address constant ccipLnMEthereumSepolia =
@@ -182,6 +192,7 @@ contract Helper {
         networks[SupportedNetworks.KROMA_SEPOLIA_TESTNET] = "Kroma Sepolia Testnet";
         networks[SupportedNetworks.METIS_SEPOLIA] = "Metis Sepolia";
         networks[SupportedNetworks.ZKSYNC_SEPOLIA] = "zkSync Sepolia";
+        networks[SupportedNetworks.SCROLL_SEPOLIA] = "Scroll Sepolia";
     }
 
     function getDummyTokensFromNetwork(
@@ -296,6 +307,13 @@ contract Helper {
                 linkZksyncSepolia,
                 wethZksyncSepolia,
                 chainIdZksyncSepolia
+            );
+        } else if (network == SupportedNetworks.SCROLL_SEPOLIA) {
+            return (
+                routerScrollSepolia,
+                linkScrollSepolia,
+                wethScrollSepolia,
+                chainIdScrollSepolia
             );
         }
     }
