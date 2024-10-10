@@ -22,8 +22,8 @@ contract Helper {
         public networks;
 
     enum PayFeesIn {
-        Native,
-        LINK
+        Native, // 0
+        LINK // 1
     }
 
     // Chain IDs
