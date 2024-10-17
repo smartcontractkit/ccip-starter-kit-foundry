@@ -18,7 +18,8 @@ contract Helper {
         SCROLL_SEPOLIA, // 11
         ZIRCUIT_SEPOLIA, // 12
         XLAYER_SEPOLIA, // 13
-        POLYGON_ZKEVM_SEPOLIA // 14
+        POLYGON_ZKEVM_SEPOLIA, // 14
+        POLKADOT_ASTAR_SHIBUYA // 15
     }
 
     mapping(SupportedNetworks enumValue => string humanReadableName)
@@ -45,6 +46,7 @@ contract Helper {
     uint64 constant chainIdZircuitSepolia = 4562743618362911021;
     uint64 constant chainIdXlayerSepolia = 2066098519157881736;
     uint64 constant chainIdPolygonZkevmSepolia = 1654667687261492630;
+    uint64 constant chainIdPolkadotAstarShibuya = 6955638871347136141;
 
     // Router addresses
     address constant routerEthereumSepolia =
@@ -77,6 +79,8 @@ contract Helper {
         0xc5F5330C4793AF46872a9eC15b76a007A96a4152;
     address constant routerPolygonZkevmSepolia =
         0x91A7f913EEF5E3058AD1Bf8842C294f7219C7271;
+    address constant routerPolkadotAstarShibuya =
+        0x22aE550d87eBf775E0c1fDc8881121c8A51F5903;
 
     // Link addresses (can be used as fee)
     address constant linkEthereumSepolia =
@@ -109,6 +113,8 @@ contract Helper {
         0x724593f6FCb0De4E6902d4C55D7C74DaA2AF0E55;
     address constant linkPolygonZkevmSepolia =
         0x5576815a38A3706f37bf815b261cCc7cCA77e975;
+    address constant linkPolkadotAstarShibuya =
+        0xe74037112db8807B3B4B3895F5790e5bc1866a29;
 
     // Wrapped native addresses
     address constant wethEthereumSepolia =
@@ -141,6 +147,8 @@ contract Helper {
         0xa7b9C3a116b20bEDDdBE4d90ff97157f67F0bD97;
     address constant wethPolygonZkevmSepolia =
         0x1CE28d5C81B229c77C5651feB49c4C489f8c52C4;
+    address constant wsbyPolkadotAstarShibuya =
+        0xbd5F3751856E11f3e80dBdA567Ef91Eb7e874791;
 
     // CCIP-BnM addresses
     address constant ccipBnMEthereumSepolia =
@@ -165,6 +173,8 @@ contract Helper {
         0x20Aa09AAb761e2E600d65c6929A9fd1E59821D3f;
     address constant ccipBnMScrollSepolia =
         0x231d45b53C905c3d6201318156BDC725c9c3B9B1;
+    address constant ccipBnMPolkadotAstarShibuya =
+        0xc49ec0eB4beb48B8Da4cceC51AA9A5bD0D0A4c43;
 
     // CCIP-LnM addresses
     address constant ccipLnMEthereumSepolia =
@@ -187,6 +197,8 @@ contract Helper {
         0x835fcBB6770E1246CfCf52F83cDcec3177d0bb6b;
     address constant clCcipLnMMetisSepolia =
         0x705b364CadE0e515577F2646529e3A417473a155;
+    address constant clCcipLnMPolkadotAstarShibuya =
+        0xB9d4e1141E67ECFedC8A8139b5229b7FF2BF16F5;
 
     // USDC addresses
     address constant usdcAvalancheFuji =
@@ -220,6 +232,7 @@ contract Helper {
         networks[SupportedNetworks.ZIRCUIT_SEPOLIA] = "Zircuit Sepolia";
         networks[SupportedNetworks.XLAYER_SEPOLIA] = "Xlayer Sepolia";
         networks[SupportedNetworks.POLYGON_ZKEVM_SEPOLIA] = "Polygon ZKEVM Sepolia";
+        networks[SupportedNetworks.POLKADOT_ASTAR_SHIBUYA] = "Polkadot Astar Shibuya";
     }
 
     function getDummyTokensFromNetwork(
@@ -243,6 +256,8 @@ contract Helper {
             return (ccipBnMKromaSepoliaTestnet, clCcipLnMKromaSepoliaTestnet);
         } else if (network == SupportedNetworks.METIS_SEPOLIA) {
             return (ccipBnMMetisSepolia, clCcipLnMMetisSepolia);
+        } else if (network == SupportedNetworks.POLKADOT_ASTAR_SHIBUYA) {
+            return (ccipBnMPolkadotAstarShibuya, clCcipLnMPolkadotAstarShibuya);
         }
     }
 
@@ -362,6 +377,13 @@ contract Helper {
                 linkPolygonZkevmSepolia,
                 wethPolygonZkevmSepolia,
                 chainIdPolygonZkevmSepolia
+            );
+        } else if (network == SupportedNetworks.POLKADOT_ASTAR_SHIBUYA) {
+            return (
+                routerPolkadotAstarShibuya,
+                linkPolkadotAstarShibuya,
+                wsbyPolkadotAstarShibuya,
+                chainIdPolkadotAstarShibuya
             );
         }
     }
