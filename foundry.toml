@@ -24,5 +24,6 @@ zircuitSepolia = "${ZIRCUIT_SEPOLIA_RPC_URL}"
 xlayerSepolia = "${XLAYER_SEPOLIA_RPC_URL}"
 polygonZkevmSepolia = "${POLYGON_ZKEVM_SEPOLIA_RPC_URL}"
 polkadotAstarShibuya = "${POLKADOT_ASTAR_SHIBUYA_RPC_URL}"
+mantleSepolia = "${MANTLE_SEPOLIA_RPC_URL}"
 
 # See more config options https://github.com/foundry-rs/foundry/tree/master/config

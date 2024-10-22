@@ -19,7 +19,8 @@ contract Helper {
         ZIRCUIT_SEPOLIA, // 12
         XLAYER_SEPOLIA, // 13
         POLYGON_ZKEVM_SEPOLIA, // 14
-        POLKADOT_ASTAR_SHIBUYA // 15
+        POLKADOT_ASTAR_SHIBUYA, // 15
+        MANTLE_SEPOLIA // 16
     }
 
     mapping(SupportedNetworks enumValue => string humanReadableName)
@@ -47,6 +48,7 @@ contract Helper {
     uint64 constant chainIdXlayerSepolia = 2066098519157881736;
     uint64 constant chainIdPolygonZkevmSepolia = 1654667687261492630;
     uint64 constant chainIdPolkadotAstarShibuya = 6955638871347136141;
+    uint64 constant chainIdMantleSepolia = 8236463271206331221;
 
     // Router addresses
     address constant routerEthereumSepolia =
@@ -81,6 +83,8 @@ contract Helper {
         0x91A7f913EEF5E3058AD1Bf8842C294f7219C7271;
     address constant routerPolkadotAstarShibuya =
         0x22aE550d87eBf775E0c1fDc8881121c8A51F5903;
+    address constant routerMantleSepolia =
+        0xFd33fd627017fEf041445FC19a2B6521C9778f86;
 
     // Link addresses (can be used as fee)
     address constant linkEthereumSepolia =
@@ -115,6 +119,8 @@ contract Helper {
         0x5576815a38A3706f37bf815b261cCc7cCA77e975;
     address constant linkPolkadotAstarShibuya =
         0xe74037112db8807B3B4B3895F5790e5bc1866a29;
+    address constant linkMantleSepolia =
+        0x22bdEdEa0beBdD7CfFC95bA53826E55afFE9DE04;
 
     // Wrapped native addresses
     address constant wethEthereumSepolia =
@@ -149,6 +155,8 @@ contract Helper {
         0x1CE28d5C81B229c77C5651feB49c4C489f8c52C4;
     address constant wsbyPolkadotAstarShibuya =
         0xbd5F3751856E11f3e80dBdA567Ef91Eb7e874791;
+    address constant wmntMantleSepolia =
+        0x19f5557E23e9914A18239990f6C70D68FDF0deD5;
 
     // CCIP-BnM addresses
     address constant ccipBnMEthereumSepolia =
@@ -233,6 +241,7 @@ contract Helper {
         networks[SupportedNetworks.XLAYER_SEPOLIA] = "Xlayer Sepolia";
         networks[SupportedNetworks.POLYGON_ZKEVM_SEPOLIA] = "Polygon ZKEVM Sepolia";
         networks[SupportedNetworks.POLKADOT_ASTAR_SHIBUYA] = "Polkadot Astar Shibuya";
+        networks[SupportedNetworks.MANTLE_SEPOLIA] = "Mantle Sepolia";
     }
 
     function getDummyTokensFromNetwork(
@@ -384,6 +393,13 @@ contract Helper {
                 linkPolkadotAstarShibuya,
                 wsbyPolkadotAstarShibuya,
                 chainIdPolkadotAstarShibuya
+            );
+        } else if (network == SupportedNetworks.MANTLE_SEPOLIA) {
+            return (
+                routerMantleSepolia,
+                linkMantleSepolia,
+                wmntMantleSepolia,
+                chainIdMantleSepolia
             );
         }
     }
