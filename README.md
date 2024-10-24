@@ -74,6 +74,7 @@ XLAYER_SEPOLIA_RPC_URL=""
 POLYGON_ZKEVM_SEPOLIA_RPC_URL=""
 POLKADOT_ASTAR_SHIBUYA_RPC_URL=""
 MANTLE_SEPOLIA_RPC_URL=""
+SONEIUM_MINATO_SEPOLIA_RPC_URL=""
 ```
 
 Once that is done, to load the variables in the `.env` file, run the following command:
@@ -104,7 +105,8 @@ enum SupportedNetworks {
     XLAYER_SEPOLIA, // 13
     POLYGON_ZKEVM_SEPOLIA, // 14
     POLKADOT_ASTAR_SHIBUYA, // 15
-    MANTLE_SEPOLIA // 16
+    MANTLE_SEPOLIA, // 16
+    SONEIUM_MINATO_SEPOLIA // 17
 }
 ```
 

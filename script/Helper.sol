@@ -20,7 +20,8 @@ contract Helper {
         XLAYER_SEPOLIA, // 13
         POLYGON_ZKEVM_SEPOLIA, // 14
         POLKADOT_ASTAR_SHIBUYA, // 15
-        MANTLE_SEPOLIA // 16
+        MANTLE_SEPOLIA, // 16
+        SONEIUM_MINATO_SEPOLIA // 17
     }
 
     mapping(SupportedNetworks enumValue => string humanReadableName)
@@ -49,6 +50,7 @@ contract Helper {
     uint64 constant chainIdPolygonZkevmSepolia = 1654667687261492630;
     uint64 constant chainIdPolkadotAstarShibuya = 6955638871347136141;
     uint64 constant chainIdMantleSepolia = 8236463271206331221;
+    uint64 constant chainIdSoneiumMinatoSepolia = 686603546605904534;
 
     // Router addresses
     address constant routerEthereumSepolia =
@@ -85,6 +87,8 @@ contract Helper {
         0x22aE550d87eBf775E0c1fDc8881121c8A51F5903;
     address constant routerMantleSepolia =
         0xFd33fd627017fEf041445FC19a2B6521C9778f86;
+    address constant routerSoneiumMinatoSepolia =
+        0x443a1bce545d56E2c3f20ED32eA588395FFce0f4;
 
     // Link addresses (can be used as fee)
     address constant linkEthereumSepolia =
@@ -121,6 +125,8 @@ contract Helper {
         0xe74037112db8807B3B4B3895F5790e5bc1866a29;
     address constant linkMantleSepolia =
         0x22bdEdEa0beBdD7CfFC95bA53826E55afFE9DE04;
+    address constant linkSoneiumMinatoSepolia =
+        0x7ea13478Ea3961A0e8b538cb05a9DF0477c79Cd2;
 
     // Wrapped native addresses
     address constant wethEthereumSepolia =
@@ -157,6 +163,8 @@ contract Helper {
         0xbd5F3751856E11f3e80dBdA567Ef91Eb7e874791;
     address constant wmntMantleSepolia =
         0x19f5557E23e9914A18239990f6C70D68FDF0deD5;
+    address constant wethSoneiumMinatoSepolia =
+        0x4200000000000000000000000000000000000006;
 
     // CCIP-BnM addresses
     address constant ccipBnMEthereumSepolia =
@@ -242,6 +250,7 @@ contract Helper {
         networks[SupportedNetworks.POLYGON_ZKEVM_SEPOLIA] = "Polygon ZKEVM Sepolia";
         networks[SupportedNetworks.POLKADOT_ASTAR_SHIBUYA] = "Polkadot Astar Shibuya";
         networks[SupportedNetworks.MANTLE_SEPOLIA] = "Mantle Sepolia";
+        networks[SupportedNetworks.SONEIUM_MINATO_SEPOLIA] = "Soneium Minato Sepolia";
     }
 
     function getDummyTokensFromNetwork(
@@ -400,6 +409,13 @@ contract Helper {
                 linkMantleSepolia,
                 wmntMantleSepolia,
                 chainIdMantleSepolia
+            );
+        } else if (network == SupportedNetworks.SONEIUM_MINATO_SEPOLIA) {
+            return (
+                routerSoneiumMinatoSepolia,
+                linkSoneiumMinatoSepolia,
+                wethSoneiumMinatoSepolia,
+                chainIdSoneiumMinatoSepolia
             );
         }
     }
