@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.19;
+pragma solidity 0.8.24;
 
 import {LinkTokenInterface} from "@chainlink/contracts/src/v0.8/interfaces/LinkTokenInterface.sol";
 import {IRouterClient} from "@chainlink/contracts-ccip/src/v0.8/ccip/interfaces/IRouterClient.sol";
@@ -39,7 +39,12 @@ contract BasicMessageSender is Withdraw {
             receiver: abi.encode(receiver),
             data: abi.encode(messageText),
             tokenAmounts: new Client.EVMTokenAmount[](0),
-            extraArgs: "",
+            extraArgs: Client._argsToBytes(
+                    Client.EVMExtraArgsV2({
+                        gasLimit: 200_000,
+                        allowOutOfOrderExecution: true
+                    })
+                ),
             feeToken: payFeesIn == PayFeesIn.LINK ? i_link : address(0)
         });
 

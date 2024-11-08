@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.19;
+pragma solidity 0.8.24;
 
 import {LinkTokenInterface} from "@chainlink/contracts/src/v0.8/interfaces/LinkTokenInterface.sol";
 import {IERC20} from "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.3/contracts/token/ERC20/IERC20.sol";
@@ -33,12 +33,6 @@ contract BasicTokenSender is Withdraw {
 
     receive() external payable {}
 
-    function getSupportedTokens(
-        uint64 chainSelector
-    ) external view returns (address[] memory tokens) {
-        tokens = IRouterClient(i_router).getSupportedTokens(chainSelector);
-    }
-
     function send(
         uint64 destinationChainSelector,
         address receiver,
@@ -67,7 +61,12 @@ contract BasicTokenSender is Withdraw {
             receiver: abi.encode(receiver),
             data: "",
             tokenAmounts: tokensToSendDetails,
-            extraArgs: "",
+            extraArgs: Client._argsToBytes(
+                    Client.EVMExtraArgsV2({
+                        gasLimit: 0,
+                        allowOutOfOrderExecution: true
+                    })
+                ),
             feeToken: payFeesIn == PayFeesIn.LINK ? i_link : address(0)
         });
 

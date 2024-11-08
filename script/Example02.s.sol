@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.19;
+pragma solidity 0.8.24;
 
 import "forge-std/Script.sol";
 import "./Helper.sol";
@@ -60,7 +60,12 @@ contract CCIPTokenTransfer is Script, Helper {
             receiver: abi.encode(basicMessageReceiver),
             data: "",
             tokenAmounts: tokensToSendDetails,
-            extraArgs: "",
+            extraArgs: Client._argsToBytes(
+                    Client.EVMExtraArgsV2({
+                        gasLimit: 0,
+                        allowOutOfOrderExecution: true
+                    })
+                ),
             feeToken: payFeesIn == PayFeesIn.LINK ? linkToken : address(0)
         });
 
