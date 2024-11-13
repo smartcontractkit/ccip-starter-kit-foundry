@@ -5,8 +5,10 @@ import {IRouterClient} from "@chainlink/contracts-ccip/src/v0.8/ccip/interfaces/
 import {OwnerIsCreator} from "@chainlink/contracts-ccip/src/v0.8/shared/access/OwnerIsCreator.sol";
 import {Client} from "@chainlink/contracts-ccip/src/v0.8/ccip/libraries/Client.sol";
 import {CCIPReceiver} from "@chainlink/contracts-ccip/src/v0.8/ccip/applications/CCIPReceiver.sol";
-import {IERC20} from "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.3/contracts/token/ERC20/IERC20.sol";
-import {SafeERC20} from "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.3/contracts/token/ERC20/utils/SafeERC20.sol";
+import {IERC20} from
+    "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.3/contracts/token/ERC20/IERC20.sol";
+import {SafeERC20} from
+    "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.3/contracts/token/ERC20/utils/SafeERC20.sol";
 
 /**
  * THIS IS AN EXAMPLE CONTRACT THAT USES HARDCODED VALUES FOR CLARITY.
@@ -28,22 +30,31 @@ contract ProgrammableTokenTransfers is CCIPReceiver, OwnerIsCreator {
     error InsufficientFeeTokenAmount(); // Used when the contract balance isn't enough to pay fees.
 
     // Event emitted when a message is sent to another chain.
-    event MessageSent(
-        bytes32 indexed messageId, // The unique ID of the message.
-        uint64 indexed destinationChainSelector, // The chain selector of the destination chain.
-        address receiver, // The address of the receiver on the destination chain.
-        string message, // The message being sent.
-        Client.EVMTokenAmount tokenAmount, // The token amount that was sent.
-        uint256 fees // The fees paid for sending the message.
+    event MessageSent( // The unique ID of the message.
+        // The chain selector of the destination chain.
+        // The address of the receiver on the destination chain.
+        // The message being sent.
+        // The token amount that was sent.
+        // The fees paid for sending the message.
+        bytes32 indexed messageId,
+        uint64 indexed destinationChainSelector,
+        address receiver,
+        string message,
+        Client.EVMTokenAmount tokenAmount,
+        uint256 fees
     );
 
     // Event emitted when a message is received from another chain.
-    event MessageReceived(
-        bytes32 indexed messageId, // The unique ID of the message.
-        uint64 indexed sourceChainSelector, // The chain selector of the source chain.
-        address sender, // The address of the sender from the source chain.
-        string message, // The message that was received.
-        Client.EVMTokenAmount tokenAmount // The token amount that was received.
+    event MessageReceived( // The unique ID of the message.
+        // The chain selector of the source chain.
+        // The address of the sender from the source chain.
+        // The message that was received.
+        // The token amount that was received.
+        bytes32 indexed messageId,
+        uint64 indexed sourceChainSelector,
+        address sender,
+        string message,
+        Client.EVMTokenAmount tokenAmount
     );
 
     // Struct to hold details of a message.
@@ -79,28 +90,26 @@ contract ProgrammableTokenTransfers is CCIPReceiver, OwnerIsCreator {
         uint256 amount
     ) external returns (bytes32 messageId) {
         // set the tokent amounts
-        Client.EVMTokenAmount[]
-            memory tokenAmounts = new Client.EVMTokenAmount[](1);
-        Client.EVMTokenAmount memory tokenAmount = Client.EVMTokenAmount({
-            token: token,
-            amount: amount
-        });
+        Client.EVMTokenAmount[] memory tokenAmounts = new Client.EVMTokenAmount[](1);
+        Client.EVMTokenAmount memory tokenAmount = Client.EVMTokenAmount({token: token, amount: amount});
         tokenAmounts[0] = tokenAmount;
         // Create an EVM2AnyMessage struct in memory with necessary information for sending a cross-chain message
         Client.EVM2AnyMessage memory evm2AnyMessage = Client.EVM2AnyMessage({
             receiver: abi.encode(receiver), // ABI-encoded receiver address
             data: abi.encode(message), // ABI-encoded string message
             tokenAmounts: tokenAmounts, // Tokens amounts
-            extraArgs: Client._argsToBytes(
-                    // Additional arguments, setting gas limit and allowing out-of-order execution.
-                    // Best Practice: For simplicity, the values are hardcoded. It is advisable to use a more dynamic approach
-                    // where you set the extra arguments off-chain. This allows adaptation depending on the lanes, messages,
-                    // and ensures compatibility with future CCIP upgrades. Read more about it here: https://docs.chain.link/ccip/best-practices#using-extraargs
-                    Client.EVMExtraArgsV2({
-                        gasLimit: 200_000, // Gas limit for the callback on the destination chain
-                        allowOutOfOrderExecution: true // Allows the message to be executed out of order relative to other messages from the same sender
-                    })
-                ),
+            extraArgs: "", // This syntax uses Client.EVMExtraArgsV1({gasLimit: 200_000}) by default
+            // extraArgs: Client._argsToBytes(
+            //         // Additional arguments, setting gas limit and allowing out-of-order execution.
+            //         // Best Practice: For simplicity, the values are hardcoded. It is advisable to use a more dynamic approach
+            //         // where you set the extra arguments off-chain. This allows adaptation depending on the lanes, messages,
+            //         // and ensures compatibility with future CCIP upgrades. Read more about it here: https://docs.chain.link/ccip/best-practices#using-extraargs
+            //         // EVMExtraArgsV2 are backwards compatible with EVMExtraArgsV1
+            //         Client.EVMExtraArgsV2({
+            //             gasLimit: 200_000, // Gas limit for the callback on the destination chain
+            //             allowOutOfOrderExecution: true // Allows the message to be executed out of order relative to other messages from the same sender
+            //         })
+            //     ),
             feeToken: address(0) // Setting feeToken to zero address, indicating native asset will be used for fees
         });
 
@@ -117,63 +126,34 @@ contract ProgrammableTokenTransfers is CCIPReceiver, OwnerIsCreator {
         if (address(this).balance < fees) revert InsufficientFeeTokenAmount();
 
         // Send the message through the router and store the returned message ID
-        messageId = router.ccipSend{value: fees}(
-            destinationChainSelector,
-            evm2AnyMessage
-        );
+        messageId = router.ccipSend{value: fees}(destinationChainSelector, evm2AnyMessage);
 
         // Emit an event with message details
-        emit MessageSent(
-            messageId,
-            destinationChainSelector,
-            receiver,
-            message,
-            tokenAmount,
-            fees
-        );
+        emit MessageSent(messageId, destinationChainSelector, receiver, message, tokenAmount, fees);
 
         // Return the message ID
         return messageId;
     }
 
     /// handle a received message
-    function _ccipReceive(
-        Client.Any2EVMMessage memory any2EvmMessage
-    ) internal override {
+    function _ccipReceive(Client.Any2EVMMessage memory any2EvmMessage) internal override {
         bytes32 messageId = any2EvmMessage.messageId; // fetch the messageId
         uint64 sourceChainSelector = any2EvmMessage.sourceChainSelector; // fetch the source chain identifier (aka selector)
         address sender = abi.decode(any2EvmMessage.sender, (address)); // abi-decoding of the sender address
-        Client.EVMTokenAmount[] memory tokenAmounts = any2EvmMessage
-            .destTokenAmounts;
+        Client.EVMTokenAmount[] memory tokenAmounts = any2EvmMessage.destTokenAmounts;
         address token = tokenAmounts[0].token; // we expect one token to be transfered at once but of course, you can transfer several tokens.
         uint256 amount = tokenAmounts[0].amount; // we expect one token to be transfered at once but of course, you can transfer several tokens.
         string memory message = abi.decode(any2EvmMessage.data, (string)); // abi-decoding of the sent string message
         receivedMessages.push(messageId);
-        Message memory detail = Message(
-            sourceChainSelector,
-            sender,
-            message,
-            token,
-            amount
-        );
+        Message memory detail = Message(sourceChainSelector, sender, message, token, amount);
         messageDetail[messageId] = detail;
 
-        emit MessageReceived(
-            messageId,
-            sourceChainSelector,
-            sender,
-            message,
-            tokenAmounts[0]
-        );
+        emit MessageReceived(messageId, sourceChainSelector, sender, message, tokenAmounts[0]);
     }
 
     /// @notice Get the total number of received messages.
     /// @return number The total number of received messages.
-    function getNumberOfReceivedMessages()
-        external
-        view
-        returns (uint256 number)
-    {
+    function getNumberOfReceivedMessages() external view returns (uint256 number) {
         return receivedMessages.length;
     }
 
@@ -185,28 +165,14 @@ contract ProgrammableTokenTransfers is CCIPReceiver, OwnerIsCreator {
     /// @return message The received message.
     /// @return token The received token.
     /// @return amount The received token amount.
-    function getReceivedMessageDetails(
-        bytes32 messageId
-    )
+    function getReceivedMessageDetails(bytes32 messageId)
         external
         view
-        returns (
-            uint64 sourceChainSelector,
-            address sender,
-            string memory message,
-            address token,
-            uint256 amount
-        )
+        returns (uint64 sourceChainSelector, address sender, string memory message, address token, uint256 amount)
     {
         Message memory detail = messageDetail[messageId];
         if (detail.sender == address(0)) revert MessageIdNotExist(messageId);
-        return (
-            detail.sourceChainSelector,
-            detail.sender,
-            detail.message,
-            detail.token,
-            detail.amount
-        );
+        return (detail.sourceChainSelector, detail.sender, detail.message, detail.token, detail.amount);
     }
 
     /// @notice Fetches details of a received message by its position in the received messages list.
@@ -218,9 +184,7 @@ contract ProgrammableTokenTransfers is CCIPReceiver, OwnerIsCreator {
     /// @return message The received message.
     /// @return token The received token.
     /// @return amount The received token amount.
-    function getReceivedMessageAt(
-        uint256 index
-    )
+    function getReceivedMessageAt(uint256 index)
         external
         view
         returns (
@@ -232,18 +196,12 @@ contract ProgrammableTokenTransfers is CCIPReceiver, OwnerIsCreator {
             uint256 amount
         )
     {
-        if (index >= receivedMessages.length)
+        if (index >= receivedMessages.length) {
             revert IndexOutOfBound(index, receivedMessages.length - 1);
+        }
         messageId = receivedMessages[index];
         Message memory detail = messageDetail[messageId];
-        return (
-            messageId,
-            detail.sourceChainSelector,
-            detail.sender,
-            detail.message,
-            detail.token,
-            detail.amount
-        );
+        return (messageId, detail.sourceChainSelector, detail.sender, detail.message, detail.token, detail.amount);
     }
 
     /// @notice Fetches the details of the last received message.
@@ -275,14 +233,7 @@ contract ProgrammableTokenTransfers is CCIPReceiver, OwnerIsCreator {
         // Fetch the details of the last received message
         Message memory detail = messageDetail[messageId];
 
-        return (
-            messageId,
-            detail.sourceChainSelector,
-            detail.sender,
-            detail.message,
-            detail.token,
-            detail.amount
-        );
+        return (messageId, detail.sourceChainSelector, detail.sender, detail.message, detail.token, detail.amount);
     }
 
     /// @notice Fallback function to allow the contract to receive Ether.
@@ -302,7 +253,7 @@ contract ProgrammableTokenTransfers is CCIPReceiver, OwnerIsCreator {
         if (amount == 0) revert NothingToWithdraw();
 
         // Attempt to send the funds, capturing the success status and discarding any return data
-        (bool sent, ) = beneficiary.call{value: amount}("");
+        (bool sent,) = beneficiary.call{value: amount}("");
 
         // Revert if the send failed, with information about the attempted transfer
         if (!sent) revert FailedToWithdrawEth(msg.sender, beneficiary, amount);
@@ -312,10 +263,7 @@ contract ProgrammableTokenTransfers is CCIPReceiver, OwnerIsCreator {
     /// @dev This function reverts with a 'NothingToWithdraw' error if there are no tokens to withdraw.
     /// @param beneficiary The address to which the tokens will be sent.
     /// @param token The contract address of the ERC20 token to be withdrawn.
-    function withdrawToken(
-        address beneficiary,
-        address token
-    ) public onlyOwner {
+    function withdrawToken(address beneficiary, address token) public onlyOwner {
         // Retrieve the balance of this contract
         uint256 amount = IERC20(token).balanceOf(address(this));
 

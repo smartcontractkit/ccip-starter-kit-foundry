@@ -2,8 +2,10 @@
 pragma solidity 0.8.24;
 
 import {LinkTokenInterface} from "@chainlink/contracts/src/v0.8/interfaces/LinkTokenInterface.sol";
-import {IERC20} from "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.3/contracts/token/ERC20/IERC20.sol";
-import {SafeERC20} from "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.3/contracts/token/ERC20/utils/SafeERC20.sol";
+import {IERC20} from
+    "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.3/contracts/token/ERC20/IERC20.sol";
+import {SafeERC20} from
+    "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.3/contracts/token/ERC20/utils/SafeERC20.sol";
 import {IRouterClient} from "@chainlink/contracts-ccip/src/v0.8/ccip/interfaces/IRouterClient.sol";
 import {Client} from "@chainlink/contracts-ccip/src/v0.8/ccip/libraries/Client.sol";
 import {Withdraw} from "./utils/Withdraw.sol";
@@ -41,16 +43,11 @@ contract BasicTokenSender is Withdraw {
     ) external {
         uint256 length = tokensToSendDetails.length;
 
-        for (uint256 i = 0; i < length; ) {
+        for (uint256 i = 0; i < length;) {
             IERC20(tokensToSendDetails[i].token).safeTransferFrom(
-                msg.sender,
-                address(this),
-                tokensToSendDetails[i].amount
+                msg.sender, address(this), tokensToSendDetails[i].amount
             );
-            IERC20(tokensToSendDetails[i].token).approve(
-                i_router,
-                tokensToSendDetails[i].amount
-            );
+            IERC20(tokensToSendDetails[i].token).approve(i_router, tokensToSendDetails[i].amount);
 
             unchecked {
                 ++i;
@@ -61,33 +58,19 @@ contract BasicTokenSender is Withdraw {
             receiver: abi.encode(receiver),
             data: "",
             tokenAmounts: tokensToSendDetails,
-            extraArgs: Client._argsToBytes(
-                    Client.EVMExtraArgsV2({
-                        gasLimit: 0,
-                        allowOutOfOrderExecution: true
-                    })
-                ),
+            extraArgs: Client._argsToBytes(Client.EVMExtraArgsV1({gasLimit: 0})),
             feeToken: payFeesIn == PayFeesIn.LINK ? i_link : address(0)
         });
 
-        uint256 fee = IRouterClient(i_router).getFee(
-            destinationChainSelector,
-            message
-        );
+        uint256 fee = IRouterClient(i_router).getFee(destinationChainSelector, message);
 
         bytes32 messageId;
 
         if (payFeesIn == PayFeesIn.LINK) {
             LinkTokenInterface(i_link).approve(i_router, fee);
-            messageId = IRouterClient(i_router).ccipSend(
-                destinationChainSelector,
-                message
-            );
+            messageId = IRouterClient(i_router).ccipSend(destinationChainSelector, message);
         } else {
-            messageId = IRouterClient(i_router).ccipSend{value: fee}(
-                destinationChainSelector,
-                message
-            );
+            messageId = IRouterClient(i_router).ccipSend{value: fee}(destinationChainSelector, message);
         }
 
         emit MessageSent(messageId);

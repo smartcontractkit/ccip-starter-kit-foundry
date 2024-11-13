@@ -151,6 +151,26 @@ Or if you want to mint 10\*\*18 units of `CCIP-BnM` test token on Avalanche Fuji
 forge script ./script/Faucet.s.sol -vvv --broadcast --rpc-url avalancheFuji --sig "run(uint8)" -- 1
 ```
 
+### EVMExtraArgs
+
+Most of these examples are simplified for educational purposes. For production code, please adhere to the following best practices:
+
+- **Do Not Hardcode `extraArgs`**: In these examples, `extraArgs` are hardcoded within contracts for simplicity. It is recommended to make `extraArgs` mutable. For instance, you can construct `extraArgs` off-chain and pass them into your function calls, or store them in a storage variable that can be updated as needed. This approach ensures that `extraArgs` remain backward compatible with future CCIP upgrades. Refer to the [Best Practices](https://docs.chain.link/ccip/best-practices) guide from the Official Chainlink Documentation for more information.
+- **Validate the Destination Chain**: Always ensure that the destination chain is valid and supported before sending messages.
+- **Understand `allowOutOfOrderExecution` Usage**: This parameter is available only on lanes where the **Out of Order Execution** property is set to **Optional** or **Required**. Refer to the [CCIP Directory](https://docs.chain.link/ccip/directory) to determine if your target lane supports this feature. For lanes where this parameter is absent, you must use `extraArgsV1` instead.
+
+To help you with the off-chain encoding of `extraArgs`, we included the [`script/EncodeExtraArgsOffchain.s.sol`](script/EncodeExtraArgsOffchain.s.sol) helper script. To encode `extraArgs` as `EVMExtraArgsV1` run:
+
+```shell
+forge script ./script/EncodeExtraArgsOffchain.s.sol -vvv --sig "encodeV1(uint256)" -- <GAS_LIMIT>
+```
+
+To encode `extraArgs` as `EVMExtraArgsV2` run:
+
+```shell
+forge script ./script/EncodeExtraArgsOffchain.s.sol -vvv --sig "encodeV2(uint256,bool)" -- <GAS_LIMIT> <ALLOW_OUT_OF_ORDER_EXECUTION>
+```
+
 ### Example 1 - Transfer Tokens from EOA to EOA
 
 To transfer tokens from one EOA on one blockchain to another EOA on another blockchain you can use the `script/Example01.s.sol` smart contract:
