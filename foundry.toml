@@ -28,5 +28,6 @@ polkadotAstarShibuya = "${POLKADOT_ASTAR_SHIBUYA_RPC_URL}"
 mantleSepolia = "${MANTLE_SEPOLIA_RPC_URL}"
 soneiumMinatoSepolia = "${SONEIUM_MINATO_SEPOLIA_RPC_URL}"
 bsquaredTestnet = "${BSQUARED_TESTNET_RPC_URL}"
+bobSepolia = "${BOB_SEPOLIA_RPC_URL}"
 
 # See more config options https://github.com/foundry-rs/foundry/tree/master/config

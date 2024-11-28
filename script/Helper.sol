@@ -22,7 +22,8 @@ contract Helper {
         POLKADOT_ASTAR_SHIBUYA, // 15
         MANTLE_SEPOLIA, // 16
         SONEIUM_MINATO_SEPOLIA, // 17
-        BSQUARED_TESTNET // 18
+        BSQUARED_TESTNET, // 18
+        BOB_SEPOLIA // 19
     }
 
     mapping(SupportedNetworks enumValue => string humanReadableName)
@@ -53,6 +54,7 @@ contract Helper {
     uint64 constant chainIdMantleSepolia = 8236463271206331221;
     uint64 constant chainIdSoneiumMinatoSepolia = 686603546605904534;
     uint64 constant chainIdBsquaredTestnet = 1948510578179542068;
+    uint64 constant chainIdBobSepolia = 5535534526963509396;
 
     // Router addresses
     address constant routerEthereumSepolia =
@@ -93,6 +95,8 @@ contract Helper {
         0x443a1bce545d56E2c3f20ED32eA588395FFce0f4;
     address constant routerBsquaredTestnet =
         0x34A49Eb641daF64d61be00Aa7F759f8225351101;
+    address constant routerBobSepolia =
+        0x7808184405d6Cbc663764003dE21617fa640bc82;
 
     // Link addresses (can be used as fee)
     address constant linkEthereumSepolia =
@@ -133,6 +137,8 @@ contract Helper {
         0x7ea13478Ea3961A0e8b538cb05a9DF0477c79Cd2;
     address constant linkBsquaredTestnet =
         0x436a1907D9e6a65E6db73015F08f9C66F6B63E45;
+    address constant linkBobSepolia =
+        0xcd2AfB2933391E35e8682cbaaF75d9CA7339b183;
 
     // Wrapped native addresses
     address constant wethEthereumSepolia =
@@ -173,6 +179,8 @@ contract Helper {
         0x4200000000000000000000000000000000000006;
     address constant wbtcBsquaredTestnet =
         0x4200000000000000000000000000000000000006;
+    address constant wethBobSepolia =
+        0x4200000000000000000000000000000000000006;
 
     // CCIP-BnM addresses
     address constant ccipBnMEthereumSepolia =
@@ -201,6 +209,8 @@ contract Helper {
         0xc49ec0eB4beb48B8Da4cceC51AA9A5bD0D0A4c43;
     address constant ccipBnMBsquaredTestnet =
         0x0643fD73C261eC4B369C3a8C5c0eC8c57485E32d;
+    address constant ccipBnMBobSepolia =
+        0x3B7d0d0CeC08eBF8dad58aCCa4719791378b2329;
 
     // CCIP-LnM addresses
     address constant ccipLnMEthereumSepolia =
@@ -262,6 +272,7 @@ contract Helper {
         networks[SupportedNetworks.MANTLE_SEPOLIA] = "Mantle Sepolia";
         networks[SupportedNetworks.SONEIUM_MINATO_SEPOLIA] = "Soneium Minato Sepolia";
         networks[SupportedNetworks.BSQUARED_TESTNET] = "B-Squared Testnet";
+        networks[SupportedNetworks.BOB_SEPOLIA] = "BoB Sepolia";
     }
 
     function getDummyTokensFromNetwork(
@@ -289,6 +300,8 @@ contract Helper {
             return (ccipBnMPolkadotAstarShibuya, clCcipLnMPolkadotAstarShibuya);
         } else if (network == SupportedNetworks.BSQUARED_TESTNET) {
             return (ccipBnMBsquaredTestnet, address(0));
+        } else if (network == SupportedNetworks.BOB_SEPOLIA) {
+            return (ccipBnMBobSepolia, address(0));
         }
     }
 
@@ -436,6 +449,13 @@ contract Helper {
                 linkBsquaredTestnet,
                 wbtcBsquaredTestnet,
                 chainIdBsquaredTestnet
+            );
+        } else if (network == SupportedNetworks.BOB_SEPOLIA) {
+            return (
+                routerBobSepolia,
+                linkBobSepolia,
+                wethBobSepolia,
+                chainIdBobSepolia
             );
         }
     }
