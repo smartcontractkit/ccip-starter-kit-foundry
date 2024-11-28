@@ -77,6 +77,7 @@ MANTLE_SEPOLIA_RPC_URL=""
 SONEIUM_MINATO_SEPOLIA_RPC_URL=""
 BSQUARED_TESTNET_RPC_URL=""
 BOB_SEPOLIA_RPC_URL=""
+WORLDCHAIN_SEPOLIA_RPC_URL=""
 ```
 
 Once that is done, to load the variables in the `.env` file, run the following command:
@@ -110,7 +111,8 @@ enum SupportedNetworks {
     MANTLE_SEPOLIA, // 16
     SONEIUM_MINATO_SEPOLIA, // 17
     BSQUARED_TESTNET, // 18
-    BOB_SEPOLIA // 19
+    BOB_SEPOLIA, // 19
+    WORLDCHAIN_SEPOLIA // 20
 }
 ```
 
