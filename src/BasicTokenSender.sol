@@ -58,7 +58,7 @@ contract BasicTokenSender is Withdraw {
             receiver: abi.encode(receiver),
             data: "",
             tokenAmounts: tokensToSendDetails,
-            extraArgs: Client._argsToBytes(Client.EVMExtraArgsV1({gasLimit: 0})),
+            extraArgs: Client._argsToBytes(Client.EVMExtraArgsV2({gasLimit: 0, allowOutOfOrderExecution: true})),
             feeToken: payFeesIn == PayFeesIn.LINK ? i_link : address(0)
         });
 

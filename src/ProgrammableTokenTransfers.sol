@@ -30,12 +30,12 @@ contract ProgrammableTokenTransfers is CCIPReceiver, OwnerIsCreator {
     error InsufficientFeeTokenAmount(); // Used when the contract balance isn't enough to pay fees.
 
     // Event emitted when a message is sent to another chain.
+    // The chain selector of the destination chain.
+    // The address of the receiver on the destination chain.
+    // The message being sent.
+    // The token amount that was sent.
+    // The fees paid for sending the message.
     event MessageSent( // The unique ID of the message.
-        // The chain selector of the destination chain.
-        // The address of the receiver on the destination chain.
-        // The message being sent.
-        // The token amount that was sent.
-        // The fees paid for sending the message.
         bytes32 indexed messageId,
         uint64 indexed destinationChainSelector,
         address receiver,
@@ -45,11 +45,11 @@ contract ProgrammableTokenTransfers is CCIPReceiver, OwnerIsCreator {
     );
 
     // Event emitted when a message is received from another chain.
+    // The chain selector of the source chain.
+    // The address of the sender from the source chain.
+    // The message that was received.
+    // The token amount that was received.
     event MessageReceived( // The unique ID of the message.
-        // The chain selector of the source chain.
-        // The address of the sender from the source chain.
-        // The message that was received.
-        // The token amount that was received.
         bytes32 indexed messageId,
         uint64 indexed sourceChainSelector,
         address sender,
@@ -98,18 +98,16 @@ contract ProgrammableTokenTransfers is CCIPReceiver, OwnerIsCreator {
             receiver: abi.encode(receiver), // ABI-encoded receiver address
             data: abi.encode(message), // ABI-encoded string message
             tokenAmounts: tokenAmounts, // Tokens amounts
-            extraArgs: "", // This syntax uses Client.EVMExtraArgsV1({gasLimit: 200_000}) by default
-            // extraArgs: Client._argsToBytes(
-            //         // Additional arguments, setting gas limit and allowing out-of-order execution.
-            //         // Best Practice: For simplicity, the values are hardcoded. It is advisable to use a more dynamic approach
-            //         // where you set the extra arguments off-chain. This allows adaptation depending on the lanes, messages,
-            //         // and ensures compatibility with future CCIP upgrades. Read more about it here: https://docs.chain.link/ccip/best-practices#using-extraargs
-            //         // EVMExtraArgsV2 are backwards compatible with EVMExtraArgsV1
-            //         Client.EVMExtraArgsV2({
-            //             gasLimit: 200_000, // Gas limit for the callback on the destination chain
-            //             allowOutOfOrderExecution: true // Allows the message to be executed out of order relative to other messages from the same sender
-            //         })
-            //     ),
+            extraArgs: Client._argsToBytes(
+                // Additional arguments, setting gas limit and allowing out-of-order execution.
+                // Best Practice: For simplicity, the values are hardcoded. It is advisable to use a more dynamic approach
+                // where you set the extra arguments off-chain. This allows adaptation depending on the lanes, messages,
+                // and ensures compatibility with future CCIP upgrades. Read more about it here: https://docs.chain.link/ccip/best-practices#using-extraargs
+                Client.EVMExtraArgsV2({
+                    gasLimit: 200_000, // Gas limit for the callback on the destination chain
+                    allowOutOfOrderExecution: true // Allows the message to be executed out of order relative to other messages from the same sender
+                })
+            ),
             feeToken: address(0) // Setting feeToken to zero address, indicating native asset will be used for fees
         });
 
