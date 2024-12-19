@@ -65,7 +65,7 @@ contract Example02Test is Test {
             receiver: abi.encode(basicMessageReceiver),
             data: abi.encode(""),
             tokenAmounts: tokensToSendDetails,
-            extraArgs: "",
+            extraArgs: "", //  This will use default gas limit of 200k gas.
             feeToken: address(linkToken)
         });
 
