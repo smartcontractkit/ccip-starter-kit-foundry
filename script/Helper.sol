@@ -164,6 +164,7 @@ contract Helper {
     address constant ccipBnMKromaSepoliaTestnet = 0x6AC3e353D1DDda24d5A5416024d6E436b8817A4e;
     address constant ccipBnMMetisSepolia = 0x20Aa09AAb761e2E600d65c6929A9fd1E59821D3f;
     address constant ccipBnMScrollSepolia = 0x231d45b53C905c3d6201318156BDC725c9c3B9B1;
+    address constant ccipBnMZircuitSepolia = 0xEA8cA8AE1c54faB8D185FC1fd7C2d70Bee8a417e;
     address constant ccipBnMPolkadotAstarShibuya = 0xc49ec0eB4beb48B8Da4cceC51AA9A5bD0D0A4c43;
     address constant ccipBnMBsquaredTestnet = 0x0643fD73C261eC4B369C3a8C5c0eC8c57485E32d;
     address constant ccipBnMBobSepolia = 0x3B7d0d0CeC08eBF8dad58aCCa4719791378b2329;
@@ -185,6 +186,7 @@ contract Helper {
     address constant clCcipLnMWemixTestnet = 0xcb342aE3D65E3fEDF8F912B0432e2B8F88514d5D;
     address constant clCcipLnMKromaSepoliaTestnet = 0x835fcBB6770E1246CfCf52F83cDcec3177d0bb6b;
     address constant clCcipLnMMetisSepolia = 0x705b364CadE0e515577F2646529e3A417473a155;
+    address constant clCcipLnMZircuitSepolia = 0xCdeE7708A96479f6D029741144f458B7FA807A6C;
     address constant clCcipLnMPolkadotAstarShibuya = 0xB9d4e1141E67ECFedC8A8139b5229b7FF2BF16F5;
 
     // USDC addresses
@@ -249,6 +251,8 @@ contract Helper {
             return (ccipBnMKromaSepoliaTestnet, clCcipLnMKromaSepoliaTestnet);
         } else if (network == SupportedNetworks.METIS_SEPOLIA) {
             return (ccipBnMMetisSepolia, clCcipLnMMetisSepolia);
+        } else if (network == SupportedNetworks.ZIRCUIT_SEPOLIA) {
+            return (ccipBnMZircuitSepolia, clCcipLnMZircuitSepolia);
         } else if (network == SupportedNetworks.POLKADOT_ASTAR_SHIBUYA) {
             return (ccipBnMPolkadotAstarShibuya, clCcipLnMPolkadotAstarShibuya);
         } else if (network == SupportedNetworks.BSQUARED_TESTNET) {
