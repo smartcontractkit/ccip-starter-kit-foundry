@@ -27,9 +27,8 @@ contract Helper {
         WORLDCHAIN_SEPOLIA, // 20
         SHIBARIUM_TESTNET, // 21
         BITLAYER_TESTNET, // 22
-        SONEIUM_TESTNET, // 23
-        FANTOM_SONIC_TESTNET, // 24
-        CORN_TESTNET // 25
+        FANTOM_SONIC_TESTNET, // 23
+        CORN_TESTNET // 24
 
     }
 
@@ -64,7 +63,6 @@ contract Helper {
     uint64 constant chainIdWorldchainSepolia = 5299555114858065850;
     uint64 constant chainIdShibariumTestnet = 17833296867764334567;
     uint64 constant chainIdBitlayerTestnet = 3789623672476206327; // https://github.com/smartcontractkit/reference-data-directory-ccip-prod-testnet/blob/SHIP-3965/bitlayer-testnet-deployment/bitcoin-testnet-bitlayer-1/ccip/metadata.json
-    uint64 constant chainIdSoneiumTestnet = 686603546605904534;
     uint64 constant chainIdFantomSonicTestnet = 3676871237479449268;
     uint64 constant chainIdCornTestnet = 1467427327723633929; // https://github.com/smartcontractkit/reference-data-directory-ccip-prod-testnet/blob/corn-testnet-chain/ethereum-testnet-sepolia-corn-1/ccip/metadata.json
 
@@ -92,7 +90,6 @@ contract Helper {
     address constant routerWorldchainSepolia = 0x47693fc188b2c30078F142eadc2C009E8D786E8d;
     address constant routerShibariumTestnet = 0x449E234FEDF3F907b9E9Dd6BAf1ddc36664097E5;
     address constant routerBitlayerTestnet = 0x3dfbe078277609D34c8ef015c61f23A9BeDE61BB; // TODO
-    address constant routerSoneiumTestnet = 0x443a1bce545d56E2c3f20ED32eA588395FFce0f4;
     address constant routerFantomSonicTestnet = 0x2fBd4659774D468Db5ca5bacE37869905d8EfA34;
     address constant routerCornTestnet = 0x9981250f56d4d0Fa9736343659B4890ebbb94110;
 
@@ -120,7 +117,6 @@ contract Helper {
     address constant linkWorldchainSepolia = 0xC82Ea35634BcE95C394B6BC00626f827bB0F4801;
     address constant linkShibariumTestnet = 0x44637eEfD71A090990f89faEC7022fc74B2969aD; 
     address constant linkBitlayerTestnet = 0x2A5bACb2440BC17D53B7b9Be73512dDf92265e48; // TODO
-    address constant linkSoneiumTestnet = 0x7ea13478Ea3961A0e8b538cb05a9DF0477c79Cd2;
     address constant linkFantomSonicTestnet = 0x61876F0429726D7777B46f663e1C9ab75d08Fc56;
     address constant linkCornTestnet = 0x996EfAb6011896Be832969D91E9bc1b3983cfdA1;
 
@@ -148,7 +144,6 @@ contract Helper {
     address constant wethWorldchainSepolia = 0x4200000000000000000000000000000000000006;
     address constant wboneShibariumTestnet = 0x41c3F37587EBcD46C0F85eF43E38BcfE1E70Ab56; 
     address constant wbtcBitlayerTestnet = 0x3e57d6946f893314324C975AA9CEBBdF3232967E; // TODO double check 
-    address constant wethSoneiumTestnet = 0x4200000000000000000000000000000000000006;
     address constant wethFantomSonicTestnet = 0x917FE4b784d1895187Df169aeCc687C03ba12662;
     address constant wbtcCornTestnet = 0x1cAa492a1B39D4867253FC27C4fBEE7b0DbAf575;
 
@@ -172,7 +167,7 @@ contract Helper {
     address constant ccipBnMWorldchainSepolia = 0x8fdE0C794fDA5a7A303Ce216f79B9695a7714EcB;
     address constant ccipBnMShibariumTestnet = 0x81249b4bD91A8706eE67a2f422DB82258D4947ad; 
     address constant ccipBnMBitlayerTestnet = 0x0; // TODO obtain
-    address constant ccipBnMSoneiumTestnet = 0x0; // TODO obtain
+    address constant ccipBnMSoneiumMinatoSepolia = 0x0; // TODO obtain
     address constant ccipBnMFantomSonicTestnet = 0x230c46b9a7c8929A80863bDe89082B372a4c7A99;
     address constant ccipBnMCornTestnet = 0x0; // TODO obtain
 
@@ -225,7 +220,6 @@ contract Helper {
         networks[SupportedNetworks.WORLDCHAIN_SEPOLIA] = "World Chain Sepolia";
         networks[SupportedNetworks.SHIBARIUM_TESTNET] = "Shibarium Testnet";
         networks[SupportedNetworks.BITLAYER_TESTNET] = "Bitlayer Testnet";
-        networks[SupportedNetworks.SONEIUM_TESTNET] = "Soneium Testnet";
         networks[SupportedNetworks.FANTOM_SONIC_TESTNET] = "Fantom Sonic Testnet";
         networks[SupportedNetworks.CORN_TESTNET] = "Corn Testnet";
     }
@@ -269,8 +263,8 @@ contract Helper {
             return (ccipBnMShibariumTestnet, address(0));
         } else if (network == SupportedNetworks.BITLAYER_TESTNET) {
             return (ccipBnMBitlayerTestnet, address(0));
-        } else if (network == SupportedNetworks.SONEIUM_TESTNET) {
-            return (ccipBnMSoneiumTestnet, address(0));
+        } else if (network == SupportedNetworks.SONEIUM_MINATO_SEPOLIA) {
+            return (ccipBnMSoneiumMinatoSepolia, address(0));
         } else if (network == SupportedNetworks.FANTOM_SONIC_TESTNET) {
             return (ccipBnMFantomSonicTestnet, address(0));
         } else if (network == SupportedNetworks.CORN_TESTNET) {
@@ -343,8 +337,6 @@ contract Helper {
             return routerShibariumTestnet, linkShibariumTestnet, wboneShibariumTestnet, chainIdShibariumTestnet;
         } else if (network == SupportedNetworks.BITLAYER_TESTNET){
             return (routerBitlayerTestnet, linkBitlayerTestnet, wbtcBitlayerTestnet, chainIdBitlayerTestnet);
-        } else if (network == SupportedNetworks.SONEIUM_TESTNET){
-            return (routerSoneiumTestnet, linkSoneiumTestnet, wethSoneiumTestnet, chainIdSoneiumTestnet);
         } else if (network == SupportedNetworks.FANTOM_SONIC_TESTNET){
             return (routerFantomSonicTestnet, linkFantomSonicTestnet, wethFantomSonicTestnet, chainIdFantomSonicTestnet);
         } else if (network == SupportedNetworks.CORN_TESTNET){
