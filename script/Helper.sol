@@ -169,7 +169,7 @@ contract Helper {
     address constant ccipBnMBitlayerTestnet = 0x0; // TODO obtain
     address constant ccipBnMSoneiumMinatoSepolia = 0x0; // TODO obtain
     address constant ccipBnMFantomSonicTestnet = 0x230c46b9a7c8929A80863bDe89082B372a4c7A99;
-    address constant ccipBnMCornTestnet = 0x0; // TODO obtain
+    address constant ccipBnMCornTestnet = 0x996EfAb6011896Be832969D91E9bc1b3983cfdA1;
 
     // CCIP-LnM addresses
     address constant ccipLnMEthereumSepolia = 0x466D489b6d36E7E3b824ef491C225F5830E81cC1;
