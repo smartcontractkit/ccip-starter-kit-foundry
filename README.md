@@ -78,6 +78,12 @@ SONEIUM_MINATO_SEPOLIA_RPC_URL=""
 BSQUARED_TESTNET_RPC_URL=""
 BOB_SEPOLIA_RPC_URL=""
 WORLDCHAIN_SEPOLIA_RPC_URL=""
+SHIBARIUM_TESTNET_RPC_URL=""
+BITLAYER_TESTNET_RPC_URL=""
+FANTOM_SONIC_TESTNET_RPC_URL=""
+CORN_TESTNET_RPC_URL=""
+HASHKEY_SEPOLIA_RPC_URL=""
+INK_SEPOLIA_RPC_URL=""
 ```
 
 Once that is done, to load the variables in the `.env` file, run the following command:
@@ -112,7 +118,13 @@ enum SupportedNetworks {
     SONEIUM_MINATO_SEPOLIA, // 17
     BSQUARED_TESTNET, // 18
     BOB_SEPOLIA, // 19
-    WORLDCHAIN_SEPOLIA // 20
+    WORLDCHAIN_SEPOLIA,  // 20
+    SHIBARIUM_TESTNET, // 21
+    BITLAYER_TESTNET, // 22
+    FANTOM_SONIC_TESTNET, // 23
+    CORN_TESTNET, // 24
+    HASHKEY_SEPOLIA, // 25
+    INK_SEPOLIA // 26
 }
 ```
 
@@ -169,11 +181,10 @@ Or if you want to mint 10\*\*18 units of `CCIP-BnM` test token on Avalanche Fuji
 forge script ./script/Faucet.s.sol -vvv --broadcast --rpc-url avalancheFuji --sig "run(uint8)" -- 1
 ```
 
-### EVMExtraArgs
+### Production Best Practice
+Most of these examples are simplified for educational purposes. For production code, please adhere to the following best practices (Refer to the [Best Practices](https://docs.chain.link/ccip/best-practices) guide from the Official Chainlink Documentation for more information.):
 
-Most of these examples are simplified for educational purposes. For production code, please adhere to the following best practices:
-
-- **Do Not Hardcode `extraArgs`**: In these examples, `extraArgs` are hardcoded within contracts for simplicity. It is recommended to make `extraArgs` mutable. For instance, you can construct `extraArgs` off-chain and pass them into your function calls, or store them in a storage variable that can be updated as needed. This approach ensures that `extraArgs` remain backward compatible with future CCIP upgrades. Refer to the [Best Practices](https://docs.chain.link/ccip/best-practices) guide from the Official Chainlink Documentation for more information.
+- **Do Not Hardcode `extraArgs`**: In these examples, `extraArgs` are hardcoded within contracts for simplicity. It is recommended to make `extraArgs` mutable. For instance, you can construct `extraArgs` off-chain and pass them into your function calls, or store them in a storage variable that can be updated as needed. This approach ensures that `extraArgs` remain backward compatible with future CCIP upgrades. 
 - **Validate the Destination Chain**: Always ensure that the destination chain is valid and supported before sending messages.
 - **Understand `allowOutOfOrderExecution` Usage**: This parameter is available only on lanes where the **Out of Order Execution** property is set to **Optional** or **Required**. Refer to the [CCIP Directory](https://docs.chain.link/ccip/directory) to determine if your target lane supports this feature. For lanes where this parameter is absent, you must use `extraArgsV1` instead.
 

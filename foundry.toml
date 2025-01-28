@@ -30,5 +30,11 @@ soneiumMinatoSepolia = "${SONEIUM_MINATO_SEPOLIA_RPC_URL}"
 bsquaredTestnet = "${BSQUARED_TESTNET_RPC_URL}"
 bobSepolia = "${BOB_SEPOLIA_RPC_URL}"
 worldchainSepolia = "${WORLDCHAIN_SEPOLIA_RPC_URL}"
+shibariumTestnet = "${SHIBARIUM_TESTNET_RPC_URL}"
+bitlayerTestnet= "${BITLAYER_TESTNET_RPC_URL}"
+fantomSonicTestnet = "${FANTOM_SONIC_TESTNET_RPC_URL}"
+cornTestnet = "${CORN_TESTNET_RPC_URL}"
+hashkeySepolia = "${HASHKEY_SEPOLIA_RPC_URL}"
+inkSepolia = "${INK_SEPOLIA_RPC_URL}"
 
 # See more config options https://github.com/foundry-rs/foundry/tree/master/config
