@@ -35,5 +35,6 @@ bitlayerTestnet= "${BITLAYER_TESTNET_RPC_URL}"
 fantomSonicTestnet = "${FANTOM_SONIC_TESTNET_RPC_URL}"
 cornTestnet = "${CORN_TESTNET_RPC_URL}"
 hashkeySepolia = "${HASHKEY_SEPOLIA_RPC_URL}"
+inkSepolia = "${INK_SEPOLIA_RPC_URL}"
 
 # See more config options https://github.com/foundry-rs/foundry/tree/master/config

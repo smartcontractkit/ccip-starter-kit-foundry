@@ -83,6 +83,7 @@ BITLAYER_TESTNET_RPC_URL=""
 FANTOM_SONIC_TESTNET_RPC_URL=""
 CORN_TESTNET_RPC_URL=""
 HASHKEY_SEPOLIA_RPC_URL=""
+INK_SEPOLIA_RPC_URL=""
 ```
 
 Once that is done, to load the variables in the `.env` file, run the following command:
@@ -122,7 +123,8 @@ enum SupportedNetworks {
     BITLAYER_TESTNET, // 22
     FANTOM_SONIC_TESTNET, // 23
     CORN_TESTNET, // 24
-    HASHKEY_SEPOLIA // 25
+    HASHKEY_SEPOLIA, // 25
+    INK_SEPOLIA // 26
 }
 ```
 

@@ -29,7 +29,8 @@ contract Helper {
         BITLAYER_TESTNET, // 22
         FANTOM_SONIC_TESTNET, // 23
         CORN_TESTNET, // 24
-        HASHKEY_SEPOLIA // 25
+        HASHKEY_SEPOLIA, // 25
+        INK_SEPOLIA // 26
 
     }
 
@@ -67,6 +68,7 @@ contract Helper {
     uint64 constant chainIdFantomSonicTestnet = 3676871237479449268;
     uint64 constant chainIdCornTestnet = 1467427327723633929; // https://github.com/smartcontractkit/reference-data-directory-ccip-prod-testnet/blob/corn-testnet-chain/ethereum-testnet-sepolia-corn-1/ccip/metadata.json
     uint64 constant chainIdHashkeySepolia = 4356164186791070119;
+    uint64 constant chainIdInkSepolia = 9763904284804119144;
 
     // Router addresses
     address constant routerEthereumSepolia = 0x0BF3dE8c5D3e8A2B34D2BEeB17ABfCeBaf363A59;
@@ -95,6 +97,7 @@ contract Helper {
     address constant routerFantomSonicTestnet = 0x2fBd4659774D468Db5ca5bacE37869905d8EfA34;
     address constant routerCornTestnet = 0x9981250f56d4d0Fa9736343659B4890ebbb94110;
     address constant routerHashkeySepolia = 0x1360c71dd2458B6d4A5Ad5946d9011BafA0435d7;
+    address constant routerInkSepolia = 0x17fCda531D8E43B4e2a2A2492FBcd4507a1685A1;
 
     // Link addresses (can be used as fee)
     address constant linkEthereumSepolia = 0x779877A7B0D9E8603169DdbD7836e478b4624789;
@@ -123,6 +126,7 @@ contract Helper {
     address constant linkFantomSonicTestnet = 0x61876F0429726D7777B46f663e1C9ab75d08Fc56;
     address constant linkCornTestnet = 0x996EfAb6011896Be832969D91E9bc1b3983cfdA1;
     address constant linkHashkeySepolia = 0x8418c4d7e8e17ab90232DC72150730E6c4b84F57;
+    address constant linkInkSepolia = 0x3423C922911956b1Ccbc2b5d4f38216a6f4299b4;
 
     // Wrapped native addresses
     address constant wethEthereumSepolia = 0x097D90c9d3E0B50Ca60e1ae45F6A81010f9FB534;
@@ -150,7 +154,7 @@ contract Helper {
     address constant wbtcBitlayerTestnet = 0x3e57d6946f893314324C975AA9CEBBdF3232967E; // TODO double check 
     address constant wethFantomSonicTestnet = 0x917FE4b784d1895187Df169aeCc687C03ba12662;
     address constant wbtcCornTestnet = 0x1cAa492a1B39D4867253FC27C4fBEE7b0DbAf575;
-    address constant whskHashkeySepolia = 0x2896e619Fa7c831A7E52b87EffF4d671bEc6B262;
+    address constant wethInkSepolia = 0x4200000000000000000000000000000000000006;
 
     // CCIP-BnM addresses
     address constant ccipBnMEthereumSepolia = 0xFd57b4ddBf88a4e07fF4e34C487b99af2Fe82a05;
@@ -176,6 +180,7 @@ contract Helper {
     address constant ccipBnMFantomSonicTestnet = 0x230c46b9a7c8929A80863bDe89082B372a4c7A99;
     address constant ccipBnMCornTestnet = 0x996EfAb6011896Be832969D91E9bc1b3983cfdA1;
     address constant ccipBnMHashkeySepolia = 0xB0F91Ce2ECAa3555D4b1fD4489bD9a207a7844f0;
+    address constant ccipBnMInkSepolia = 0x414dbe1d58dd9BA7C84f7Fc0e4f82bc858675d37;
 
     // CCIP-LnM addresses
     address constant ccipLnMEthereumSepolia = 0x466D489b6d36E7E3b824ef491C225F5830E81cC1;
@@ -229,6 +234,7 @@ contract Helper {
         networks[SupportedNetworks.FANTOM_SONIC_TESTNET] = "Fantom Sonic Testnet";
         networks[SupportedNetworks.CORN_TESTNET] = "Corn Testnet";
         networks[SupportedNetworks.HASHKEY_SEPOLIA] = "Hashkey Sepolia";
+        networks[SupportedNetworks.INK_SEPOLIA] = "Ink Sepolia";
     }
 
     function getDummyTokensFromNetwork(SupportedNetworks network)
@@ -278,6 +284,8 @@ contract Helper {
             return (ccipBnMCornTestnet, address(0));
         } else if (network == SupportedNetworks.HASHKEY_SEPOLIA) {
             return (ccipBnMHashkeySepolia, address(0));
+        } else if (network == SupportedNetworks.INK_SEPOLIA) {
+            return (ccipBnMInkSepolia, address(0));
         }
     }
 
@@ -352,6 +360,8 @@ contract Helper {
             return (routerCornTestnet, linkCornTestnet, wbtcCornTestnet, chainIdCornTestnet);
         } else if (network == SupportedNetworks.HASHKEY_SEPOLIA){
             return (routerHashkeySepolia, linkHashkeySepolia, whskHashkeySepolia, chainIdHashkeySepolia);
+        } else if (network == SupportedNetworks.INK_SEPOLIA){
+            return (routerInkSepolia, linkInkSepolia, wethInkSepolia, chainIdInkSepolia);
         }
     }
 }
