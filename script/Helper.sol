@@ -351,7 +351,7 @@ contract Helper {
         } else if (network == SupportedNetworks.WORLDCHAIN_SEPOLIA) {
             return (routerWorldchainSepolia, linkWorldchainSepolia, wethWorldchainSepolia, chainIdWorldchainSepolia);
         } else if (network == SupportedNetworks.SHIBARIUM_TESTNET) {
-            return routerShibariumTestnet, linkShibariumTestnet, wboneShibariumTestnet, chainIdShibariumTestnet;
+            return (routerShibariumTestnet, linkShibariumTestnet, wboneShibariumTestnet, chainIdShibariumTestnet);
         } else if (network == SupportedNetworks.BITLAYER_TESTNET){
             return (routerBitlayerTestnet, linkBitlayerTestnet, wbtcBitlayerTestnet, chainIdBitlayerTestnet);
         } else if (network == SupportedNetworks.FANTOM_SONIC_TESTNET){
