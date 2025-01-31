@@ -195,7 +195,7 @@ contract Helper {
     address constant clCcipLnMMetisSepolia = 0x705b364CadE0e515577F2646529e3A417473a155;
     address constant clCcipLnMZircuitSepolia = 0x3210D3244B29535724e19159288323d86287195c;
     address constant clCcipLnMPolkadotAstarShibuya = 0xB9d4e1141E67ECFedC8A8139b5229b7FF2BF16F5;
-    address constant clCcipLnMMantleSepoliaShibuya = 0xCdeE7708A96479f6D029741144f458B7FA807A6C;
+    address constant clCcipLnMMantleSepolia = 0xCdeE7708A96479f6D029741144f458B7FA807A6C;
 
     // USDC addresses
     address constant usdcAvalancheFuji = 0x5425890298aed601595a70AB815c96711a31Bc65;
