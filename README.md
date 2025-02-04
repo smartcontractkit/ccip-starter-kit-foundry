@@ -6,6 +6,31 @@
 
 This project demonstrates a couple of basic Chainlink CCIP use cases.
 
+## Table of Contents
+
+1. [Chainlink CCIP Starter Kit](#chainlink-ccip-starter-kit)
+   - [Note](#note)
+2. [Prerequisites](#prerequisites)
+3. [Getting Started](#getting-started)
+   - [Install packages](#install-packages)
+   - [Compile contracts](#compile-contracts)
+4. [What is Chainlink CCIP?](#what-is-chainlink-ccip)
+5. [Usage](#usage)
+   - [Set a password for encrypting and decrypting the environment variable file](#set-a-password-for-encrypting-and-decrypting-the-environment-variable-file)
+   - [Set environment variables](#set-environment-variables)
+   - [Validate your inputs](#validate-your-inputs)
+6. [Testing](#local-testing)
+   [Faucet](#faucet)
+
+7. [Production Best Practice](#production-best-practice)
+8. [Example 1 - Transfer CCIP Test Tokens from EOA to EOA](#example-1---transfer-tokens-from-eoa-to-eoa)
+9. [Example 2 - Transfer Tokens from EOA to Smart Contract](#example-2---transfer-tokens-from-eoa-to-smart-contract)
+10. [Example 3 - Transfer Token(s) from Smart Contract to any destination](#example-3---transfer-tokens-from-smart-contract-to-any-destination)
+11. [Example 4 - Send & Receive Tokens and Data](#example-4---send--receive-tokens-and-data)
+12. [Example 5 - Send & Receive Cross-Chain Messages and Pay with Native Coins](#example-5---send--receive-cross-chain-messages-and-pay-with-native-coins)
+13. [Example 6 - Send & Receive Cross-Chain Messages and Pay with LINK Tokens](#example-6---send--receive-cross-chain-messages-and-pay-with-link-tokens)
+14. [Example 7 - Execute Received Message as a Function Call](#example-7---execute-received-message-as-a-function-call)
+
 ## Prerequisites
 
 - [Foundry](https://book.getfoundry.sh/getting-started/installation)
@@ -141,9 +166,14 @@ enum PayFeesIn {
 
 So, if you want to pay for Chainlink CCIP fees in LINK token, you will pass `1 (uint8)` as a function argument.
 
-### Local testing
+## Local testing
 
-The test files are located in the `test` folder. Note that there are two types of tests:
+The test files are located in the `test` folder.
+
+> **Note**  
+> Tests in the test folder have names like Example1.spec.ts, where `Example1` maps to the [#example-1](#example-1---transfer-tokens-from-eoa-to-eoa) scenario below.
+
+There are two types of tests:
 
 - **Test with [CCIPLocalSimulator](https://github.com/smartcontractkit/chainlink-local/blob/main/src/ccip/CCIPLocalSimulator.sol)**: These tests are used to test the CCIP functionality in your local environment. They are located in the `test/no-fork` folder. To run these tests, run the following command:
 
@@ -159,7 +189,7 @@ The test files are located in the `test` folder. Note that there are two types o
 
   **Note**: The fork tests send CCIP messages from Arbitrum Sepolia to Ethereum Sepolia, so make sure you have the _ETHEREUM_SEPOLIA_RPC_URL_ and _ARBITRUM_SEPOLIA_RPC_URL_ set in your .env file.
 
-### Faucet
+## Faucet
 
 You will need test tokens for some of the examples in this Starter Kit. Public faucets sometimes limit how many tokens a user can create and token pools might not have enough liquidity. To resolve these issues, CCIP supports two test tokens that you can mint permissionlessly so you don't run out of tokens while testing different scenarios.
 
@@ -181,10 +211,11 @@ Or if you want to mint 10\*\*18 units of `CCIP-BnM` test token on Avalanche Fuji
 forge script ./script/Faucet.s.sol -vvv --broadcast --rpc-url avalancheFuji --sig "run(uint8)" -- 1
 ```
 
-### Production Best Practice
+## Production Best Practice
+
 Most of these examples are simplified for educational purposes. For production code, please adhere to the following best practices (Refer to the [Best Practices](https://docs.chain.link/ccip/best-practices) guide from the Official Chainlink Documentation for more information.):
 
-- **Do Not Hardcode `extraArgs`**: In these examples, `extraArgs` are hardcoded within contracts for simplicity. It is recommended to make `extraArgs` mutable. For instance, you can construct `extraArgs` off-chain and pass them into your function calls, or store them in a storage variable that can be updated as needed. This approach ensures that `extraArgs` remain backward compatible with future CCIP upgrades. 
+- **Do Not Hardcode `extraArgs`**: In these examples, `extraArgs` are hardcoded within contracts for simplicity. It is recommended to make `extraArgs` mutable. For instance, you can construct `extraArgs` off-chain and pass them into your function calls, or store them in a storage variable that can be updated as needed. This approach ensures that `extraArgs` remain backward compatible with future CCIP upgrades.
 - **Validate the Destination Chain**: Always ensure that the destination chain is valid and supported before sending messages.
 - **Understand `allowOutOfOrderExecution` Usage**: This parameter is available only on lanes where the **Out of Order Execution** property is set to **Optional** or **Required**. Refer to the [CCIP Directory](https://docs.chain.link/ccip/directory) to determine if your target lane supports this feature. For lanes where this parameter is absent, you must use `extraArgsV1` instead.
 
