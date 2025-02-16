@@ -154,6 +154,7 @@ contract Helper {
     address constant wbtcBitlayerTestnet = 0x3e57d6946f893314324C975AA9CEBBdF3232967E; // TODO double check 
     address constant wethFantomSonicTestnet = 0x917FE4b784d1895187Df169aeCc687C03ba12662;
     address constant wbtcCornTestnet = 0x1cAa492a1B39D4867253FC27C4fBEE7b0DbAf575;
+    address constant whskHashkeySepolia = 0x2896e619Fa7c831A7E52b87EffF4d671bEc6B262;
     address constant wethInkSepolia = 0x4200000000000000000000000000000000000006;
 
     // CCIP-BnM addresses
@@ -175,8 +176,8 @@ contract Helper {
     address constant ccipBnMBobSepolia = 0x3B7d0d0CeC08eBF8dad58aCCa4719791378b2329;
     address constant ccipBnMWorldchainSepolia = 0x8fdE0C794fDA5a7A303Ce216f79B9695a7714EcB;
     address constant ccipBnMShibariumTestnet = 0x81249b4bD91A8706eE67a2f422DB82258D4947ad; 
-    address constant ccipBnMBitlayerTestnet = 0x0; // TODO obtain
-    address constant ccipBnMSoneiumMinatoSepolia = 0x0; // TODO obtain
+    address constant ccipBnMBitlayerTestnet = 0xFd57b4ddBf88a4e07fF4e34C487b99af2Fe82a05; // TODO obtain
+    address constant ccipBnMSoneiumMinatoSepolia = address(0); // TODO obtain
     address constant ccipBnMFantomSonicTestnet = 0x230c46b9a7c8929A80863bDe89082B372a4c7A99;
     address constant ccipBnMCornTestnet = 0x996EfAb6011896Be832969D91E9bc1b3983cfdA1;
     address constant ccipBnMHashkeySepolia = 0xB0F91Ce2ECAa3555D4b1fD4489bD9a207a7844f0;
@@ -195,7 +196,7 @@ contract Helper {
     address constant clCcipLnMMetisSepolia = 0x705b364CadE0e515577F2646529e3A417473a155;
     address constant clCcipLnMZircuitSepolia = 0x3210D3244B29535724e19159288323d86287195c;
     address constant clCcipLnMPolkadotAstarShibuya = 0xB9d4e1141E67ECFedC8A8139b5229b7FF2BF16F5;
-    address constant clCcipLnMMantleSepoliaShibuya = 0xCdeE7708A96479f6D029741144f458B7FA807A6C;
+    address constant clCcipLnMMantleSepolia = 0xCdeE7708A96479f6D029741144f458B7FA807A6C;
 
     // USDC addresses
     address constant usdcAvalancheFuji = 0x5425890298aed601595a70AB815c96711a31Bc65;
@@ -351,7 +352,7 @@ contract Helper {
         } else if (network == SupportedNetworks.WORLDCHAIN_SEPOLIA) {
             return (routerWorldchainSepolia, linkWorldchainSepolia, wethWorldchainSepolia, chainIdWorldchainSepolia);
         } else if (network == SupportedNetworks.SHIBARIUM_TESTNET) {
-            return routerShibariumTestnet, linkShibariumTestnet, wboneShibariumTestnet, chainIdShibariumTestnet;
+            return (routerShibariumTestnet, linkShibariumTestnet, wboneShibariumTestnet, chainIdShibariumTestnet);
         } else if (network == SupportedNetworks.BITLAYER_TESTNET){
             return (routerBitlayerTestnet, linkBitlayerTestnet, wbtcBitlayerTestnet, chainIdBitlayerTestnet);
         } else if (network == SupportedNetworks.FANTOM_SONIC_TESTNET){
