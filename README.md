@@ -15,21 +15,19 @@ This project demonstrates a couple of basic Chainlink CCIP use cases.
    - [Install packages](#install-packages)
    - [Compile contracts](#compile-contracts)
 4. [What is Chainlink CCIP?](#what-is-chainlink-ccip)
-5. [Usage](#usage)
-   - [Set a password for encrypting and decrypting the environment variable file](#set-a-password-for-encrypting-and-decrypting-the-environment-variable-file)
-   - [Set environment variables](#set-environment-variables)
-   - [Validate your inputs](#validate-your-inputs)
-6. [Testing](#local-testing)
+5. [Usage & Environment Variables](#usage--environment-variables)
+6. [Chain Configurations](#chain-configurations)
+7. [Testing](#local-testing)
    [Faucet](#faucet)
 
-7. [Production Best Practice](#production-best-practice)
-8. [Example 1 - Transfer CCIP Test Tokens from EOA to EOA](#example-1---transfer-tokens-from-eoa-to-eoa)
-9. [Example 2 - Transfer Tokens from EOA to Smart Contract](#example-2---transfer-tokens-from-eoa-to-smart-contract)
-10. [Example 3 - Transfer Token(s) from Smart Contract to any destination](#example-3---transfer-tokens-from-smart-contract-to-any-destination)
-11. [Example 4 - Send & Receive Tokens and Data](#example-4---send--receive-tokens-and-data)
-12. [Example 5 - Send & Receive Cross-Chain Messages and Pay with Native Coins](#example-5---send--receive-cross-chain-messages-and-pay-with-native-coins)
-13. [Example 6 - Send & Receive Cross-Chain Messages and Pay with LINK Tokens](#example-6---send--receive-cross-chain-messages-and-pay-with-link-tokens)
-14. [Example 7 - Execute Received Message as a Function Call](#example-7---execute-received-message-as-a-function-call)
+8. [Production Best Practice](#production-best-practice)
+9. [Example 1 - Transfer CCIP Test Tokens from EOA to EOA](#example-1---transfer-tokens-from-eoa-to-eoa)
+10. [Example 2 - Transfer Tokens from EOA to Smart Contract](#example-2---transfer-tokens-from-eoa-to-smart-contract)
+11. [Example 3 - Transfer Token(s) from Smart Contract to any destination](#example-3---transfer-tokens-from-smart-contract-to-any-destination)
+12. [Example 4 - Send & Receive Tokens and Data](#example-4---send--receive-tokens-and-data)
+13. [Example 5 - Send & Receive Cross-Chain Messages and Pay with Native Coins](#example-5---send--receive-cross-chain-messages-and-pay-with-native-coins)
+14. [Example 6 - Send & Receive Cross-Chain Messages and Pay with LINK Tokens](#example-6---send--receive-cross-chain-messages-and-pay-with-link-tokens)
+15. [Example 7 - Execute Received Message as a Function Call](#example-7---execute-received-message-as-a-function-call)
 
 ## Prerequisites
 
@@ -76,7 +74,7 @@ CCIP receiver can be:
 
 To use this project, you can consider CCIP as a "black-box" component and be aware of the Router contract only. If you want to dive deep into it, check the [Official Chainlink Documentation](https://docs.chain.link/ccip).
 
-## Usage
+## Usage & Environment Variables
 
 In the next section you can see a couple of basic Chainlink CCIP use case examples. But before that, you need to set up some environment variables.
 
@@ -116,6 +114,8 @@ Once that is done, to load the variables in the `.env` file, run the following c
 ```shell
 source .env
 ```
+
+## Chain Configurations
 
 Make yourself familiar with the [`Helper.sol`](./script/Helper.sol) smart contract. It contains all the necessary Chainlink CCIP config. If you ever need to adjust any of those parameters, go to the Helper contract.
 
