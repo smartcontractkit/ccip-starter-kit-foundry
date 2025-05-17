@@ -4,7 +4,7 @@ pragma solidity 0.8.24;
 import "forge-std/Script.sol";
 import "./Helper.sol";
 import {BasicTokenSender} from "../src/BasicTokenSender.sol";
-import {Client} from "@chainlink/contracts-ccip/src/v0.8/ccip/libraries/Client.sol";
+import {Client} from "@chainlink/contracts-ccip/contracts/libraries/Client.sol";
 
 contract DeployBasicTokenSender is Script, Helper {
     function run(SupportedNetworks source) external {
