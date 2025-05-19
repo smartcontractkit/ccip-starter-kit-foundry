@@ -1,8 +1,6 @@
 {
   "name": "ccip-starter-kit-foundry",
-  "devDependencies": {
-    "@chainlink/contracts": "^0.6.1",
-    "@chainlink/contracts-ccip": "^1.5.1-beta.0",
-    "@chainlink/local": "^0.2.3"
+  "dependencies": {
+    "@chainlink/local": "^0.2.5-beta"
   }
 }

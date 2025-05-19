@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {Client} from "@chainlink/contracts-ccip/src/v0.8/ccip/libraries/Client.sol";
+import {Client} from "@chainlink/contracts-ccip/contracts/libraries/Client.sol";
 
 /// @title EncodeExtraArgsOffchain
 /// @notice This contract is not intended to be deployed on-chain, it is simply a helper contract to encode the extraArgs.
@@ -18,7 +18,7 @@ contract EncodeExtraArgsOffchain {
     //    Client.EVMExtraArgsV1 memory extraArgs = Client.EVMExtraArgsV1({gasLimit: 300_000});
     //    bytes memory encodedV1ExtraArgs = Client._argsToBytes(extraArgs);
     // Then later compute V2 extraArgs, for example when allowOutOfOrderExecution was added:
-    //    Client.EVMExtraArgsV2 memory extraArgs = Client.EVMExtraArgsV2({gasLimit: 300_000, allowOutOfOrderExecution: true});
+    //    Client.GenericExtraArgsV2 memory extraArgs = Client.GenericExtraArgsV2({gasLimit: 300_000, allowOutOfOrderExecution: true});
     //    bytes memory encodedV2ExtraArgs = Client._argsToBytes(extraArgs);
     // and update storage with the new args.
     // If different options are required for different messages, for example different gas limits,
@@ -34,8 +34,8 @@ contract EncodeExtraArgsOffchain {
         pure
         returns (bytes memory extraArgsBytes)
     {
-        Client.EVMExtraArgsV2 memory extraArgs =
-            Client.EVMExtraArgsV2({gasLimit: gasLimit, allowOutOfOrderExecution: allowOutOfOrderExecution});
+        Client.GenericExtraArgsV2 memory extraArgs =
+            Client.GenericExtraArgsV2({gasLimit: gasLimit, allowOutOfOrderExecution: allowOutOfOrderExecution});
         extraArgsBytes = Client._argsToBytes(extraArgs);
     }
 }

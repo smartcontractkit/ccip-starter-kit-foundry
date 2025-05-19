@@ -8,7 +8,7 @@ import {
     LinkToken,
     BurnMintERC677Helper
 } from "@chainlink/local/src/ccip/CCIPLocalSimulator.sol";
-import {Client} from "@chainlink/contracts-ccip/src/v0.8/ccip/libraries/Client.sol";
+import {Client} from "@chainlink/contracts-ccip/contracts/libraries/Client.sol";
 import {BasicMessageReceiver} from "../../src/BasicMessageReceiver.sol";
 
 contract Example02Test is Test {
