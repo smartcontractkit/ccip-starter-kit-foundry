@@ -28,6 +28,7 @@ This project demonstrates a couple of basic Chainlink CCIP use cases.
 13. [Example 5 - Send & Receive Cross-Chain Messages and Pay with Native Coins](#example-5---send--receive-cross-chain-messages-and-pay-with-native-coins)
 14. [Example 6 - Send & Receive Cross-Chain Messages and Pay with LINK Tokens](#example-6---send--receive-cross-chain-messages-and-pay-with-link-tokens)
 15. [Example 7 - Execute Received Message as a Function Call](#example-7---execute-received-message-as-a-function-call)
+16. [CCT Standard](#cct-standard)
 
 ## Prerequisites
 
@@ -85,6 +86,7 @@ PRIVATE_KEY=""
 ETHEREUM_SEPOLIA_RPC_URL=""
 ARBITRUM_SEPOLIA_RPC_URL=""
 AVALANCHE_FUJI_RPC_URL=""
+BASE_SEPOLIA_RPC_URL=""
 POLYGON_MUMBAI_RPC_URL=""
 BNB_CHAIN_TESTNET_RPC_URL=""
 WEMIX_TESTNET_RPC_URL=""
@@ -711,3 +713,33 @@ cast send <SOURCE_MINTER_ADDRESS> --rpc-url avalancheFuji --private-key=$PRIVATE
 ```
 
 depending on whether you filled the [`SourceMinter.sol`](./src/cross-chain-nft-minter/SourceMinter.sol) contract with `Native (0)` or `LINK (1)` in step number 3.
+
+## CCT Standard
+
+The [Cross-Chain Token (CCT)](https://docs.chain.link/ccip/concepts/cross-chain-token/overview) standard offers a streamlined and decentralized approach to enabling token transfers across blockchains using Chainlink's Cross-Chain Interoperability Protocol (CCIP).
+
+Using CCT one can add support for cross-chain token transfers via CCIP for its own ERC20 token.
+
+This repository includes examples of ERC-20 tokens with:
+
+1. `getCCIPAdmin()` function in `MockERC20BurnAndMintToken` in [`CCIPv1_5ForkBurnMintPoolFork.t.sol`](./test/fork/CCIPv1_5BurnMintPoolFork.t.sol) file
+2. `owner()` function in `MockERC20TokenOwner` in [`CCIPv1_5LockReleasePoolFork.t.sol`](./test/fork/CCIPv1_5LockReleasePoolFork.t.sol) file
+
+To run CCT examples make sure you have the following environment variables set in your `.env` file:
+
+```shell
+ETHEREUM_SEPOLIA_RPC_URL=""
+BASE_SEPOLIA_RPC_URL=""
+```
+
+1. To run the CCT example with ERC20 token with `getCCIPAdmin()` function and Burn & Mint token pools, run the following command:
+
+```shell
+forge test --mp ./test/fork/CCIPv1_5ForkBurnMintPoolFork.t.sol
+```
+
+2. To run the CCT example with ERC20 token with `owner()` function and Lock & Release token pools, run the following command:
+
+```shell
+forge test --mp ./test/fork/CCIPv1_5LockReleasePoolFork.t.sol
+```
