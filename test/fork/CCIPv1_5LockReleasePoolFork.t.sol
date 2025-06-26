@@ -28,15 +28,15 @@ contract MockERC20TokenOwner is ERC20, OwnerIsCreator {
 contract CCIPv1_5LockReleasePoolFork is Test {
     CCIPLocalSimulatorFork public ccipLocalSimulatorFork;
     MockERC20TokenOwner public mockERC20TokenEthSepolia;
-    MockERC20TokenOwner public mockERC20TokenBaseSepolia;
+    MockERC20TokenOwner public mockERC20TokenAvalancheFuji;
     LockReleaseTokenPool public lockReleaseTokenPoolEthSepolia;
-    LockReleaseTokenPool public lockReleaseTokenPoolBaseSepolia;
+    LockReleaseTokenPool public lockReleaseTokenPoolAvalancheFuji;
 
     Register.NetworkDetails ethSepoliaNetworkDetails;
-    Register.NetworkDetails baseSepoliaNetworkDetails;
+    Register.NetworkDetails avalancheFujiNetworkDetails;
 
     uint256 ethSepoliaFork;
-    uint256 baseSepoliaFork;
+    uint256 avalancheFujiFork;
 
     address alice;
 
@@ -44,9 +44,9 @@ contract CCIPv1_5LockReleasePoolFork is Test {
         alice = makeAddr("alice");
 
         string memory ETHEREUM_SEPOLIA_RPC_URL = vm.envString("ETHEREUM_SEPOLIA_RPC_URL");
-        string memory BASE_SEPOLIA_RPC_URL = vm.envString("BASE_SEPOLIA_RPC_URL");
+        string memory AVALANCHE_FUJI_RPC_URL = vm.envString("AVALANCHE_FUJI_RPC_URL");
         ethSepoliaFork = vm.createSelectFork(ETHEREUM_SEPOLIA_RPC_URL);
-        baseSepoliaFork = vm.createFork(BASE_SEPOLIA_RPC_URL);
+        avalancheFujiFork = vm.createFork(AVALANCHE_FUJI_RPC_URL);
 
         ccipLocalSimulatorFork = new CCIPLocalSimulatorFork();
         vm.makePersistent(address(ccipLocalSimulatorFork));
@@ -56,11 +56,11 @@ contract CCIPv1_5LockReleasePoolFork is Test {
         mockERC20TokenEthSepolia = new MockERC20TokenOwner();
         vm.stopPrank();
 
-        // Step 2) Deploy token on Base Sepolia
-        vm.selectFork(baseSepoliaFork);
+        // Step 2) Deploy token on Avalanche Fuji
+        vm.selectFork(avalancheFujiFork);
 
         vm.startPrank(alice);
-        mockERC20TokenBaseSepolia = new MockERC20TokenOwner();
+        mockERC20TokenAvalancheFuji = new MockERC20TokenOwner();
         vm.stopPrank();
     }
 
@@ -82,18 +82,18 @@ contract CCIPv1_5LockReleasePoolFork is Test {
         );
         vm.stopPrank();
 
-        // Step 4) Deploy LockReleaseTokenPool on Base Sepolia
-        vm.selectFork(baseSepoliaFork);
-        baseSepoliaNetworkDetails = ccipLocalSimulatorFork.getNetworkDetails(block.chainid);
+        // Step 4) Deploy LockReleaseTokenPool on Avalanche Fuji
+        vm.selectFork(avalancheFujiFork);
+        avalancheFujiNetworkDetails = ccipLocalSimulatorFork.getNetworkDetails(block.chainid);
 
         vm.startPrank(alice);
-        lockReleaseTokenPoolBaseSepolia = new LockReleaseTokenPool(
-            IERC20(address(mockERC20TokenBaseSepolia)),
+        lockReleaseTokenPoolAvalancheFuji = new LockReleaseTokenPool(
+            IERC20(address(mockERC20TokenAvalancheFuji)),
             localTokenDecimals,
             allowlist,
-            baseSepoliaNetworkDetails.rmnProxyAddress,
+            avalancheFujiNetworkDetails.rmnProxyAddress,
             true, // acceptLiquidity
-            baseSepoliaNetworkDetails.routerAddress
+            avalancheFujiNetworkDetails.routerAddress
         );
         vm.stopPrank();
 
@@ -109,14 +109,14 @@ contract CCIPv1_5LockReleasePoolFork is Test {
         lockReleaseTokenPoolEthSepolia.provideLiquidity(liquidityAmount);
         vm.stopPrank();
 
-        // Step 6) Set the LiquidityManager address and Add liquidity to the pool on Base Sepolia
-        vm.selectFork(baseSepoliaFork);
+        // Step 6) Set the LiquidityManager address and Add liquidity to the pool on Avalanche Fuji
+        vm.selectFork(avalancheFujiFork);
 
         vm.startPrank(alice);
-        mockERC20TokenBaseSepolia.mint(address(alice), amountToMint);
-        mockERC20TokenBaseSepolia.approve(address(lockReleaseTokenPoolBaseSepolia), liquidityAmount);
-        lockReleaseTokenPoolBaseSepolia.setRebalancer(address(alice));
-        lockReleaseTokenPoolBaseSepolia.provideLiquidity(liquidityAmount);
+        mockERC20TokenAvalancheFuji.mint(address(alice), amountToMint);
+        mockERC20TokenAvalancheFuji.approve(address(lockReleaseTokenPoolAvalancheFuji), liquidityAmount);
+        lockReleaseTokenPoolAvalancheFuji.setRebalancer(address(alice));
+        lockReleaseTokenPoolAvalancheFuji.provideLiquidity(liquidityAmount);
         vm.stopPrank();
 
         // Step 7) Claim Admin role on Ethereum Sepolia
@@ -129,14 +129,14 @@ contract CCIPv1_5LockReleasePoolFork is Test {
         registryModuleOwnerCustomEthSepolia.registerAdminViaOwner(address(mockERC20TokenEthSepolia));
         vm.stopPrank();
 
-        // Step 8) Claim Admin role on Base Sepolia
-        vm.selectFork(baseSepoliaFork);
+        // Step 8) Claim Admin role on Avalanche Fuji
+        vm.selectFork(avalancheFujiFork);
 
-        RegistryModuleOwnerCustom registryModuleOwnerCustomBaseSepolia =
-            RegistryModuleOwnerCustom(baseSepoliaNetworkDetails.registryModuleOwnerCustomAddress);
+        RegistryModuleOwnerCustom registryModuleOwnerCustomAvalancheFuji =
+            RegistryModuleOwnerCustom(avalancheFujiNetworkDetails.registryModuleOwnerCustomAddress);
 
         vm.startPrank(alice);
-        registryModuleOwnerCustomBaseSepolia.registerAdminViaOwner(address(mockERC20TokenBaseSepolia));
+        registryModuleOwnerCustomAvalancheFuji.registerAdminViaOwner(address(mockERC20TokenAvalancheFuji));
         vm.stopPrank();
 
         // Step 9) Accept Admin role on Ethereum Sepolia
@@ -149,14 +149,14 @@ contract CCIPv1_5LockReleasePoolFork is Test {
         tokenAdminRegistryEthSepolia.acceptAdminRole(address(mockERC20TokenEthSepolia));
         vm.stopPrank();
 
-        // Step 10) Accept Admin role on Base Sepolia
-        vm.selectFork(baseSepoliaFork);
+        // Step 10) Accept Admin role on Avalanche Fuji
+        vm.selectFork(avalancheFujiFork);
 
-        TokenAdminRegistry tokenAdminRegistryBaseSepolia =
-            TokenAdminRegistry(baseSepoliaNetworkDetails.tokenAdminRegistryAddress);
+        TokenAdminRegistry tokenAdminRegistryAvalancheFuji =
+            TokenAdminRegistry(avalancheFujiNetworkDetails.tokenAdminRegistryAddress);
 
         vm.startPrank(alice);
-        tokenAdminRegistryBaseSepolia.acceptAdminRole(address(mockERC20TokenBaseSepolia));
+        tokenAdminRegistryAvalancheFuji.acceptAdminRole(address(mockERC20TokenAvalancheFuji));
         vm.stopPrank();
 
         // Step 11) Link token to pool on Ethereum Sepolia
@@ -166,12 +166,12 @@ contract CCIPv1_5LockReleasePoolFork is Test {
         tokenAdminRegistryEthSepolia.setPool(address(mockERC20TokenEthSepolia), address(lockReleaseTokenPoolEthSepolia));
         vm.stopPrank();
 
-        // Step 12) Link token to pool on Base Sepolia
-        vm.selectFork(baseSepoliaFork);
+        // Step 12) Link token to pool on Avalanche Fuji
+        vm.selectFork(avalancheFujiFork);
 
         vm.startPrank(alice);
-        tokenAdminRegistryBaseSepolia.setPool(
-            address(mockERC20TokenBaseSepolia), address(lockReleaseTokenPoolBaseSepolia)
+        tokenAdminRegistryAvalancheFuji.setPool(
+            address(mockERC20TokenAvalancheFuji), address(lockReleaseTokenPoolAvalancheFuji)
         );
         vm.stopPrank();
 
@@ -181,11 +181,11 @@ contract CCIPv1_5LockReleasePoolFork is Test {
         vm.startPrank(alice);
         TokenPool.ChainUpdate[] memory chains = new TokenPool.ChainUpdate[](1);
         bytes[] memory remotePoolAddressesEthSepolia = new bytes[](1);
-        remotePoolAddressesEthSepolia[0] = abi.encode(address(lockReleaseTokenPoolBaseSepolia));
+        remotePoolAddressesEthSepolia[0] = abi.encode(address(lockReleaseTokenPoolAvalancheFuji));
         chains[0] = TokenPool.ChainUpdate({
-            remoteChainSelector: baseSepoliaNetworkDetails.chainSelector,
+            remoteChainSelector: avalancheFujiNetworkDetails.chainSelector,
             remotePoolAddresses: remotePoolAddressesEthSepolia,
-            remoteTokenAddress: abi.encode(address(mockERC20TokenBaseSepolia)),
+            remoteTokenAddress: abi.encode(address(mockERC20TokenAvalancheFuji)),
             outboundRateLimiterConfig: RateLimiter.Config({isEnabled: true, capacity: liquidityAmount, rate: 167}),
             inboundRateLimiterConfig: RateLimiter.Config({isEnabled: true, capacity: liquidityAmount, rate: 167})
         });
@@ -193,24 +193,24 @@ contract CCIPv1_5LockReleasePoolFork is Test {
         lockReleaseTokenPoolEthSepolia.applyChainUpdates(remoteChainSelectorsToRemove, chains);
         vm.stopPrank();
 
-        // Step 14) Configure Token Pool on Base Sepolia
-        vm.selectFork(baseSepoliaFork);
+        // Step 14) Configure Token Pool on Avalanche Fuji
+        vm.selectFork(avalancheFujiFork);
 
         vm.startPrank(alice);
         chains = new TokenPool.ChainUpdate[](1);
-        bytes[] memory remotePoolAddressesBaseSepolia = new bytes[](1);
-        remotePoolAddressesBaseSepolia[0] = abi.encode(address(lockReleaseTokenPoolEthSepolia));
+        bytes[] memory remotePoolAddressesAvalancheFuji = new bytes[](1);
+        remotePoolAddressesAvalancheFuji[0] = abi.encode(address(lockReleaseTokenPoolEthSepolia));
         chains[0] = TokenPool.ChainUpdate({
             remoteChainSelector: ethSepoliaNetworkDetails.chainSelector,
-            remotePoolAddresses: remotePoolAddressesBaseSepolia,
+            remotePoolAddresses: remotePoolAddressesAvalancheFuji,
             remoteTokenAddress: abi.encode(address(mockERC20TokenEthSepolia)),
             outboundRateLimiterConfig: RateLimiter.Config({isEnabled: true, capacity: liquidityAmount, rate: 167}),
             inboundRateLimiterConfig: RateLimiter.Config({isEnabled: true, capacity: liquidityAmount, rate: 167})
         });
-        lockReleaseTokenPoolBaseSepolia.applyChainUpdates(remoteChainSelectorsToRemove, chains);
+        lockReleaseTokenPoolAvalancheFuji.applyChainUpdates(remoteChainSelectorsToRemove, chains);
         vm.stopPrank();
 
-        // Step 15) Transfer tokens from Ethereum Sepolia to Base Sepolia
+        // Step 15) Transfer tokens from Ethereum Sepolia to Avalanche Fuji
         vm.selectFork(ethSepoliaFork);
 
         address linkEthSepoliaAddress = ethSepoliaNetworkDetails.linkAddress;
@@ -230,7 +230,7 @@ contract CCIPv1_5LockReleasePoolFork is Test {
 
         uint256 balanceOfAliceBeforeEthSepolia = mockERC20TokenEthSepolia.balanceOf(alice);
 
-        uint64 destinationChainSelector = baseSepoliaNetworkDetails.chainSelector;
+        uint64 destinationChainSelector = avalancheFujiNetworkDetails.chainSelector;
         IRouterClient routerEthSepolia = IRouterClient(routerEthSepoliaAddress);
         routerEthSepolia.ccipSend(
             destinationChainSelector,
@@ -248,9 +248,9 @@ contract CCIPv1_5LockReleasePoolFork is Test {
 
         assertEq(balanceOfAliceAfterEthSepolia, balanceOfAliceBeforeEthSepolia - amountToSend);
 
-        ccipLocalSimulatorFork.switchChainAndRouteMessage(baseSepoliaFork);
+        ccipLocalSimulatorFork.switchChainAndRouteMessage(avalancheFujiFork);
 
-        uint256 balanceOfAliceAfterBaseSepolia = mockERC20TokenBaseSepolia.balanceOf(alice);
-        assertEq(balanceOfAliceAfterBaseSepolia, balanceOfAliceBeforeEthSepolia + amountToSend);
+        uint256 balanceOfAliceAfterAvalancheFuji = mockERC20TokenAvalancheFuji.balanceOf(alice);
+        assertEq(balanceOfAliceAfterAvalancheFuji, balanceOfAliceBeforeEthSepolia + amountToSend);
     }
 }
