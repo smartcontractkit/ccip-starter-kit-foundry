@@ -8,6 +8,12 @@
   "lib/chainlink-evm": {
     "rev": "86aa5a1d34b20eda8d18fe6eb0e4882948e545ba"
   },
+  "lib/chainlink-local": {
+    "tag": {
+      "name": "v0.2.7-beta.0",
+      "rev": "126337155f40ac9eb53f1f3483d104fd18caf380"
+    }
+  },
   "lib/forge-std": {
     "rev": "9b49a72cfdb36bcf195eb863f868f01a6d6d3186"
   },
