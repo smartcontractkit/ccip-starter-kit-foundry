@@ -5,3 +5,6 @@
 	path = lib/chainlink-ccip
 	url = https://github.com/smartcontractkit/chainlink-ccip
 	branch = develop
+[submodule "lib/openzeppelin-contracts"]
+	path = lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts

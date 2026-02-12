@@ -4,6 +4,12 @@ pragma solidity ^0.8.24;
 import {Client} from "@chainlink/contracts-ccip/contracts/libraries/Client.sol";
 import {ExtraArgsCodec} from "@chainlink/contracts-ccip/contracts/libraries/ExtraArgsCodec.sol";
 
+/**
+ * THIS IS AN EXAMPLE CONTRACT THAT USES HARDCODED VALUES FOR CLARITY.
+ * THIS IS AN EXAMPLE CONTRACT THAT USES UN-AUDITED CODE.
+ * DO NOT USE THIS CODE IN PRODUCTION.
+ */
+
 /// @title EncodeExtraArgsOffchain
 /// @notice This contract is not intended to be deployed on-chain, it is simply a helper contract to encode the extraArgs.
 ///
