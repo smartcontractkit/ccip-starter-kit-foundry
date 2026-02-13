@@ -3,4 +3,12 @@ src = "src"
 out = "out"
 libs = ["lib"]
 
+[lint]
+exclude_lints = [
+    "mixed-case-variable",
+    "pascal-case-struct",
+    "mixed-case-function",
+    "screaming-snake-case-immutable",
+]
+
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
