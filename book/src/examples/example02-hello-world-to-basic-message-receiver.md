@@ -52,7 +52,7 @@ Parameter notes:
 - `<BLOCK_CONFIRMATIONS_GT_ZERO>` must be `> 0` for Faster Than Finality.
 - Executor may enforce a minimum block confirmations value and revert if too low.
 - If requested confirmations exceed chain finality, default finality is used.
-- `<FEE_TOKEN_ADDRESS>`
+- `<FEE_TOKEN_ADDRESS>`: Pass the LINK token address on the source chain here. If you want to pay for CCIP fees in native coin instead, pass `0x0000000000000000000000000000000000000000`
 
 ## Verify Result
 
