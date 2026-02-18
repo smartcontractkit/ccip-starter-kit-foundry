@@ -12,8 +12,9 @@ contract Faucet is Script {
     function run(address ccipBnM) external {
         vm.startBroadcast();
 
-        BurnMintERC20WithDrip(ccipBnM).drip(msg.sender);
-        console2.log("Minting 1 CCIP-BnM token (", ccipBnM, ") to address:", msg.sender);
+        (, address broadcaster,) = vm.readCallers();
+        BurnMintERC20WithDrip(ccipBnM).drip(broadcaster);
+        console2.log("Minting 1 CCIP-BnM token (", ccipBnM, ") to address:", broadcaster);
 
         vm.stopBroadcast();
     }

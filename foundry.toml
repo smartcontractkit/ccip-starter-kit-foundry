@@ -3,6 +3,12 @@ src = "src"
 out = "out"
 libs = ["lib"]
 
+[rpc_endpoints]
+ethereumSepolia = "${ETHEREUM_SEPOLIA_RPC_URL}"
+avalancheFuji = "${AVALANCHE_FUJI_RPC_URL}"
+polygonAmoy = "${POLYGON_AMOY_RPC_URL}"
+baseSepolia = "${BASE_SEPOLIA_RPC_URL}"
+
 [lint]
 exclude_lints = [
     "mixed-case-variable",
