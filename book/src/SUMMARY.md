@@ -13,6 +13,9 @@
 - [Example 07: CCT Lock and Release](./examples/example07-cct02-lockrelease-token-and-pool-setup.md)
 - [Example 08: CCT Burn and Mint With AdvancedPoolHooks](./examples/example08-cct03-burnmint-with-advanced-pool-hooks.md)
 
+# CCIP API
+- [Using the CCIP API](./examples/using-the-api.md)
+
 # Legacy Examples
 - [Legacy 01: ExtraArgsV1 Token Transfer](./examples/legacy01-extraargsv1-data-message.md)
 - [Legacy 02: ExtraArgsV2 Token Transfer (CLI `allowOutOfOrderExecution`)](./examples/legacy02-extraargsv2-data-message.md)
