@@ -1,17 +1,19 @@
-# Example 06: CCT Burn and Mint
+# Example 07: CCT Lock and Release
 
-This example covers the full BurnMint CCT flow on Fuji -> Sepolia:
+This example covers the full LockRelease CCT flow on Fuji -> Sepolia:
 
-1. Deploy BurnMint token + BurnMint pool on both chains.
+1. Deploy token + lock box + LockRelease pool on both chains.
 2. Configure pools to trust each other.
-3. Send a token transfer across the lane.
-4. Verify BurnMint behavior (burn on source, mint on destination).
+3. Fund destination lock box liquidity.
+4. Send a token transfer across the lane.
+5. Verify lock/release behavior.
 
 Scripts used:
 
-- `script/examples/Example06.s.sol:DeployCCTBurnMintTokenAndPool`
-- `script/examples/Example06.s.sol:Example06`
-- `script/examples/Example06.s.sol:SendCCTTokenWithExtraArgsV3DefaultFinality`
+- `script/examples/Example07.s.sol:DeployCCTLockReleaseTokenAndPool`
+- `script/examples/Example07.s.sol:Example07`
+- `script/examples/Example07.s.sol:FundCCTLockBoxLiquidity`
+- `script/examples/Example06.s.sol:SendCCTTokenWithExtraArgsV3DefaultFinality` (reused for the final transfer step)
 
 ## Before You Start
 
@@ -30,7 +32,7 @@ Scripts used:
 
 ## Script Defaults
 
-`DeployCCTBurnMintTokenAndPool` deploys token with:
+`DeployCCTLockReleaseTokenAndPool` deploys token with:
 
 - `name`: `TestToken`
 - `symbol`: `TEST`
@@ -40,12 +42,12 @@ Scripts used:
 
 The deployment also uses:
 
-- BurnMint pool (no advanced pool hook in this example)
+- LockRelease pool
+- `ERC20LockBox` bound to the local token
 - disabled rate limiter config in chain updates
 
 > **Important: Optimizer is required for CCT pool deployment**
 >
-> `BurnMintTokenPool` can exceed EVM max code size if compiled without optimizer.
 > This repo includes a dedicated CCT profile in `foundry.toml`:
 >
 > ```toml
@@ -56,10 +58,10 @@ The deployment also uses:
 >
 > For this chapter, use `FOUNDRY_PROFILE=cct` in all commands.
 
-## Step 1: Deploy Token + Pool on Fuji
+## Step 1: Deploy Token + Lock Box + Pool on Fuji
 
 ```bash
-FOUNDRY_PROFILE=cct forge script script/examples/Example06.s.sol:DeployCCTBurnMintTokenAndPool \
+FOUNDRY_PROFILE=cct forge script script/examples/Example07.s.sol:DeployCCTLockReleaseTokenAndPool \
   --rpc-url avalancheFuji \
   --account myAccount \
   --broadcast \
@@ -73,12 +75,13 @@ FOUNDRY_PROFILE=cct forge script script/examples/Example06.s.sol:DeployCCTBurnMi
 Save from logs:
 
 - `<FUJI_TOKEN_ADDRESS>`
+- `<FUJI_LOCKBOX_ADDRESS>`
 - `<FUJI_POOL_ADDRESS>`
 
-## Step 2: Deploy Token + Pool on Sepolia
+## Step 2: Deploy Token + Lock Box + Pool on Sepolia
 
 ```bash
-FOUNDRY_PROFILE=cct forge script script/examples/Example06.s.sol:DeployCCTBurnMintTokenAndPool \
+FOUNDRY_PROFILE=cct forge script script/examples/Example07.s.sol:DeployCCTLockReleaseTokenAndPool \
   --rpc-url ethereumSepolia \
   --account myAccount \
   --broadcast \
@@ -92,12 +95,13 @@ FOUNDRY_PROFILE=cct forge script script/examples/Example06.s.sol:DeployCCTBurnMi
 Save from logs:
 
 - `<SEPOLIA_TOKEN_ADDRESS>`
+- `<SEPOLIA_LOCKBOX_ADDRESS>`
 - `<SEPOLIA_POOL_ADDRESS>`
 
 ## Step 3: Configure Fuji Pool With Sepolia Remote
 
 ```bash
-FOUNDRY_PROFILE=cct forge script script/examples/Example06.s.sol:Example06 \
+FOUNDRY_PROFILE=cct forge script script/examples/Example07.s.sol:Example07 \
   --rpc-url avalancheFuji \
   --account myAccount \
   --broadcast \
@@ -111,7 +115,7 @@ FOUNDRY_PROFILE=cct forge script script/examples/Example06.s.sol:Example06 \
 ## Step 4: Configure Sepolia Pool With Fuji Remote
 
 ```bash
-FOUNDRY_PROFILE=cct forge script script/examples/Example06.s.sol:Example06 \
+FOUNDRY_PROFILE=cct forge script script/examples/Example07.s.sol:Example07 \
   --rpc-url ethereumSepolia \
   --account myAccount \
   --broadcast \
@@ -122,7 +126,24 @@ FOUNDRY_PROFILE=cct forge script script/examples/Example06.s.sol:Example06 \
   <FUJI_POOL_ADDRESS>
 ```
 
-## Step 5: Send BurnMint Transfer (ExtraArgsV3 + Default Finality)
+## Step 5: Fund Destination Lock Box Liquidity
+
+For Fuji -> Sepolia transfers, fund the Sepolia lock box first:
+
+```bash
+FOUNDRY_PROFILE=cct forge script script/examples/Example07.s.sol:FundCCTLockBoxLiquidity \
+  --rpc-url ethereumSepolia \
+  --account myAccount \
+  --broadcast \
+  --sig "run(address,address,uint256)" \
+  <SEPOLIA_TOKEN_ADDRESS> \
+  <SEPOLIA_LOCKBOX_ADDRESS> \
+  <LIQUIDITY_AMOUNT>
+```
+
+If you also want Sepolia -> Fuji transfers, fund Fuji lock box too with the same script.
+
+## Step 6: Send LockRelease Transfer (Reuse Example06 CCT Sender)
 
 ```bash
 FOUNDRY_PROFILE=cct forge script script/examples/Example06.s.sol:SendCCTTokenWithExtraArgsV3DefaultFinality \
@@ -135,20 +156,20 @@ FOUNDRY_PROFILE=cct forge script script/examples/Example06.s.sol:SendCCTTokenWit
   <RECEIVER_ON_SEPOLIA> \
   <FUJI_TOKEN_ADDRESS> \
   <AMOUNT> \
-  <GAS_LIMIT> \
+  0 \
   <FEE_TOKEN_ADDRESS>
 ```
 
 Parameter notes:
 
 - `<AMOUNT>` uses token decimals (`1e18` is 1 token for 18-decimal token).
-- For token-only transfer to EOA receiver, use `<GAS_LIMIT>` = `0`.
+- `gasLimit` is set to `0` in this command because this is token-only transfer to an EOA receiver.
 - This sender uses `ExtraArgsV3` with `blockConfirmations = 0` (default finality).
 - `<FEE_TOKEN_ADDRESS>`:
   - native fee: `0x0000000000000000000000000000000000000000`
   - LINK fee: LINK token address on Fuji
 
-## Step 6: Verify BurnMint Behavior
+## Step 7: Verify LockRelease Behavior
 
 Verify token->pool registration:
 
@@ -166,13 +187,12 @@ cast call <SEPOLIA_POOL_ADDRESS> "getRemoteToken(uint64)(bytes)" <FUJI_CHAIN_SEL
 cast call <SEPOLIA_POOL_ADDRESS> "getRemotePools(uint64)(bytes[])" <FUJI_CHAIN_SELECTOR> --rpc-url ethereumSepolia
 ```
 
-Verify balances and supplies after transfer finalizes:
+Verify lock box balances and receiver balance after transfer finalizes:
 
 ```bash
-cast call <FUJI_TOKEN_ADDRESS> "balanceOf(address)(uint256)" <SOURCE_EOA_ADDRESS> --rpc-url avalancheFuji
+cast call <FUJI_TOKEN_ADDRESS> "balanceOf(address)(uint256)" <FUJI_LOCKBOX_ADDRESS> --rpc-url avalancheFuji
+cast call <SEPOLIA_TOKEN_ADDRESS> "balanceOf(address)(uint256)" <SEPOLIA_LOCKBOX_ADDRESS> --rpc-url ethereumSepolia
 cast call <SEPOLIA_TOKEN_ADDRESS> "balanceOf(address)(uint256)" <RECEIVER_ON_SEPOLIA> --rpc-url ethereumSepolia
-cast call <FUJI_TOKEN_ADDRESS> "totalSupply()(uint256)" --rpc-url avalancheFuji
-cast call <SEPOLIA_TOKEN_ADDRESS> "totalSupply()(uint256)" --rpc-url ethereumSepolia
 ```
 
 Monitor message status with the message ID on:

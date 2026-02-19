@@ -3,21 +3,19 @@ pragma solidity 0.8.24;
 
 import {Script, console2} from "forge-std/Script.sol";
 
-import {EncodeExtraArgsOffchain} from "../EncodeExtraArgsOffchain.s.sol";
-
 import {FactoryBurnMintERC20} from
     "@chainlink/contracts-ccip/contracts/tokenAdminRegistry/TokenPoolFactory/FactoryBurnMintERC20.sol";
-import {BurnMintTokenPool} from "@chainlink/contracts-ccip/contracts/pools/BurnMintTokenPool.sol";
+import {LockReleaseTokenPool} from "@chainlink/contracts-ccip/contracts/pools/LockReleaseTokenPool.sol";
+import {ERC20LockBox} from "@chainlink/contracts-ccip/contracts/pools/ERC20LockBox.sol";
 import {TokenPool} from "@chainlink/contracts-ccip/contracts/pools/TokenPool.sol";
 import {ITokenAdminRegistry} from "@chainlink/contracts-ccip/contracts/interfaces/ITokenAdminRegistry.sol";
-import {IBurnMintERC20} from "@chainlink/contracts-ccip/contracts/interfaces/IBurnMintERC20.sol";
-import {IRouterClient} from "@chainlink/contracts-ccip/contracts/interfaces/IRouterClient.sol";
-import {Client} from "@chainlink/contracts-ccip/contracts/libraries/Client.sol";
 import {RegistryModuleOwnerCustom} from "@chainlink/contracts-ccip/contracts/tokenAdminRegistry/RegistryModuleOwnerCustom.sol";
 import {RateLimiter} from "@chainlink/contracts-ccip/contracts/libraries/RateLimiter.sol";
+
+import {AuthorizedCallers} from "@chainlink/contracts/src/v0.8/shared/access/AuthorizedCallers.sol";
 import {IERC20} from "@openzeppelin/contracts@5.3.0/token/ERC20/IERC20.sol";
 
-contract DeployCCTBurnMintTokenAndPool is Script {
+contract DeployCCTLockReleaseTokenAndPool is Script {
     string internal constant TOKEN_NAME = "TestToken";
     string internal constant TOKEN_SYMBOL = "TEST";
     uint8 internal constant TOKEN_DECIMALS = 18;
@@ -29,13 +27,13 @@ contract DeployCCTBurnMintTokenAndPool is Script {
         address registryModuleOwnerCustom,
         address armProxy,
         address router
-    ) external returns (address token, address pool) {
+    ) external returns (address token, address lockBox, address pool) {
         require(tokenAdminRegistry != address(0), "tokenAdminRegistry cannot be zero");
         require(registryModuleOwnerCustom != address(0), "registryModuleOwnerCustom cannot be zero");
         require(armProxy != address(0), "armProxy cannot be zero");
         require(router != address(0), "router cannot be zero");
 
-        console2.log("[INFO] Example06 (CCT 01): Deploy BurnMint token + BurnMint pool");
+        console2.log("[INFO] Example07 (CCT 02): Deploy LockRelease token + lock box + pool");
         console2.log("[INFO] Source chain ID:", block.chainid);
         console2.log("[INFO] TokenAdminRegistry:", tokenAdminRegistry);
         console2.log("[INFO] RegistryModuleOwnerCustom:", registryModuleOwnerCustom);
@@ -53,16 +51,21 @@ contract DeployCCTBurnMintTokenAndPool is Script {
         FactoryBurnMintERC20 tokenContract = new FactoryBurnMintERC20(
             TOKEN_NAME, TOKEN_SYMBOL, TOKEN_DECIMALS, TOKEN_MAX_SUPPLY, TOKEN_PREMINT, broadcaster
         );
-        BurnMintTokenPool poolContract = new BurnMintTokenPool(
-            IBurnMintERC20(address(tokenContract)),
+        ERC20LockBox lockBoxContract = new ERC20LockBox(address(tokenContract));
+        LockReleaseTokenPool poolContract = new LockReleaseTokenPool(
+            IERC20(address(tokenContract)),
             TOKEN_DECIMALS,
-            address(0), // No advanced pool hook in CCT 01
+            address(0), // No advanced pool hook in CCT 02
             armProxy,
-            router
+            router,
+            address(lockBoxContract)
         );
 
-        // Token pool needs mint and burn roles on the local token.
-        tokenContract.grantMintAndBurnRoles(address(poolContract));
+        address[] memory addedCallers = new address[](1);
+        addedCallers[0] = address(poolContract);
+        lockBoxContract.applyAuthorizedCallerUpdates(
+            AuthorizedCallers.AuthorizedCallerArgs({addedCallers: addedCallers, removedCallers: new address[](0)})
+        );
 
         // Register token admin and attach pool in TokenAdminRegistry.
         RegistryModuleOwnerCustom(registryModuleOwnerCustom).registerAdminViaOwner(address(tokenContract));
@@ -72,16 +75,40 @@ contract DeployCCTBurnMintTokenAndPool is Script {
         vm.stopBroadcast();
 
         token = address(tokenContract);
+        lockBox = address(lockBoxContract);
         pool = address(poolContract);
 
-        console2.log("[RESULT] Local CCT BurnMint token deployed:", token);
-        console2.log("[RESULT] Local CCT BurnMint pool deployed:", pool);
+        console2.log("[RESULT] Local CCT LockRelease token deployed:", token);
+        console2.log("[RESULT] Local CCT lock box deployed:", lockBox);
+        console2.log("[RESULT] Local CCT LockRelease pool deployed:", pool);
         console2.log("[WARN] Remote chain configuration is not done yet.");
-        console2.log("[WARN] Run Example06.run on both chains to link pools and tokens.");
+        console2.log("[WARN] Run Example07.run on both chains to link pools and tokens.");
     }
 }
 
-contract Example06 is Script {
+contract FundCCTLockBoxLiquidity is Script {
+    function run(address token, address lockBox, uint256 amount) external {
+        require(token != address(0), "token cannot be zero");
+        require(lockBox != address(0), "lockBox cannot be zero");
+        require(amount > 0, "amount must be > 0");
+
+        console2.log("[INFO] Example07 (CCT 02): Fund lock box liquidity");
+        console2.log("[INFO] Source chain ID:", block.chainid);
+        console2.log("[INFO] Token:", token);
+        console2.log("[INFO] Lock box:", lockBox);
+        console2.log("[INFO] Amount:", amount);
+
+        vm.startBroadcast();
+        bool success = IERC20(token).transfer(lockBox, amount);
+        require(success, "lockBox funding failed");
+        vm.stopBroadcast();
+
+        uint256 lockBoxBalance = IERC20(token).balanceOf(lockBox);
+        console2.log("[RESULT] Lock box funded. Current lock box balance:", lockBoxBalance);
+    }
+}
+
+contract Example07 is Script {
     function run(
         address localPool,
         uint64 remoteChainSelector,
@@ -93,7 +120,7 @@ contract Example06 is Script {
         require(remoteToken != address(0), "remoteToken cannot be zero");
         require(remotePool != address(0), "remotePool cannot be zero");
 
-        console2.log("[INFO] Example06 (CCT 01): Configure BurnMint pool remote lane");
+        console2.log("[INFO] Example07 (CCT 02): Configure LockRelease pool remote lane");
         console2.log("[INFO] Source chain ID:", block.chainid);
         console2.log("[INFO] Local pool:", localPool);
         console2.log("[INFO] Remote chain selector:", remoteChainSelector);
@@ -134,70 +161,6 @@ contract Example06 is Script {
 
         console2.log("[RESULT] Remote token configured on pool:", configuredRemoteToken);
         console2.log("[RESULT] Remote pool configured on pool:", configuredRemotePool);
-        console2.log("[RESULT] BurnMint pool lane setup completed for remote chain selector:", remoteChainSelector);
-    }
-}
-
-contract SendCCTTokenWithExtraArgsV3DefaultFinality is Script {
-    function run(
-        address sourceRouter,
-        uint64 destinationChainSelector,
-        address receiver,
-        address tokenToSend,
-        uint256 amount,
-        uint32 gasLimit,
-        address feeTokenAddress
-    ) external returns (bytes32 messageId) {
-        require(sourceRouter != address(0), "sourceRouter cannot be zero");
-        require(receiver != address(0), "receiver cannot be zero");
-        require(tokenToSend != address(0), "token cannot be zero");
-        require(amount > 0, "amount must be > 0");
-
-        uint16 blockConfirmations = 0; // Default finality
-
-        console2.log("[INFO] CCT sender: ExtraArgsV3 token transfer (default finality)");
-        console2.log("[INFO] Source chain ID:", block.chainid);
-        console2.log("[INFO] Source router:", sourceRouter);
-        console2.log("[INFO] Destination selector:", destinationChainSelector);
-        console2.log("[INFO] Receiver:", receiver);
-        console2.log("[INFO] Token:", tokenToSend);
-        console2.log("[INFO] Amount:", amount);
-        console2.log("[INFO] Gas limit:", gasLimit);
-        console2.log("[INFO] Block confirmations:", blockConfirmations);
-        console2.log("[INFO] Fee token:", feeTokenAddress);
-        console2.log("[WARN] blockConfirmations = 0 means default finality.");
-        console2.log("[WARN] Use gasLimit 0 if receiver is an EOA.");
-
-        EncodeExtraArgsOffchain extraArgsEncoder = new EncodeExtraArgsOffchain();
-        bytes memory extraArgs = extraArgsEncoder.encodeV3Basic(gasLimit, blockConfirmations);
-
-        Client.EVMTokenAmount[] memory tokenAmounts = new Client.EVMTokenAmount[](1);
-        tokenAmounts[0] = Client.EVMTokenAmount({token: tokenToSend, amount: amount});
-
-        Client.EVM2AnyMessage memory ccipMessage = Client.EVM2AnyMessage({
-            receiver: abi.encode(receiver),
-            data: "",
-            tokenAmounts: tokenAmounts,
-            extraArgs: extraArgs,
-            feeToken: feeTokenAddress
-        });
-
-        uint256 fee = IRouterClient(sourceRouter).getFee(destinationChainSelector, ccipMessage);
-        console2.log("[INFO] Quoted fee:", fee);
-
-        vm.startBroadcast();
-        IERC20(tokenToSend).approve(sourceRouter, amount);
-        if (feeTokenAddress == address(0)) {
-            console2.log("[INFO] Sending message, paying CCIP fee in native token");
-            messageId = IRouterClient(sourceRouter).ccipSend{value: fee}(destinationChainSelector, ccipMessage);
-        } else {
-            console2.log("[INFO] Sending message, paying CCIP fee in LINK");
-            IERC20(feeTokenAddress).approve(sourceRouter, fee);
-            messageId = IRouterClient(sourceRouter).ccipSend(destinationChainSelector, ccipMessage);
-        }
-        vm.stopBroadcast();
-
-        console2.log("[RESULT] Monitor message status at https://ccip.chain.link using message ID:");
-        console2.logBytes32(messageId);
+        console2.log("[RESULT] LockRelease pool lane setup completed for remote chain selector:", remoteChainSelector);
     }
 }
