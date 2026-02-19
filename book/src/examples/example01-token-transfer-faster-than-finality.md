@@ -42,7 +42,7 @@ forge script script/Faucet.s.sol:Faucet \
 
 Before picking a block depth for Faster Than Finality, you can verify the executor minimum:
 
-```solidity
+```ts
 import {Executor} from "@chainlink/contracts-ccip/contracts/executor/Executor.sol";
 Executor executor = Executor(EXECUTOR_ADDRESS);
 console2.log("Min block confirmations", executor.getMinBlockConfirmations());

@@ -12,6 +12,53 @@ Scripts used:
 1. Deploy `BasicMessageReceiver` on the destination chain.
 2. Send a Hello World CCIP data message from source chain to the deployed receiver.
 
+## Receiver Contract Context
+
+### Pre-v2.0
+
+To receive CCIP messages (data or data+tokens), contracts implemented `IAny2EVMMessageReceiver`:
+
+```ts
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+import {Client} from "../libraries/Client.sol";
+
+interface IAny2EVMMessageReceiver {
+  function ccipReceive(
+    Client.Any2EVMMessage calldata message
+  ) external;
+}
+```
+
+As a convenience, applications generally inherited `CCIPReceiver.sol` and implemented `_ccipReceive`.
+
+### CCIP v2.0
+
+In v2.0, receivers expose CCV requirements via `getCCVs`:
+
+```ts
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+import {Client} from "../libraries/Client.sol";
+
+interface IAny2EVMMessageReceiverV2 {
+  function ccipReceive(
+    Client.Any2EVMMessage calldata message
+  ) external;
+
+  function getCCVs(
+    uint64 sourceChainSelector
+  ) external view returns (address[] memory requiredCCVs, address[] memory optionalCCVs, uint8 optionalThreshold);
+}
+```
+
+In this starter kit:
+
+- `src/BasicMessageReceiver.sol` is the baseline receiver flow used in this example.
+- `src/BasicMessageReceiverWithCCVs.sol` extends it with configurable `getCCVs` behavior for Modular Trust Layer examples.
+
 ## Step 1: Deploy `BasicMessageReceiver` on Destination Chain
 
 Run:
