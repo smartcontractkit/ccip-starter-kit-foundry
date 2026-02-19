@@ -18,6 +18,21 @@ Scripts used:
 3. Mint 1 `CCIP-BnM` on Fuji.
 4. Quote fee, fund sender contract with that exact fee amount, then send data+token.
 
+## Before You Start
+
+> **Important: Keystore first**
+>
+> Use a local keystore account for script execution:
+>
+> ```bash
+> cast wallet import myAccount --interactive
+> Enter private key:
+> Enter password:
+> `myAccount` keystore was saved successfully. Address: <YOUR_EOA_ADDRESS_SHOULD_APPEAR_HERE>
+> ```
+>
+> This chapter assumes `--account myAccount`.
+
 > **If you do not have a receiver deployed yet**
 >
 > Run:

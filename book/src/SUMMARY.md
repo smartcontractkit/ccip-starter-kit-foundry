@@ -11,3 +11,5 @@
 - [Example 05: ExtraArgsV3 No-Execution-Tag (Manual Execution Path)](./examples/example05-extraargsv3-no-execution-tag-manual-execution.md)
 
 # Legacy Examples
+- [Legacy 01: ExtraArgsV1 Token Transfer](./examples/legacy01-extraargsv1-data-message.md)
+- [Legacy 02: ExtraArgsV2 Token Transfer (CLI `allowOutOfOrderExecution`)](./examples/legacy02-extraargsv2-data-message.md)

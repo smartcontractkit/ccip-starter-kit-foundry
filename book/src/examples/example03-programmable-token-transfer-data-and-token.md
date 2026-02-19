@@ -13,6 +13,21 @@ Script path: `script/examples/Example03.s.sol`
 2. Mint 1 `CCIP-BnM` on Fuji using `script/Faucet.s.sol`.
 3. Send one CCIP message containing both data and tokens.
 
+## Before You Start
+
+> **Important: Keystore first**
+>
+> Use a local keystore account for script execution:
+>
+> ```bash
+> cast wallet import myAccount --interactive
+> Enter private key:
+> Enter password:
+> `myAccount` keystore was saved successfully. Address: <YOUR_EOA_ADDRESS_SHOULD_APPEAR_HERE>
+> ```
+>
+> This chapter assumes `--account myAccount`.
+
 > **If you do not have a receiver deployed yet**
 >
 > Run:

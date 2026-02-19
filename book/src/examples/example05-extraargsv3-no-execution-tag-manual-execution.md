@@ -10,6 +10,20 @@ Script path: `script/examples/Example05.s.sol`
 2. Send a CCIP data message with `ExtraArgsV3` no-execution-tag.
 3. Observe pending execution in CCIP Explorer and execute manually.
 
+## Before You Start
+
+> **Important: Keystore first**
+>
+> Use a local keystore account for script execution:
+>
+> ```bash
+> cast wallet import myAccount --interactive
+> Enter private key:
+> Enter password:
+> `myAccount` keystore was saved successfully. Address: <YOUR_EOA_ADDRESS_SHOULD_APPEAR_HERE>
+> ```
+>
+> This chapter assumes `--account myAccount`.
 
 > **If you do not have a receiver deployed yet**
 >

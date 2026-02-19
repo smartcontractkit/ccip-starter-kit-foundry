@@ -12,6 +12,21 @@ Scripts used:
 1. Deploy `BasicMessageReceiver` on the destination chain.
 2. Send a Hello World CCIP data message from source chain to the deployed receiver.
 
+## Before You Start
+
+> **Important: Keystore first**
+>
+> Use a local keystore account for script execution:
+>
+> ```bash
+> cast wallet import myAccount --interactive
+> Enter private key:
+> Enter password:
+> `myAccount` keystore was saved successfully. Address: <YOUR_EOA_ADDRESS_SHOULD_APPEAR_HERE>
+> ```
+>
+> This chapter assumes `--account myAccount`.
+
 ## Receiver Contract Context
 
 ### Pre-v2.0
