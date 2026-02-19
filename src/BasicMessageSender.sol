@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.24;
+pragma solidity 0.8.26;
 
 import {Withdraw, IERC20, SafeERC20} from "./utils/Withdraw.sol";
 

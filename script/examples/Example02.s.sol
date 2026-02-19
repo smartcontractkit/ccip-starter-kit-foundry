@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.24;
+pragma solidity 0.8.26;
 
 import {Script, console2} from "forge-std/Script.sol";
 
@@ -17,10 +17,7 @@ contract DeployBasicMessageReceiver is Script {
         BasicMessageReceiver basicMessageReceiver = new BasicMessageReceiver(ccipRouter);
         receiverAddress = address(basicMessageReceiver);
         console2.log(
-            "[RESULT] BasicMessageReceiver deployed to chain ID:",
-            block.chainid,
-            "with address:",
-            receiverAddress
+            "[RESULT] BasicMessageReceiver deployed to chain ID:", block.chainid, "with address:", receiverAddress
         );
 
         vm.stopBroadcast();
@@ -42,8 +39,7 @@ contract Example02 is Script {
         require(bytes(messageText).length > 0, "messageText cannot be empty");
         require(gasLimit > 0, "gasLimit must be > 0 for contract callback");
         require(
-            blockConfirmations > 0,
-            "blockConfirmations == 0 means default finality; use > 0 for Faster Than Finality"
+            blockConfirmations > 0, "blockConfirmations == 0 means default finality; use > 0 for Faster Than Finality"
         );
 
         console2.log("[INFO] Example02: Hello World data message + Faster Than Finality (EOA sender)");

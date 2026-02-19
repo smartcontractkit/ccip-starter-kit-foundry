@@ -1,10 +1,6 @@
 [submodule "lib/forge-std"]
 	path = lib/forge-std
 	url = https://github.com/foundry-rs/forge-std
-[submodule "lib/chainlink-ccip"]
-	path = lib/chainlink-ccip
-	url = https://github.com/smartcontractkit/chainlink-ccip
-	branch = develop
 [submodule "lib/chainlink-evm"]
 	path = lib/chainlink-evm
 	url = https://github.com/smartcontractkit/chainlink-evm
@@ -14,3 +10,10 @@
 [submodule "lib/openzeppelin-contracts-4.8.3"]
 	path = lib/openzeppelin-contracts-4.8.3
 	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "lib/chainlink-ccip"]
+	path = lib/chainlink-ccip
+	url = https://github.com/smartcontractkit/chainlink-ccip
+	branch = develop
+[submodule "lib/chainlink-ace"]
+	path = lib/chainlink-ace
+	url = https://github.com/smartcontractkit/chainlink-ace

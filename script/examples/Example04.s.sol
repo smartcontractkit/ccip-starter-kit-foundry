@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.24;
+pragma solidity 0.8.26;
 
 import {Script, console2} from "forge-std/Script.sol";
 
@@ -16,12 +16,7 @@ contract DeployBasicMessageSender is Script {
 
         BasicMessageSender basicMessageSender = new BasicMessageSender(ccipRouter, linkToken);
         senderAddress = address(basicMessageSender);
-        console2.log(
-            "[RESULT] BasicMessageSender deployed to chain ID:",
-            block.chainid,
-            "with address:",
-            senderAddress
-        );
+        console2.log("[RESULT] BasicMessageSender deployed to chain ID:", block.chainid, "with address:", senderAddress);
 
         vm.stopBroadcast();
     }
@@ -69,7 +64,9 @@ contract Example04 is Script {
 
         uint16 blockConfirmations = 0;
 
-        console2.log("[INFO] Example04: Programmable token transfer (data + token) + default finality (sender contract)");
+        console2.log(
+            "[INFO] Example04: Programmable token transfer (data + token) + default finality (sender contract)"
+        );
         console2.log("[INFO] Source chain ID:", block.chainid);
         console2.log("[INFO] Sender contract:", cfg.basicMessageSender);
         console2.log("[INFO] Source router:", cfg.sourceRouter);

@@ -11,6 +11,7 @@
 - [Example 05: ExtraArgsV3 No-Execution-Tag (Manual Execution Path)](./examples/example05-extraargsv3-no-execution-tag-manual-execution.md)
 - [Example 06: CCT Burn and Mint](./examples/example06-cct01-burnmint-token-and-pool-setup.md)
 - [Example 07: CCT Lock and Release](./examples/example07-cct02-lockrelease-token-and-pool-setup.md)
+- [Example 08: CCT Burn and Mint With AdvancedPoolHooks](./examples/example08-cct03-burnmint-with-advanced-pool-hooks.md)
 
 # Legacy Examples
 - [Legacy 01: ExtraArgsV1 Token Transfer](./examples/legacy01-extraargsv1-data-message.md)

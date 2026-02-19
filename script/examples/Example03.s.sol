@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.24;
+pragma solidity 0.8.26;
 
 import {Script, console2} from "forge-std/Script.sol";
 
@@ -73,8 +73,7 @@ contract Example03 is Script {
         require(amount > 0, "amount must be > 0");
         require(gasLimit > 0, "gasLimit must be > 0 for contract callback");
         require(
-            blockConfirmations > 0,
-            "blockConfirmations == 0 means default finality; use > 0 for Faster Than Finality"
+            blockConfirmations > 0, "blockConfirmations == 0 means default finality; use > 0 for Faster Than Finality"
         );
 
         console2.log("[INFO] Example03: Programmable token transfer (data + token) + Faster Than Finality (EOA sender)");
@@ -96,7 +95,8 @@ contract Example03 is Script {
 
         Client.EVM2AnyMessage memory ccipMessage =
             _buildMessage(receiver, messageText, tokenToSend, amount, extraArgs, feeTokenAddress);
-        messageId = _sendMessage(sourceRouter, destinationChainSelector, tokenToSend, amount, feeTokenAddress, ccipMessage);
+        messageId =
+            _sendMessage(sourceRouter, destinationChainSelector, tokenToSend, amount, feeTokenAddress, ccipMessage);
 
         console2.log("[RESULT] Monitor message status at https://ccip.chain.link using message ID:");
         console2.logBytes32(messageId);

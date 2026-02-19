@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.24;
+pragma solidity 0.8.26;
 
 import {Script, console2} from "forge-std/Script.sol";
 
@@ -13,7 +13,8 @@ import {ITokenAdminRegistry} from "@chainlink/contracts-ccip/contracts/interface
 import {IBurnMintERC20} from "@chainlink/contracts-ccip/contracts/interfaces/IBurnMintERC20.sol";
 import {IRouterClient} from "@chainlink/contracts-ccip/contracts/interfaces/IRouterClient.sol";
 import {Client} from "@chainlink/contracts-ccip/contracts/libraries/Client.sol";
-import {RegistryModuleOwnerCustom} from "@chainlink/contracts-ccip/contracts/tokenAdminRegistry/RegistryModuleOwnerCustom.sol";
+import {RegistryModuleOwnerCustom} from
+    "@chainlink/contracts-ccip/contracts/tokenAdminRegistry/RegistryModuleOwnerCustom.sol";
 import {RateLimiter} from "@chainlink/contracts-ccip/contracts/libraries/RateLimiter.sol";
 import {IERC20} from "@openzeppelin/contracts@5.3.0/token/ERC20/IERC20.sol";
 
@@ -24,12 +25,10 @@ contract DeployCCTBurnMintTokenAndPool is Script {
     uint256 internal constant TOKEN_PREMINT = 1_000_000 ether;
     uint256 internal constant TOKEN_MAX_SUPPLY = 100_000_000 ether;
 
-    function run(
-        address tokenAdminRegistry,
-        address registryModuleOwnerCustom,
-        address armProxy,
-        address router
-    ) external returns (address token, address pool) {
+    function run(address tokenAdminRegistry, address registryModuleOwnerCustom, address armProxy, address router)
+        external
+        returns (address token, address pool)
+    {
         require(tokenAdminRegistry != address(0), "tokenAdminRegistry cannot be zero");
         require(registryModuleOwnerCustom != address(0), "registryModuleOwnerCustom cannot be zero");
         require(armProxy != address(0), "armProxy cannot be zero");
@@ -82,12 +81,7 @@ contract DeployCCTBurnMintTokenAndPool is Script {
 }
 
 contract Example06 is Script {
-    function run(
-        address localPool,
-        uint64 remoteChainSelector,
-        address remoteToken,
-        address remotePool
-    ) external {
+    function run(address localPool, uint64 remoteChainSelector, address remoteToken, address remotePool) external {
         require(localPool != address(0), "localPool cannot be zero");
         require(remoteChainSelector != 0, "remoteChainSelector cannot be zero");
         require(remoteToken != address(0), "remoteToken cannot be zero");
@@ -103,8 +97,7 @@ contract Example06 is Script {
         bytes[] memory remotePoolAddresses = new bytes[](1);
         remotePoolAddresses[0] = abi.encode(remotePool);
 
-        RateLimiter.Config memory disabledRateLimiter =
-            RateLimiter.Config({isEnabled: false, capacity: 0, rate: 0});
+        RateLimiter.Config memory disabledRateLimiter = RateLimiter.Config({isEnabled: false, capacity: 0, rate: 0});
         TokenPool.ChainUpdate[] memory chainUpdates = new TokenPool.ChainUpdate[](1);
         chainUpdates[0] = TokenPool.ChainUpdate({
             remoteChainSelector: remoteChainSelector,

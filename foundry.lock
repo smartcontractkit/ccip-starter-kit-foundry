@@ -1,14 +1,8 @@
 {
-  "lib/openzeppelin-contracts-4.8.3": {
+  "lib/chainlink-ace": {
     "tag": {
-      "name": "v4.8.3",
-      "rev": "0a25c1940ca220686588c4af3ec526f725fe2582"
-    }
-  },
-  "lib/chainlink-ccip": {
-    "branch": {
-      "name": "develop",
-      "rev": "77ceb46c41bc1f2df237037627bf70f120cf3974"
+      "name": "v1.0.0",
+      "rev": "288c393af4da077b49e5138ac47965aed9ca4b3a"
     }
   },
   "lib/openzeppelin-contracts-5.3.0": {
@@ -23,16 +17,22 @@
       "rev": "86aa5a1d34b20eda8d18fe6eb0e4882948e545ba"
     }
   },
-  "lib/openzeppelin-contracts": {
-    "tag": {
-      "name": "v4.8.3",
-      "rev": "0a25c1940ca220686588c4af3ec526f725fe2582"
-    }
-  },
   "lib/forge-std": {
     "tag": {
       "name": "v1.14.0",
       "rev": "1801b0541f4fda118a10798fd3486bb7051c5dd6"
+    }
+  },
+  "lib/chainlink-ccip": {
+    "branch": {
+      "name": "develop",
+      "rev": "acf2bee52aea93fc8b43e1d795326eedcb74e0ca"
+    }
+  },
+  "lib/openzeppelin-contracts-4.8.3": {
+    "tag": {
+      "name": "v4.8.3",
+      "rev": "0a25c1940ca220686588c4af3ec526f725fe2582"
     }
   }
 }

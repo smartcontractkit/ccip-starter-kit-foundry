@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.24;
+pragma solidity 0.8.26;
 
 import {Script, console2} from "forge-std/Script.sol";
 
@@ -39,14 +39,7 @@ contract Example05 is Script {
         EncodeExtraArgsOffchain extraArgsEncoder = new EncodeExtraArgsOffchain();
         address noExecutionAddress = extraArgsEncoder.getNoExecutionAddress();
         bytes memory extraArgs = extraArgsEncoder.encodeV3(
-            gasLimit,
-            blockConfirmations,
-            new address[](0),
-            new bytes[](0),
-            noExecutionAddress,
-            "",
-            "",
-            ""
+            gasLimit, blockConfirmations, new address[](0), new bytes[](0), noExecutionAddress, "", "", ""
         );
 
         Client.EVM2AnyMessage memory ccipMessage = Client.EVM2AnyMessage({
