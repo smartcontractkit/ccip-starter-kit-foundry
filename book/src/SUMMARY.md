@@ -14,7 +14,10 @@
 - [Example 08: CCT Burn and Mint With AdvancedPoolHooks](./examples/example08-cct03-burnmint-with-advanced-pool-hooks.md)
 
 # CCIP API
-- [Using the CCIP API](./examples/using-the-api.md)
+- [Using the CCIP API](./tools/using-the-api.md)
+
+# CCIP SDK
+- [CCIP SDK: `ccip-send` (Data, Token, Token+Data)](./tools/ccip-sdk-ccip-send.md)
 
 # Legacy Examples
 - [Legacy 01: ExtraArgsV1 Token Transfer](./examples/legacy01-extraargsv1-data-message.md)

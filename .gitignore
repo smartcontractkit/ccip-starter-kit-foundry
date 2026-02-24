@@ -9,6 +9,10 @@ out/
 
 # Docs
 book/book
+*.tsv
 
 # Dotenv file
 .env
+
+# Node
+node_modules/

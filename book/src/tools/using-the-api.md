@@ -4,9 +4,9 @@
 > 
 > [https://api.ccip.chain.link/](https://api.ccip.chain.link/)
 >
-> Interactive docs (Swagger UI):
+> Documentation at:
 >
-> [https://api.ccip.chain.link/docs/](https://api.ccip.chain.link/docs/)
+> [https://docs.chain.link/ccip/tools/api/](https://docs.chain.link/ccip/tools/api/)
 
 With the CCIP REST API you can:
 
