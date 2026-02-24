@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "ccip-send": "node --import tsx src/ccip-send.ts",
+    "ccip-track": "node --import tsx src/ccip-track.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

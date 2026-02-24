@@ -24,6 +24,7 @@ Run available scripts:
 
 ```bash
 npm --prefix sdk-examples run ccip-send -- --help
+npm --prefix sdk-examples run ccip-track -- --help
 ```
 
 ## API vs CLI vs SDK

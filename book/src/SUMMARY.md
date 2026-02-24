@@ -18,6 +18,7 @@
 
 # CCIP SDK
 - [CCIP SDK: `ccip-send` (Data, Token, Token+Data)](./tools/ccip-sdk-ccip-send.md)
+- [CCIP SDK: `ccip-track` (Tx Hash, Message ID, Sender)](./tools/ccip-sdk-ccip-track.md)
 
 # Legacy Examples
 - [Legacy 01: ExtraArgsV1 Token Transfer](./examples/legacy01-extraargsv1-data-message.md)

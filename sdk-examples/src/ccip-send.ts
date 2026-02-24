@@ -1,20 +1,12 @@
-import path from 'node:path'
-import { fileURLToPath } from 'node:url'
-import dotenv from 'dotenv'
-
 import { EVMChain } from '@chainlink/ccip-sdk'
 import { viemWallet } from '@chainlink/ccip-sdk/viem'
 import { createWalletClient, defineChain, http, parseUnits, toHex } from 'viem'
 import { privateKeyToAccount } from 'viem/accounts'
+import { getArg, hasFlag, parseBlockConfirmations, requireArg, requireUserKey, resolveRpcUrl } from './helpers.js'
 
 type SendMode = 'data' | 'token' | 'token-data'
 
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
-
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
-
-dotenv.config({ path: path.resolve(__dirname, '..', '..', '.env') })
 
 function printUsage(): void {
   console.log('CCIP v2 send demo (generic lane)')
@@ -38,72 +30,9 @@ function printUsage(): void {
   console.log('  --dry-run                  quote only, do not send')
 }
 
-function hasFlag(name: string): boolean {
-  return process.argv.includes(name)
-}
-
-function getArg(name: string): string | undefined {
-  const idx = process.argv.indexOf(name)
-  if (idx === -1 || idx + 1 >= process.argv.length) return undefined
-  const value = process.argv[idx + 1]
-  if (!value || value.startsWith('--')) return undefined
-  return value
-}
-
-function requireArg(name: string): string {
-  const value = getArg(name)
-  if (!value) throw new Error(`Missing required argument: ${name}`)
-  return value
-}
-
-function getEnvFirst(names: string[]): string | undefined {
-  for (const name of names) {
-    const value = process.env[name]
-    if (value) return value
-  }
-  return undefined
-}
-
-function resolveRpcUrl(flagName: '--source-rpc-url' | '--dest-rpc-url'): string {
-  const fromFlag = getArg(flagName)
-  if (fromFlag) return fromFlag
-
-  const fromEnv =
-    flagName === '--source-rpc-url'
-      ? getEnvFirst(['CCIP_SOURCE_RPC_URL', 'AVALANCHE_FUJI_RPC_URL'])
-      : getEnvFirst(['CCIP_DEST_RPC_URL', 'ETHEREUM_SEPOLIA_RPC_URL'])
-  if (fromEnv) return fromEnv
-
-  if (flagName === '--source-rpc-url') {
-    throw new Error(
-      'Missing source RPC URL. Pass --source-rpc-url or set CCIP_SOURCE_RPC_URL (fallback AVALANCHE_FUJI_RPC_URL).',
-    )
-  }
-  throw new Error(
-    'Missing destination RPC URL. Pass --dest-rpc-url or set CCIP_DEST_RPC_URL (fallback ETHEREUM_SEPOLIA_RPC_URL).',
-  )
-}
-
 function normalizeMode(input: string): SendMode {
   if (input === 'data' || input === 'token' || input === 'token-data') return input
   throw new Error(`Unsupported mode: ${input}. Use one of: data, token, token-data`)
-}
-
-function parseBlockConfirmations(input: string): number {
-  if (!/^\d+$/.test(input)) throw new Error(`Invalid --block-confirmations value: ${input}`)
-  const parsed = Number(input)
-  if (!Number.isSafeInteger(parsed) || parsed < 0 || parsed > 65535) {
-    throw new Error('--block-confirmations must be an integer between 0 and 65535')
-  }
-  return parsed
-}
-
-function requireUserKey(): `0x${string}` {
-  const key = process.env.USER_KEY ?? process.env.PRIVATE_KEY
-  if (!key) {
-    throw new Error('Missing USER_KEY (or PRIVATE_KEY) in environment')
-  }
-  return key.startsWith('0x') ? (key as `0x${string}`) : (`0x${key}` as `0x${string}`)
 }
 
 async function resolveFeeToken(source: EVMChain, router: string, feeTokenInput: string): Promise<string> {
