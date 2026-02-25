@@ -1,8 +1,32 @@
 # CCIP SDK: `ccip-track` (Tx Hash, Message ID, Sender)
 
+> **CCIP SDK package**
+>
+> Install from NPM: `npm install @chainlink/ccip-sdk`
+>
+> NPM: [https://www.npmjs.com/package/@chainlink/ccip-sdk](https://www.npmjs.com/package/@chainlink/ccip-sdk)
+>
+> Docs: [https://docs.chain.link/ccip/tools/sdk](https://docs.chain.link/ccip/tools/sdk)
+
 This chapter shows how to track CCIP v2 messages from source-chain activity using the SDK script:
 
 - `sdk-examples/src/ccip-track.ts`
+
+## How This Script Uses the SDK
+
+The tracking script uses the SDK in three paths: fetch messages from a source tx hash, fetch by message ID, and stream sender history from source-chain logs.
+
+```ts
+import { EVMChain, getMessagesForSender } from '@chainlink/ccip-sdk'
+
+const source = await EVMChain.fromUrl(sourceRpcUrl)
+const byTx = await source.getMessagesInTx(sourceTxHash)
+const byId = await source.getMessageById(messageId)
+
+for await (const msg of getMessagesForSender(source, sender, { startBlock })) {
+  console.log(msg.message.messageId)
+}
+```
 
 ## Prerequisites
 

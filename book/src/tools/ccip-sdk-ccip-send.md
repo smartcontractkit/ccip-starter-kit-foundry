@@ -1,5 +1,13 @@
 # CCIP SDK: `ccip-send` (Data, Token, Token+Data)
 
+> **CCIP SDK package**
+>
+> Install from NPM: `npm install @chainlink/ccip-sdk`
+>
+> NPM: [https://www.npmjs.com/package/@chainlink/ccip-sdk](https://www.npmjs.com/package/@chainlink/ccip-sdk)
+>
+> Docs: [https://docs.chain.link/ccip/tools/sdk](https://docs.chain.link/ccip/tools/sdk)
+
 This chapter shows how to run the SDK script for the three message shapes used in CCIP v2 examples:
 
 1. data-only
@@ -7,6 +15,20 @@ This chapter shows how to run the SDK script for the three message shapes used i
 3. token+data
 
 The script lives in `sdk-examples/src/ccip-send.ts`.
+
+## How This Script Uses the SDK
+
+At a high level, the script builds `EVMChain` instances for source and destination, asks the SDK for a fee quote, then submits the message via the SDK send call.
+
+```ts
+import { EVMChain } from '@chainlink/ccip-sdk'
+
+const source = await EVMChain.fromUrl(sourceRpcUrl)
+const dest = await EVMChain.fromUrl(destRpcUrl)
+
+const fee = await source.getFee({ router, destChainSelector: dest.network.chainSelector, message })
+await source.sendMessage({ router, destChainSelector: dest.network.chainSelector, message: { ...message, fee }, wallet })
+```
 
 ## Prerequisites
 
@@ -16,15 +38,7 @@ From repo root:
 npm --prefix sdk-examples install
 ```
 
-For actual sends (non-`--dry-run`), set a funded sender key in `.env`:
-
-```bash
-USER_KEY=0x...
-```
-
-```bash
-source .env
-```
+For actual sends (non-`--dry-run`), set `USER_KEY` (or `PRIVATE_KEY`) in the root `.env`.
 
 ## RPC Configuration
 
