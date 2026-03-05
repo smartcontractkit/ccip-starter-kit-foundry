@@ -29,7 +29,7 @@ cp .env.example .env
 
 Populate RPC URL variables only for the chains you actually plan to run.
 
-In `foundry.toml`, each chain alias points to an env var (for example `polygonAmoy = "${POLYGON_AMOY_RPC_URL}"`).
+In `foundry.toml`, each chain alias points to an env var (for example `avalancheFuji = "${AVALANCHE_FUJI_RPC_URL}"`).
 
 If a variable is missing in `.env`, commands using the corresponding alias will fail.
 

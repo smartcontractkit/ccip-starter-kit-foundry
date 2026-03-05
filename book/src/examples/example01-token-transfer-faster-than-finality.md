@@ -31,7 +31,7 @@ Use the faucet script on the source chain:
 
 ```bash
 forge script script/Faucet.s.sol:Faucet \
-  --rpc-url polygonAmoy \
+  --rpc-url avalancheFuji \
   --account myAccount \
   --broadcast \
   --sig "run(address)" \
@@ -59,7 +59,7 @@ Run `Example01`:
 
 ```bash
 forge script script/examples/Example01.s.sol:Example01 \
-  --rpc-url polygonAmoy \
+  --rpc-url avalancheFuji \
   --account myAccount \
   --broadcast \
   --sig "run(address,uint64,address,address,uint256,uint32,uint16,address)" \
