@@ -50,7 +50,7 @@ As a convenience, applications generally inherited `CCIPReceiver.sol` and implem
 
 ### CCIP v2.0
 
-In v2.0, receivers expose CCV requirements via `getCCVs`:
+In v2.0, receivers expose CCV and finality requirements via `getCCVsAndMinBlockDepth`:
 
 ```ts
 // SPDX-License-Identifier: MIT
@@ -63,16 +63,27 @@ interface IAny2EVMMessageReceiverV2 {
     Client.Any2EVMMessage calldata message
   ) external;
 
-  function getCCVs(
-    uint64 sourceChainSelector
-  ) external view returns (address[] memory requiredCCVs, address[] memory optionalCCVs, uint8 optionalThreshold);
+  function getCCVsAndMinBlockDepth(
+    uint64 sourceChainSelector,
+    bytes calldata sender
+  )
+    external
+    view
+    returns (
+      address[] memory requiredCCVs,
+      address[] memory optionalCCVs,
+      uint8 optionalThreshold,
+      uint16 minBlockDepth
+    );
 }
 ```
+
+`minBlockDepth = 0` means finality is required. Any non-zero value allows Faster Than Finality messages with sufficient block depth.
 
 In this starter kit:
 
 - `src/BasicMessageReceiver.sol` is the baseline receiver flow used in this example.
-- `src/BasicMessageReceiverWithCCVs.sol` extends it with configurable `getCCVs` behavior for Modular Trust Layer examples.
+- `src/BasicMessageReceiverWithCCVs.sol` extends it with configurable `getCCVsAndMinBlockDepth` behavior for Modular Trust Layer examples.
 
 ## Step 1: Deploy `BasicMessageReceiver` on Destination Chain
 

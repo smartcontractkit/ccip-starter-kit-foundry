@@ -135,7 +135,7 @@ contract Example06SetPoolMinBlockConfirmations is Script {
     function run(address localPool, uint16 minBlockConfirmations) external returns (uint16 updatedMinBlockConfirmations) {
         require(localPool != address(0), "localPool cannot be zero");
 
-        uint16 previousMinBlockConfirmations = TokenPool(localPool).getMinBlockConfirmation();
+        uint16 previousMinBlockConfirmations = TokenPool(localPool).getMinBlockConfirmations();
 
         console2.log("[INFO] Example06 (CCT 01): Set pool min block confirmations");
         console2.log("[INFO] Source chain ID:", block.chainid);
@@ -144,10 +144,10 @@ contract Example06SetPoolMinBlockConfirmations is Script {
         console2.log("[INFO] New min block confirmations:", minBlockConfirmations);
 
         vm.startBroadcast();
-        TokenPool(localPool).setMinBlockConfirmation(minBlockConfirmations);
+        TokenPool(localPool).setMinBlockConfirmations(minBlockConfirmations);
         vm.stopBroadcast();
 
-        updatedMinBlockConfirmations = TokenPool(localPool).getMinBlockConfirmation();
+        updatedMinBlockConfirmations = TokenPool(localPool).getMinBlockConfirmations();
         console2.log("[RESULT] Updated min block confirmations:", updatedMinBlockConfirmations);
     }
 }
@@ -158,7 +158,7 @@ contract Example06GetPoolMinBlockConfirmations is Script {
     ) external view returns (uint16 minBlockConfirmations) {
         require(localPool != address(0), "localPool cannot be zero");
 
-        minBlockConfirmations = TokenPool(localPool).getMinBlockConfirmation();
+        minBlockConfirmations = TokenPool(localPool).getMinBlockConfirmations();
 
         console2.log("[INFO] Example06 (CCT 01): Read pool min block confirmations");
         console2.log("[INFO] Source chain ID:", block.chainid);

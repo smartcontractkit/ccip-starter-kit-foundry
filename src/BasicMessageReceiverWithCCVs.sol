@@ -18,13 +18,16 @@ contract BasicMessageReceiverWithCCVs is BasicMessageReceiver, Ownable2Step {
         address[] requiredCCVs;
         address[] optionalCCVs;
         uint8 optionalThreshold;
+        bool requireFinality;
     }
 
+    /// @notice Arguments required to add a CCV configuration for a source chain.
     struct CCVConfigArgs {
         address[] requiredCCVs;
         address[] optionalCCVs;
         uint64 sourceChainSelector;
         uint8 optionalThreshold;
+        bool requireFinality;
     }
 
     error DuplicateCCV(uint64 sourceChainSelector, address ccv);
@@ -32,33 +35,56 @@ contract BasicMessageReceiverWithCCVs is BasicMessageReceiver, Ownable2Step {
     error ZeroAddressNotAllowedAsOptional();
 
     event CCVConfigSet(
-        uint64 indexed sourceChainSelector, address[] requiredCCVs, address[] optionalCCVs, uint8 optionalThreshold
+        uint64 indexed sourceChainSelector,
+        address[] requiredCCVs,
+        address[] optionalCCVs,
+        uint8 optionalThreshold,
+        bool requireFinality
     );
-    event CCVConfigRemoved(uint64 indexed sourceChainSelector);
 
-    mapping(uint64 sourceChainSelector => CCVConfig) internal s_ccvConfigs;
+    mapping(uint64 sourceChainSelector => CCVConfig ccvConfig) internal s_ccvConfigs;
 
     constructor(address router) BasicMessageReceiver(router) Ownable(msg.sender) {}
 
     /// @dev Override getCCVs
-    function getCCVs(uint64 sourceChainSelector)
+    function getCCVsAndMinBlockDepth(
+        uint64 sourceChainSelector,
+        bytes calldata /*sender*/
+    )
         external
         view
         override
-        returns (address[] memory requiredCCVs, address[] memory optionalCCVs, uint8 optionalThreshold)
+        returns (
+            address[] memory requiredCCVs,
+            address[] memory optionalCCVs,
+            uint8 optionalThreshold,
+            uint16 minBlockDepth
+        )
     {
         CCVConfig memory config = s_ccvConfigs[sourceChainSelector];
-        return (config.requiredCCVs, config.optionalCCVs, config.optionalThreshold);
+        // If requireFinality is true, minBlockDepth = 0 (require finality).
+        // If requireFinality is false, minBlockDepth = 1 (allow any FTF level) - WARNING only use a finality of 1 when
+        // you use a trusted sender on the source chain that manages the finality risk when sending messages.
+        minBlockDepth = config.requireFinality ? 0 : 1;
+        return (config.requiredCCVs, config.optionalCCVs, config.optionalThreshold, minBlockDepth);
     }
 
+    /// @notice Set CCV configurations for source chains.
+    /// @param ccvConfigsToSet List of CCV configs to set.
     function applyCCVConfigUpdates(CCVConfigArgs[] calldata ccvConfigsToSet) external virtual onlyOwner {
         for (uint256 i = 0; i < ccvConfigsToSet.length; ++i) {
             CCVConfigArgs memory args = ccvConfigsToSet[i];
             // If optionalThreshold > optionalCCVs.length, then it's impossible to satisfy the optional CCV requirement.
-            // If optionalThreshold == optionalCCVs.length, then optional CCVs are essentially required.
-            // They should instead be defined as required CCVs.
-            if (args.optionalCCVs.length > 0 && args.optionalThreshold >= args.optionalCCVs.length) {
-                revert InvalidOptionalThreshold(args.sourceChainSelector, args.optionalThreshold);
+            // If optionalThreshold == optionalCCVs.length, then optional CCVs are essentially required, they should instead
+            // be defined as required CCVs.
+            if (args.optionalCCVs.length > 0) {
+                if (args.optionalThreshold >= args.optionalCCVs.length) {
+                    revert InvalidOptionalThreshold(args.sourceChainSelector, args.optionalThreshold);
+                }
+            } else {
+                if (args.optionalThreshold > 0) {
+                    revert InvalidOptionalThreshold(args.sourceChainSelector, args.optionalThreshold);
+                }
             }
             uint256 requiredCCVLength = args.requiredCCVs.length;
             uint256 optionalCCVLength = args.optionalCCVs.length;
@@ -83,14 +109,16 @@ contract BasicMessageReceiverWithCCVs is BasicMessageReceiver, Ownable2Step {
             s_ccvConfigs[args.sourceChainSelector] = CCVConfig({
                 requiredCCVs: args.requiredCCVs,
                 optionalCCVs: args.optionalCCVs,
-                optionalThreshold: args.optionalThreshold
+                optionalThreshold: args.optionalThreshold,
+                requireFinality: args.requireFinality
             });
-            emit CCVConfigSet(args.sourceChainSelector, args.requiredCCVs, args.optionalCCVs, args.optionalThreshold);
+            emit CCVConfigSet(
+                args.sourceChainSelector,
+                args.requiredCCVs,
+                args.optionalCCVs,
+                args.optionalThreshold,
+                args.requireFinality
+            );
         }
-    }
-
-    function removeCCVConfig(uint64 sourceChainSelector) external onlyOwner {
-        delete s_ccvConfigs[sourceChainSelector];
-        emit CCVConfigRemoved(sourceChainSelector);
     }
 }
