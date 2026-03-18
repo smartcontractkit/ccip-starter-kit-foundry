@@ -1,16 +1,18 @@
-# Example 02: Hello World to BasicMessageReceiver (Faster Than Finality)
+# Example 02: Hello World to BasicMessageReceiverWithCCVs (Faster Than Finality)
 
-This example deploys a destination receiver contract and sends a Hello World data message to it from an EOA using Faster Than Finality (`blockConfirmations > 0`).
+This example deploys a destination `BasicMessageReceiverWithCCVs` contract and sends a Hello World data message from an EOA using Faster Than Finality (`blockConfirmations > 0`).
 
 Scripts used:
 
-- `script/examples/Example02.s.sol:DeployBasicMessageReceiver`
+- `script/examples/Example02.s.sol:DeployBasicMessageReceiverWithCCVs`
+- `script/examples/Example02.s.sol:SetBasicMessageReceiverWithCCVsMinBlockDepth`
 - `script/examples/Example02.s.sol:Example02`
 
 ## What You Will Do
 
-1. Deploy `BasicMessageReceiver` on the destination chain.
-2. Send a Hello World CCIP data message from source chain to the deployed receiver.
+1. Deploy `BasicMessageReceiverWithCCVs` on destination chain.
+2. Configure minimum block depth for the source chain.
+3. Send a Hello World CCIP data message from source chain to `BasicMessageReceiverWithCCVs`.
 
 ## Before You Start
 
@@ -50,7 +52,7 @@ As a convenience, applications generally inherited `CCIPReceiver.sol` and implem
 
 ### CCIP v2.0
 
-In v2.0, receivers expose CCV and finality requirements via `getCCVsAndMinBlockDepth`:
+In v2.0, receivers expose Cross Chain Verifiers and finality requirements via `getCCVsAndMinBlockDepth`:
 
 ```ts
 // SPDX-License-Identifier: MIT
@@ -78,19 +80,25 @@ interface IAny2EVMMessageReceiverV2 {
 }
 ```
 
-`minBlockDepth = 0` means finality is required. Any non-zero value allows Faster Than Finality messages with sufficient block depth.
+The receiver controls two independent dimensions:
 
-In this starter kit:
+- `requiredCCVs` and `optionalCCVs` define additional verifiers required for acceptance.
+- `minBlockDepth` defines minimum block depth for Faster Than Finality execution.
+- `minBlockDepth = 0` means default finality is required.
 
-- `src/BasicMessageReceiver.sol` is the baseline receiver flow used in this example.
-- `src/BasicMessageReceiverWithCCVs.sol` extends it with configurable `getCCVsAndMinBlockDepth` behavior for Modular Trust Layer examples.
+You can combine these independently:
 
-## Step 1: Deploy `BasicMessageReceiver` on Destination Chain
+- Add additional verifiers while keeping `minBlockDepth = 0`.
+- Use default verifiers only, while setting `minBlockDepth > 0`.
+
+In this starter kit, `src/BasicMessageReceiverWithCCVs.sol` adds configurable verifier sets and configurable minimum block depth.
+
+## Step 1: Deploy `BasicMessageReceiverWithCCVs` on Destination Chain
 
 Run:
 
 ```bash
-forge script script/examples/Example02.s.sol:DeployBasicMessageReceiver \
+forge script script/examples/Example02.s.sol:DeployBasicMessageReceiverWithCCVs \
   --rpc-url ethereumSepolia \
   --account myAccount \
   --broadcast \
@@ -98,9 +106,31 @@ forge script script/examples/Example02.s.sol:DeployBasicMessageReceiver \
   <DESTINATION_ROUTER>
 ```
 
-Save the deployed receiver address from the `[RESULT]` log.
+Save the deployed address as `<BASIC_MESSAGE_RECEIVER_WITH_CCVS_ADDRESS>`.
 
-## Step 2: Send Hello World Data Message from EOA
+By default, this receiver starts with `minBlockDepth = 0` (default finality only) for all source chains.
+
+## Step 2: Configure Minimum Block Depth for Your Source Chain
+
+Run:
+
+```bash
+forge script script/examples/Example02.s.sol:SetBasicMessageReceiverWithCCVsMinBlockDepth \
+  --rpc-url ethereumSepolia \
+  --account myAccount \
+  --broadcast \
+  --sig "run(address,uint64,uint16)" \
+  <BASIC_MESSAGE_RECEIVER_WITH_CCVS_ADDRESS> \
+  <SOURCE_CHAIN_SELECTOR> \
+  <MIN_BLOCK_DEPTH>
+```
+
+For this chapter, use `<MIN_BLOCK_DEPTH> = 1`.
+
+- `0` means deafault finality-only behavior.
+- `> 0` enables Faster Than Finality with that minimum depth.
+
+## Step 3: Send Hello World Data Message from EOA
 
 Run:
 
@@ -112,7 +142,7 @@ forge script script/examples/Example02.s.sol:Example02 \
   --sig "run(address,uint64,address,string,uint32,uint16,address)" \
   <SOURCE_ROUTER> \
   <DESTINATION_CHAIN_SELECTOR> \
-  <DEPLOYED_BASIC_MESSAGE_RECEIVER_ADDRESS> \
+  <BASIC_MESSAGE_RECEIVER_WITH_CCVS_ADDRESS> \
   "Hello, World" \
   <GAS_LIMIT> \
   <BLOCK_CONFIRMATIONS_GT_ZERO> \
@@ -121,8 +151,9 @@ forge script script/examples/Example02.s.sol:Example02 \
 
 Parameter notes:
 
-- `<GAS_LIMIT>` must be `> 0` because the destination receiver contract callback needs gas.
+- `<GAS_LIMIT>` must be `> 0` because the destination receiver callback needs gas.
 - `<BLOCK_CONFIRMATIONS_GT_ZERO>` must be `> 0` for Faster Than Finality.
+- `<BLOCK_CONFIRMATIONS_GT_ZERO>` should be greater than or equal to `<MIN_BLOCK_DEPTH>`.
 - Executor may enforce a minimum block confirmations value and revert if too low.
 - If requested confirmations exceed chain finality, default finality is used.
 - `<FEE_TOKEN_ADDRESS>`: Pass the LINK token address on the source chain here. If you want to pay for CCIP fees in native coin instead, pass `0x0000000000000000000000000000000000000000`
@@ -135,10 +166,8 @@ Use that ID in the CCIP Explorer:
 
 - https://ccip.chain.link
 
-You can also inspect receiver state on destination chain:
+You can inspect receiver state on destination chain:
 
 ```bash
-cast call <DEPLOYED_BASIC_MESSAGE_RECEIVER_ADDRESS> "latestMessage()(bytes)" --rpc-url ethereumSepolia
+cast call <BASIC_MESSAGE_RECEIVER_WITH_CCVS_ADDRESS> "latestMessage()(bytes)" --rpc-url ethereumSepolia
 ```
-
-The stored bytes are the raw `abi.encode(string)` payload sent by this example.

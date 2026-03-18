@@ -3,12 +3,27 @@ pragma solidity 0.8.26;
 
 import {Script, console2} from "forge-std/Script.sol";
 
+import {BasicMessageReceiver} from "src/BasicMessageReceiver.sol";
 import {BasicMessageSender} from "src/BasicMessageSender.sol";
 import {EncodeExtraArgsOffchain} from "../EncodeExtraArgsOffchain.s.sol";
 
 import {IRouterClient} from "@chainlink/contracts-ccip/contracts/interfaces/IRouterClient.sol";
 import {Client} from "@chainlink/contracts-ccip/contracts/libraries/Client.sol";
 import {IERC20} from "@openzeppelin/contracts@5.3.0/token/ERC20/IERC20.sol";
+
+contract DeployBasicMessageReceiver is Script {
+    function run(address ccipRouter) external returns (address receiverAddress) {
+        vm.startBroadcast();
+
+        BasicMessageReceiver basicMessageReceiver = new BasicMessageReceiver(ccipRouter);
+        receiverAddress = address(basicMessageReceiver);
+        console2.log(
+            "[RESULT] BasicMessageReceiver deployed to chain ID:", block.chainid, "with address:", receiverAddress
+        );
+
+        vm.stopBroadcast();
+    }
+}
 
 contract DeployBasicMessageSender is Script {
     function run(address ccipRouter, address linkToken) external returns (address senderAddress) {

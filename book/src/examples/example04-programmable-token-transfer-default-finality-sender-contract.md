@@ -6,6 +6,9 @@ This example sends a programmable token transfer from Avalanche Fuji to Ethereum
 - Tokens: `CCIP-BnM`
 - Finality mode: default finality (`blockConfirmations = 0`)
 
+Because this chapter uses default finality, the baseline `BasicMessageReceiver` is sufficient on destination.
+If you want the Faster Than Finality variant (`blockConfirmations > 0`), use Example03 with `BasicMessageReceiverWithCCVs`.
+
 Scripts used:
 
 - `script/examples/Example04.s.sol:DeployBasicMessageSender`
@@ -38,7 +41,7 @@ Scripts used:
 > Run:
 >
 > ```bash
-> forge script script/examples/Example02.s.sol:DeployBasicMessageReceiver \
+> forge script script/examples/Example04.s.sol:DeployBasicMessageReceiver \
 >   --rpc-url ethereumSepolia \
 >   --account myAccount \
 >   --broadcast \

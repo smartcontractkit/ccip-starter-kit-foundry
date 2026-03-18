@@ -16,6 +16,21 @@ This chapter shows how to run the SDK script for the three message shapes used i
 
 The script lives in `sdk-examples/src/ccip-send.ts`.
 
+## Receiver Compatibility for Faster Than Finality
+
+When using `--block-confirmations > 0` (Faster Than Finality), receiver compatibility matters for message modes that execute receiver callbacks.
+
+| Mode | `--block-confirmations 0` | `--block-confirmations > 0` |
+|---|---|---|
+| `data` | baseline receiver works | destination receiver must accept Faster Than Finality (`minBlockDepth > 0`) |
+| `token-data` | baseline receiver works | destination receiver must accept Faster Than Finality (`minBlockDepth > 0`) |
+| `token` with `--gas-limit 0` | callback not executed (EOA-style token receive path) | callback not executed (EOA-style token receive path) |
+
+Terminology note:
+
+- Sender side (`ExtraArgsV3`): `blockConfirmations`
+- Receiver side (`getCCVsAndMinBlockDepth`): `minBlockDepth`
+
 ## How This Script Uses the SDK
 
 At a high level, the script builds `EVMChain` instances for source and destination, asks the SDK for a fee quote, then submits the message via the SDK send call.

@@ -6,7 +6,7 @@ Script path: `script/examples/Example05.s.sol`
 
 ## What You Will Do
 
-1. Ensure destination `BasicMessageReceiver` exists.
+1. Ensure a compatible destination receiver exists (default finality or Faster Than Finality based on your `blockConfirmations`).
 2. Send a CCIP data message with `ExtraArgsV3` no-execution-tag.
 3. Observe pending execution in CCIP Explorer and execute manually.
 
@@ -27,10 +27,10 @@ Script path: `script/examples/Example05.s.sol`
 
 > **If you do not have a receiver deployed yet**
 >
-> Run:
+> Choose deployment based on your `blockConfirmations`:
 >
 > ```bash
-> forge script script/examples/Example02.s.sol:DeployBasicMessageReceiver \
+> forge script script/examples/Example04.s.sol:DeployBasicMessageReceiver \
 >   --rpc-url ethereumSepolia \
 >   --account myAccount \
 >   --broadcast \
@@ -38,7 +38,33 @@ Script path: `script/examples/Example05.s.sol`
 >   <DESTINATION_ROUTER>
 > ```
 >
-> Save the receiver address from the `[RESULT]` log.
+> Use this for default finality (`blockConfirmations = 0`). Save this as `<BASIC_MESSAGE_RECEIVER_ADDRESS>`.
+>
+> ```bash
+> forge script script/examples/Example02.s.sol:DeployBasicMessageReceiverWithCCVs \
+>   --rpc-url ethereumSepolia \
+>   --account myAccount \
+>   --broadcast \
+>   --sig "run(address)" \
+>   <DESTINATION_ROUTER>
+> ```
+>
+> If you use Faster Than Finality (`blockConfirmations > 0`), configure min block depth for your source chain:
+>
+> ```bash
+> forge script script/examples/Example02.s.sol:SetBasicMessageReceiverWithCCVsMinBlockDepth \
+>   --rpc-url ethereumSepolia \
+>   --account myAccount \
+>   --broadcast \
+>   --sig "run(address,uint64,uint16)" \
+>   <BASIC_MESSAGE_RECEIVER_WITH_CCVS_ADDRESS> \
+>   <SOURCE_CHAIN_SELECTOR> \
+>   <MIN_BLOCK_DEPTH>
+> ```
+>
+> Use `<MIN_BLOCK_DEPTH> > 0` for Faster Than Finality.
+>
+> Use this for Faster Than Finality (`blockConfirmations > 0`). Save this as `<BASIC_MESSAGE_RECEIVER_WITH_CCVS_ADDRESS>`.
 
 ## Understanding ExtraArgsV3
 
@@ -81,7 +107,7 @@ forge script script/examples/Example05.s.sol:Example05 \
   --sig "run(address,uint64,address,string,uint32,uint16,address)" \
   <SOURCE_ROUTER> \
   <DESTINATION_CHAIN_SELECTOR> \
-  <DEPLOYED_BASIC_MESSAGE_RECEIVER_ADDRESS> \
+  <BASIC_MESSAGE_RECEIVER_ADDRESS_OR_BASIC_MESSAGE_RECEIVER_WITH_CCVS_ADDRESS> \
   "Hello, World" \
   <GAS_LIMIT> \
   <BLOCK_CONFIRMATIONS> \
@@ -92,6 +118,8 @@ Parameter notes:
 
 - `<GAS_LIMIT>` must be `> 0` because the receiver callback needs gas.
 - `<BLOCK_CONFIRMATIONS>` can be `0` (default finality) or `> 0`.
+- If `<BLOCK_CONFIRMATIONS> > 0`, destination receiver must accept Faster Than Finality (`minBlockDepth > 0`) for this source chain.
+- If `<BLOCK_CONFIRMATIONS> = 0`, a default-finality receiver is sufficient.
 - `<FEE_TOKEN_ADDRESS>`: Pass the LINK token address on the source chain here. If you want to pay for CCIP fees in native coin instead, pass `0x0000000000000000000000000000000000000000`
 - This example sets executor to `NO_EXECUTION_ADDRESS`, so execution is not automatic.
 

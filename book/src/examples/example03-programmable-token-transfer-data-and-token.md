@@ -1,6 +1,6 @@
-# Example 03: Programmable Token Transfer (Hello World + CCIP-BnM)
+# Example 03: Programmable Token Transfer (Faster Than Finality)
 
-This example sends a programmable token transfer from an EOA on Avalanche Fuji to a `BasicMessageReceiver` on Ethereum Sepolia:
+This example sends a programmable token transfer from an EOA on Avalanche Fuji to a receiver that supports Faster Than Finality on Ethereum Sepolia:
 
 - Data payload: `"Hello, World"`
 - Tokens: `CCIP-BnM`
@@ -9,9 +9,17 @@ Script path: `script/examples/Example03.s.sol`
 
 ## What You Will Do
 
-1. Ensure a destination `BasicMessageReceiver` exists on Sepolia.
+1. Ensure a destination `BasicMessageReceiverWithCCVs` exists on Sepolia.
 2. Mint 1 `CCIP-BnM` on Fuji using `script/Faucet.s.sol`.
 3. Send one CCIP message containing both data and tokens.
+
+## Receiver Compatibility Note
+
+This chapter uses Faster Than Finality (`blockConfirmations > 0`), so destination receiver should return a non-zero minimum block depth.
+
+- If your receiver is default-finality-only, this message can fail on destination.
+- Deploy `BasicMessageReceiverWithCCVs` before running this chapter.
+- For default-finality programmable token transfer (`blockConfirmations = 0`), use Example04.
 
 ## Before You Start
 
@@ -33,13 +41,28 @@ Script path: `script/examples/Example03.s.sol`
 > Run:
 >
 > ```bash
-> forge script script/examples/Example02.s.sol:DeployBasicMessageReceiver \
+> forge script script/examples/Example02.s.sol:DeployBasicMessageReceiverWithCCVs \
 >   --rpc-url ethereumSepolia \
 >   --account myAccount \
 >   --broadcast \
 >   --sig "run(address)" \
 >   <DESTINATION_ROUTER>
 > ```
+>
+> Then configure min block depth for your source chain:
+>
+> ```bash
+> forge script script/examples/Example02.s.sol:SetBasicMessageReceiverWithCCVsMinBlockDepth \
+>   --rpc-url ethereumSepolia \
+>   --account myAccount \
+>   --broadcast \
+>   --sig "run(address,uint64,uint16)" \
+>   <BASIC_MESSAGE_RECEIVER_WITH_CCVS_ADDRESS> \
+>   <SOURCE_CHAIN_SELECTOR> \
+>   <MIN_BLOCK_DEPTH>
+> ```
+>
+> For this chapter (which sends Faster Than Finality), use `<MIN_BLOCK_DEPTH> > 0`.
 >
 > Save the receiver address from the `[RESULT]` log and use it in Step 2 below.
 
@@ -64,7 +87,7 @@ forge script script/examples/Example03.s.sol:Example03 \
   --sig "run(address,uint64,address,string,address,uint256,uint32,uint16,address)" \
   <SOURCE_ROUTER> \
   <DESTINATION_CHAIN_SELECTOR> \
-  <DEPLOYED_BASIC_MESSAGE_RECEIVER_ADDRESS> \
+  <BASIC_MESSAGE_RECEIVER_WITH_CCVS_ADDRESS> \
   "Hello, World" \
   <CCIP_BNM_FUJI_ADDRESS> \
   <AMOUNT> \
@@ -78,6 +101,7 @@ Parameter notes:
 - `<AMOUNT>` uses token decimals (`1e18` is 1 token for 18-decimal tokens).
 - `<GAS_LIMIT>` must be `> 0` because the receiver contract callback handles data.
 - `<BLOCK_CONFIRMATIONS_GT_ZERO>` must be `> 0` for Faster Than Finality.
+- `<BLOCK_CONFIRMATIONS_GT_ZERO>` should be greater than or equal to `<MIN_BLOCK_DEPTH>`.
 - Executor may enforce a minimum block confirmation value and revert if too low.
 - If requested confirmations exceed chain finality, default finality is used.
 - `<FEE_TOKEN_ADDRESS>`: Pass the LINK token address on the source chain here. If you want to pay for CCIP fees in native coin instead, pass `0x0000000000000000000000000000000000000000`
@@ -91,7 +115,7 @@ Parameter notes:
 Optional receiver checks on Sepolia:
 
 ```bash
-cast call <DEPLOYED_BASIC_MESSAGE_RECEIVER_ADDRESS> "latestMessage()(bytes)" --rpc-url ethereumSepolia
-cast call <DEPLOYED_BASIC_MESSAGE_RECEIVER_ADDRESS> "latestSender()(address)" --rpc-url ethereumSepolia
-cast call <DEPLOYED_BASIC_MESSAGE_RECEIVER_ADDRESS> "latestSourceChainSelector()(uint64)" --rpc-url ethereumSepolia
+cast call <BASIC_MESSAGE_RECEIVER_WITH_CCVS_ADDRESS> "latestMessage()(bytes)" --rpc-url ethereumSepolia
+cast call <BASIC_MESSAGE_RECEIVER_WITH_CCVS_ADDRESS> "latestSender()(address)" --rpc-url ethereumSepolia
+cast call <BASIC_MESSAGE_RECEIVER_WITH_CCVS_ADDRESS> "latestSourceChainSelector()(uint64)" --rpc-url ethereumSepolia
 ```
