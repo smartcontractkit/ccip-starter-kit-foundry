@@ -22,14 +22,14 @@ When using `--block-confirmations > 0` (Faster Than Finality), receiver compatib
 
 | Mode | `--block-confirmations 0` | `--block-confirmations > 0` |
 |---|---|---|
-| `data` | baseline receiver works | destination receiver must accept Faster Than Finality (`minBlockDepth > 0`) |
-| `token-data` | baseline receiver works | destination receiver must accept Faster Than Finality (`minBlockDepth > 0`) |
+| `data` | baseline receiver works | destination receiver must allow the requested finality (see `getCCVsAndFinalityConfig` / `allowedFinalityConfig`) |
+| `token-data` | baseline receiver works | destination receiver must allow the requested finality (see `getCCVsAndFinalityConfig` / `allowedFinalityConfig`) |
 | `token` with `--gas-limit 0` | callback not executed (EOA-style token receive path) | callback not executed (EOA-style token receive path) |
 
 Terminology note:
 
-- Sender side (`ExtraArgsV3`): `blockConfirmations`
-- Receiver side (`getCCVsAndMinBlockDepth`): `minBlockDepth`
+- Sender side (`ExtraArgsV3`): requested finality (e.g. `FinalityCodec` / block depth in `requestedFinalityConfig`)
+- Receiver side (`getCCVsAndFinalityConfig`): `allowedFinalityConfig` (`bytes4`, `FinalityCodec`)
 
 ## How This Script Uses the SDK
 

@@ -27,7 +27,7 @@ This flow still demonstrates the correct hook wiring pattern for ACE-enabled set
 
 ## What This Example Covers
 
-1. Deploy BurnMint token + `AdvancedPoolHooks` + BurnMint pool on both chains.
+1. Deploy CrossChainToken + `AdvancedPoolHooks` + BurnMint pool on both chains.
 2. Configure pools to trust each other.
 3. Send token transfer with the existing ExtraArgsV3 default-finality sender.
 4. Verify hook attachment and allowlist settings.
@@ -55,7 +55,7 @@ Scripts used:
 
 ## Script Defaults
 
-`DeployCCTBurnMintTokenAndPoolWithAdvancedPoolHook` deploys token with:
+`DeployCCTBurnMintTokenAndPoolWithAdvancedPoolHook` deploys **CrossChainToken** with the same token defaults as Example 06 (`BaseERC20.ConstructorParams` + `registerAdminViaGetCCIPAdmin`):
 
 - `name`: `TestToken`
 - `symbol`: `TEST`
