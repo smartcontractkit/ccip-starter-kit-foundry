@@ -6,10 +6,7 @@
     }
   },
   "lib/chainlink-ccip": {
-    "branch": {
-      "name": "develop",
-      "rev": "acc1ef3c1e3c7d286e9da9036bcebc33b2239f05"
-    }
+    "rev": "3490f129337aa14c9c90786c244416d3fb9f79ed"
   },
   "lib/chainlink-evm": {
     "tag": {
