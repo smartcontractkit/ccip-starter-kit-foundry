@@ -64,6 +64,8 @@ This chapter uses Faster Than Finality (`blockConfirmations > 0`), so destinatio
 >
 > For this chapter (which sends Faster Than Finality), use `<MIN_BLOCK_DEPTH> > 0`.
 >
+> The script argument accepts `<MIN_BLOCK_DEPTH>` (a `uint16` passed to `BasicMessageReceiverWithCCVs.setMinBlockDepth`). On-chain, the receiver does not return that integer directly to CCIP: `getCCVsAndFinalityConfig` sets `allowedFinalityConfig` to `FinalityCodec._encodeBlockDepth(minBlockDepth)` — the same `bytes4` finality encoding CCIP 2.0 uses elsewhere for allowed finality (depth `0` means wait for full/default finality).
+>
 > Save the receiver address from the `[RESULT]` log and use it in Step 2 below.
 
 ## Step 1: Get 1 CCIP-BnM Token on Fuji
@@ -101,7 +103,7 @@ Parameter notes:
 - `<AMOUNT>` uses token decimals (`1e18` is 1 token for 18-decimal tokens).
 - `<GAS_LIMIT>` must be `> 0` because the receiver contract callback handles data.
 - `<BLOCK_CONFIRMATIONS_GT_ZERO>` must be `> 0` for Faster Than Finality.
-- `<BLOCK_CONFIRMATIONS_GT_ZERO>` should be greater than or equal to `<MIN_BLOCK_DEPTH>`.
+- `<BLOCK_CONFIRMATIONS_GT_ZERO>` should be greater than or equal to `<MIN_BLOCK_DEPTH>` (the depth you stored on the receiver; CCIP compares it against your message’s `requestedFinalityConfig` after both sides use `FinalityCodec` encoding).
 - Executor may enforce a minimum block confirmation value and revert if too low.
 - If requested confirmations exceed chain finality, default finality is used.
 - `<FEE_TOKEN_ADDRESS>`: Pass the LINK token address on the source chain here. If you want to pay for CCIP fees in native coin instead, pass `0x0000000000000000000000000000000000000000`

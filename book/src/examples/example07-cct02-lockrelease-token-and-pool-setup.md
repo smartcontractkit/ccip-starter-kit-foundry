@@ -32,13 +32,15 @@ Scripts used:
 
 ## Script Defaults
 
-`DeployCCTLockReleaseTokenAndPool` deploys token with:
+`DeployCCTLockReleaseTokenAndPool` deploys a **CrossChainToken** (same defaults as Example 06) for the underlying ERC-20, with:
 
 - `name`: `TestToken`
 - `symbol`: `TEST`
 - `decimals`: `18`
 - `preMint`: `1_000_000 * 1e18`
 - `maxSupply`: `100_000_000 * 1e18`
+
+Admin registration uses `registerAdminViaGetCCIPAdmin` on the token (see Example 06).
 
 The deployment also uses:
 

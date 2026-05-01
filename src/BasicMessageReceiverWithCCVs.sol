@@ -3,6 +3,7 @@ pragma solidity 0.8.26;
 
 import {BasicMessageReceiver} from "./BasicMessageReceiver.sol";
 
+import {FinalityCodec} from "@chainlink/contracts-ccip/contracts/libraries/FinalityCodec.sol";
 import {Ownable, Ownable2Step} from "@openzeppelin/contracts@5.3.0/access/Ownable2Step.sol";
 
 /**
@@ -51,8 +52,9 @@ contract BasicMessageReceiverWithCCVs is BasicMessageReceiver, Ownable2Step {
         emit MinBlockDepthSet(sourceChainSelector, minBlockDepth);
     }
 
-    /// @dev Override getCCVsAndMinBlockDepth
-    function getCCVsAndMinBlockDepth(
+    /// @notice Returns CCV config and allowed finality for a source chain (see `CCIPReceiver.getCCVsAndFinalityConfig`).
+    /// @dev Maps stored min block depth to `FinalityCodec` encoding (0 depth => wait for full finality).
+    function getCCVsAndFinalityConfig(
         uint64 sourceChainSelector,
         bytes calldata /*sender*/
     )
@@ -63,12 +65,13 @@ contract BasicMessageReceiverWithCCVs is BasicMessageReceiver, Ownable2Step {
             address[] memory requiredCCVs,
             address[] memory optionalCCVs,
             uint8 optionalThreshold,
-            uint16 minBlockDepth
+            bytes4 allowedFinalityConfig
         )
     {
         CCVConfig memory config = s_ccvConfigs[sourceChainSelector];
-        return
-            (config.requiredCCVs, config.optionalCCVs, config.optionalThreshold, s_minBlockDepths[sourceChainSelector]);
+        uint16 minBlockDepth = s_minBlockDepths[sourceChainSelector];
+        allowedFinalityConfig = FinalityCodec._encodeBlockDepth(minBlockDepth);
+        return (config.requiredCCVs, config.optionalCCVs, config.optionalThreshold, allowedFinalityConfig);
     }
 
     /// @notice Set CCV configurations for source chains.

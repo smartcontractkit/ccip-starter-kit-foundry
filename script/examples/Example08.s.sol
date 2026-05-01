@@ -3,8 +3,8 @@ pragma solidity 0.8.26;
 
 import {Script, console2} from "forge-std/Script.sol";
 
-import {FactoryBurnMintERC20} from
-    "@chainlink/contracts-ccip/contracts/tokenAdminRegistry/TokenPoolFactory/FactoryBurnMintERC20.sol";
+import {BaseERC20} from "@chainlink/contracts-ccip/contracts/tokens/BaseERC20.sol";
+import {CrossChainToken} from "@chainlink/contracts-ccip/contracts/tokens/CrossChainToken.sol";
 import {AdvancedPoolHooks} from "@chainlink/contracts-ccip/contracts/pools/AdvancedPoolHooks.sol";
 import {BurnMintTokenPool} from "@chainlink/contracts-ccip/contracts/pools/BurnMintTokenPool.sol";
 import {TokenPool} from "@chainlink/contracts-ccip/contracts/pools/TokenPool.sol";
@@ -37,7 +37,7 @@ contract DeployCCTBurnMintTokenAndPoolWithAdvancedPoolHook is Script {
         require(armProxy != address(0), "armProxy cannot be zero");
         require(router != address(0), "router cannot be zero");
 
-        console2.log("[INFO] Example08 (CCT 03): Deploy BurnMint token + AdvancedPoolHooks + BurnMint pool");
+        console2.log("[INFO] Example08 (CCT 03): Deploy CrossChainToken + AdvancedPoolHooks + BurnMint pool");
         console2.log("[INFO] Source chain ID:", block.chainid);
         console2.log("[INFO] TokenAdminRegistry:", tokenAdminRegistry);
         console2.log("[INFO] RegistryModuleOwnerCustom:", registryModuleOwnerCustom);
@@ -64,9 +64,16 @@ contract DeployCCTBurnMintTokenAndPoolWithAdvancedPoolHook is Script {
             authorizedCallers // authorized callers disabled
         );
 
-        FactoryBurnMintERC20 tokenContract = new FactoryBurnMintERC20(
-            TOKEN_NAME, TOKEN_SYMBOL, TOKEN_DECIMALS, TOKEN_MAX_SUPPLY, TOKEN_PREMINT, broadcaster
-        );
+        BaseERC20.ConstructorParams memory tokenParams = BaseERC20.ConstructorParams({
+            name: TOKEN_NAME,
+            symbol: TOKEN_SYMBOL,
+            maxSupply: TOKEN_MAX_SUPPLY,
+            preMint: TOKEN_PREMINT,
+            preMintRecipient: broadcaster,
+            decimals: TOKEN_DECIMALS,
+            ccipAdmin: broadcaster
+        });
+        CrossChainToken tokenContract = new CrossChainToken(tokenParams, broadcaster, broadcaster);
         BurnMintTokenPool poolContract = new BurnMintTokenPool(
             IBurnMintERC20(address(tokenContract)), TOKEN_DECIMALS, address(advancedPoolHooks), armProxy, router
         );
@@ -81,8 +88,8 @@ contract DeployCCTBurnMintTokenAndPoolWithAdvancedPoolHook is Script {
         // Token pool needs mint and burn roles on the local token.
         tokenContract.grantMintAndBurnRoles(address(poolContract));
 
-        // Register token admin and attach pool in TokenAdminRegistry.
-        RegistryModuleOwnerCustom(registryModuleOwnerCustom).registerAdminViaOwner(address(tokenContract));
+        // Register token admin and attach pool in TokenAdminRegistry (CrossChainToken uses getCCIPAdmin, not owner()).
+        RegistryModuleOwnerCustom(registryModuleOwnerCustom).registerAdminViaGetCCIPAdmin(address(tokenContract));
         ITokenAdminRegistry(tokenAdminRegistry).acceptAdminRole(address(tokenContract));
         ITokenAdminRegistry(tokenAdminRegistry).setPool(address(tokenContract), address(poolContract));
 
@@ -92,7 +99,7 @@ contract DeployCCTBurnMintTokenAndPoolWithAdvancedPoolHook is Script {
         advancedPoolHook = address(advancedPoolHooks);
         pool = address(poolContract);
 
-        console2.log("[RESULT] Local CCT BurnMint token deployed:", token);
+        console2.log("[RESULT] Local CrossChainToken deployed:", token);
         console2.log("[RESULT] Local AdvancedPoolHooks deployed:", advancedPoolHook);
         console2.log("[RESULT] Local CCT BurnMint pool deployed:", pool);
         console2.log("[RESULT] Authorized caller added to hook:", pool);

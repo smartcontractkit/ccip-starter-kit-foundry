@@ -3,6 +3,7 @@ pragma solidity ^0.8.26;
 
 import {Client} from "@chainlink/contracts-ccip/contracts/libraries/Client.sol";
 import {ExtraArgsCodec} from "@chainlink/contracts-ccip/contracts/libraries/ExtraArgsCodec.sol";
+import {FinalityCodec} from "@chainlink/contracts-ccip/contracts/libraries/FinalityCodec.sol";
 
 /**
  * THIS IS AN EXAMPLE CONTRACT THAT USES HARDCODED VALUES FOR CLARITY.
@@ -79,7 +80,7 @@ contract EncodeExtraArgsOffchain {
     ) public pure returns (bytes memory extraArgsBytes) {
         ExtraArgsCodec.GenericExtraArgsV3 memory extraArgs = ExtraArgsCodec.GenericExtraArgsV3({
             gasLimit: gasLimit,
-            blockConfirmations: blockConfirmations,
+            requestedFinalityConfig: FinalityCodec._encodeBlockDepth(blockConfirmations),
             ccvs: ccvs,
             ccvArgs: ccvArgs,
             executor: executor,
@@ -97,7 +98,15 @@ contract EncodeExtraArgsOffchain {
         pure
         returns (bytes memory extraArgsBytes)
     {
-        extraArgsBytes = ExtraArgsCodec._getBasicEncodedExtraArgsV3(gasLimit, blockConfirmations);
+        bytes4 finalityConfig = FinalityCodec._encodeBlockDepth(blockConfirmations);
+        extraArgsBytes = ExtraArgsCodec._getBasicEncodedExtraArgsV3(gasLimit, finalityConfig);
+    }
+
+    /// @notice Returns `FinalityCodec._encodeBlockDepthAndSafeFlag(blockDepth)` — **wait-for-safe** plus optional depth in the lower 16 bits.
+    /// @dev Per `FinalityCodec`, this encoding is for **allowed** finality (e.g. token pool `setAllowedFinalityConfig`, receiver policy),
+    ///      not for **requested** `requestedFinalityConfig` in sender ExtraArgsV3 (requested finality must be a single mode).
+    function encodeAllowedFinalityBlockDepthAndSafeFlag(uint16 blockDepth) public pure returns (bytes4) {
+        return FinalityCodec._encodeBlockDepthAndSafeFlag(blockDepth);
     }
 
     /// @notice Get the NO_EXECUTION_ADDRESS for manual execution.

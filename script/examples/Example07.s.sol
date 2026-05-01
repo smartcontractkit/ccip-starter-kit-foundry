@@ -3,8 +3,8 @@ pragma solidity 0.8.26;
 
 import {Script, console2} from "forge-std/Script.sol";
 
-import {FactoryBurnMintERC20} from
-    "@chainlink/contracts-ccip/contracts/tokenAdminRegistry/TokenPoolFactory/FactoryBurnMintERC20.sol";
+import {BaseERC20} from "@chainlink/contracts-ccip/contracts/tokens/BaseERC20.sol";
+import {CrossChainToken} from "@chainlink/contracts-ccip/contracts/tokens/CrossChainToken.sol";
 import {LockReleaseTokenPool} from "@chainlink/contracts-ccip/contracts/pools/LockReleaseTokenPool.sol";
 import {ERC20LockBox} from "@chainlink/contracts-ccip/contracts/pools/ERC20LockBox.sol";
 import {TokenPool} from "@chainlink/contracts-ccip/contracts/pools/TokenPool.sol";
@@ -47,9 +47,16 @@ contract DeployCCTLockReleaseTokenAndPool is Script {
         vm.startBroadcast();
         (, address broadcaster,) = vm.readCallers();
 
-        FactoryBurnMintERC20 tokenContract = new FactoryBurnMintERC20(
-            TOKEN_NAME, TOKEN_SYMBOL, TOKEN_DECIMALS, TOKEN_MAX_SUPPLY, TOKEN_PREMINT, broadcaster
-        );
+        BaseERC20.ConstructorParams memory tokenParams = BaseERC20.ConstructorParams({
+            name: TOKEN_NAME,
+            symbol: TOKEN_SYMBOL,
+            maxSupply: TOKEN_MAX_SUPPLY,
+            preMint: TOKEN_PREMINT,
+            preMintRecipient: broadcaster,
+            decimals: TOKEN_DECIMALS,
+            ccipAdmin: broadcaster
+        });
+        CrossChainToken tokenContract = new CrossChainToken(tokenParams, broadcaster, broadcaster);
         ERC20LockBox lockBoxContract = new ERC20LockBox(address(tokenContract));
         LockReleaseTokenPool poolContract = new LockReleaseTokenPool(
             IERC20(address(tokenContract)),
@@ -66,8 +73,8 @@ contract DeployCCTLockReleaseTokenAndPool is Script {
             AuthorizedCallers.AuthorizedCallerArgs({addedCallers: addedCallers, removedCallers: new address[](0)})
         );
 
-        // Register token admin and attach pool in TokenAdminRegistry.
-        RegistryModuleOwnerCustom(registryModuleOwnerCustom).registerAdminViaOwner(address(tokenContract));
+        // Register token admin and attach pool in TokenAdminRegistry (CrossChainToken uses getCCIPAdmin, not owner()).
+        RegistryModuleOwnerCustom(registryModuleOwnerCustom).registerAdminViaGetCCIPAdmin(address(tokenContract));
         ITokenAdminRegistry(tokenAdminRegistry).acceptAdminRole(address(tokenContract));
         ITokenAdminRegistry(tokenAdminRegistry).setPool(address(tokenContract), address(poolContract));
 
@@ -77,7 +84,7 @@ contract DeployCCTLockReleaseTokenAndPool is Script {
         lockBox = address(lockBoxContract);
         pool = address(poolContract);
 
-        console2.log("[RESULT] Local CCT LockRelease token deployed:", token);
+        console2.log("[RESULT] Local CrossChainToken (LockRelease flow) deployed:", token);
         console2.log("[RESULT] Local CCT lock box deployed:", lockBox);
         console2.log("[RESULT] Local CCT LockRelease pool deployed:", pool);
         console2.log("[WARN] Remote chain configuration is not done yet.");

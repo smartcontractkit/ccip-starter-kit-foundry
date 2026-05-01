@@ -5,8 +5,8 @@ import {Script, console2} from "forge-std/Script.sol";
 
 import {EncodeExtraArgsOffchain} from "../EncodeExtraArgsOffchain.s.sol";
 
-import {FactoryBurnMintERC20} from
-    "@chainlink/contracts-ccip/contracts/tokenAdminRegistry/TokenPoolFactory/FactoryBurnMintERC20.sol";
+import {BaseERC20} from "@chainlink/contracts-ccip/contracts/tokens/BaseERC20.sol";
+import {CrossChainToken} from "@chainlink/contracts-ccip/contracts/tokens/CrossChainToken.sol";
 import {BurnMintTokenPool} from "@chainlink/contracts-ccip/contracts/pools/BurnMintTokenPool.sol";
 import {TokenPool} from "@chainlink/contracts-ccip/contracts/pools/TokenPool.sol";
 import {ITokenAdminRegistry} from "@chainlink/contracts-ccip/contracts/interfaces/ITokenAdminRegistry.sol";
@@ -34,7 +34,7 @@ contract DeployCCTBurnMintTokenAndPool is Script {
         require(armProxy != address(0), "armProxy cannot be zero");
         require(router != address(0), "router cannot be zero");
 
-        console2.log("[INFO] Example06 (CCT 01): Deploy BurnMint token + BurnMint pool");
+        console2.log("[INFO] Example06 (CCT 01): Deploy CrossChainToken + BurnMint pool");
         console2.log("[INFO] Source chain ID:", block.chainid);
         console2.log("[INFO] TokenAdminRegistry:", tokenAdminRegistry);
         console2.log("[INFO] RegistryModuleOwnerCustom:", registryModuleOwnerCustom);
@@ -49,9 +49,17 @@ contract DeployCCTBurnMintTokenAndPool is Script {
         vm.startBroadcast();
         (, address broadcaster,) = vm.readCallers();
 
-        FactoryBurnMintERC20 tokenContract = new FactoryBurnMintERC20(
-            TOKEN_NAME, TOKEN_SYMBOL, TOKEN_DECIMALS, TOKEN_MAX_SUPPLY, TOKEN_PREMINT, broadcaster
-        );
+        BaseERC20.ConstructorParams memory tokenParams = BaseERC20.ConstructorParams({
+            name: TOKEN_NAME,
+            symbol: TOKEN_SYMBOL,
+            maxSupply: TOKEN_MAX_SUPPLY,
+            preMint: TOKEN_PREMINT,
+            preMintRecipient: broadcaster,
+            decimals: TOKEN_DECIMALS,
+            ccipAdmin: broadcaster
+        });
+        CrossChainToken tokenContract = new CrossChainToken(tokenParams, broadcaster, broadcaster);
+
         BurnMintTokenPool poolContract = new BurnMintTokenPool(
             IBurnMintERC20(address(tokenContract)),
             TOKEN_DECIMALS,
@@ -63,8 +71,8 @@ contract DeployCCTBurnMintTokenAndPool is Script {
         // Token pool needs mint and burn roles on the local token.
         tokenContract.grantMintAndBurnRoles(address(poolContract));
 
-        // Register token admin and attach pool in TokenAdminRegistry.
-        RegistryModuleOwnerCustom(registryModuleOwnerCustom).registerAdminViaOwner(address(tokenContract));
+        // Register token admin and attach pool in TokenAdminRegistry (CrossChainToken uses getCCIPAdmin, not owner()).
+        RegistryModuleOwnerCustom(registryModuleOwnerCustom).registerAdminViaGetCCIPAdmin(address(tokenContract));
         ITokenAdminRegistry(tokenAdminRegistry).acceptAdminRole(address(tokenContract));
         ITokenAdminRegistry(tokenAdminRegistry).setPool(address(tokenContract), address(poolContract));
 
@@ -73,7 +81,7 @@ contract DeployCCTBurnMintTokenAndPool is Script {
         token = address(tokenContract);
         pool = address(poolContract);
 
-        console2.log("[RESULT] Local CCT BurnMint token deployed:", token);
+        console2.log("[RESULT] Local CrossChainToken deployed:", token);
         console2.log("[RESULT] Local CCT BurnMint pool deployed:", pool);
         console2.log("[WARN] Remote chain configuration is not done yet.");
         console2.log("[WARN] Run Example06.run on both chains to link pools and tokens.");
@@ -131,39 +139,36 @@ contract Example06 is Script {
     }
 }
 
-contract Example06SetPoolMinBlockConfirmations is Script {
-    function run(address localPool, uint16 minBlockConfirmations) external returns (uint16 updatedMinBlockConfirmations) {
+/// @notice Sets `TokenPool` allowed finality (`FinalityCodec` bytes4). Use `FinalityCodec._encodeBlockDepth(depth)` for a depth-only policy; `bytes4(0)` waits for full finality.
+contract Example06SetPoolAllowedFinalityConfig is Script {
+    function run(address localPool, bytes4 allowedFinality) external returns (bytes4 updatedAllowedFinality) {
         require(localPool != address(0), "localPool cannot be zero");
 
-        uint16 previousMinBlockConfirmations = TokenPool(localPool).getMinBlockConfirmations();
-
-        console2.log("[INFO] Example06 (CCT 01): Set pool min block confirmations");
+        console2.log("[INFO] Example06 (CCT 01): Set pool allowed finality config");
         console2.log("[INFO] Source chain ID:", block.chainid);
         console2.log("[INFO] Local pool:", localPool);
-        console2.log("[INFO] Previous min block confirmations:", previousMinBlockConfirmations);
-        console2.log("[INFO] New min block confirmations:", minBlockConfirmations);
+        console2.logBytes4(TokenPool(localPool).getAllowedFinalityConfig());
+        console2.logBytes4(allowedFinality);
 
         vm.startBroadcast();
-        TokenPool(localPool).setMinBlockConfirmations(minBlockConfirmations);
+        TokenPool(localPool).setAllowedFinalityConfig(allowedFinality);
         vm.stopBroadcast();
 
-        updatedMinBlockConfirmations = TokenPool(localPool).getMinBlockConfirmations();
-        console2.log("[RESULT] Updated min block confirmations:", updatedMinBlockConfirmations);
+        updatedAllowedFinality = TokenPool(localPool).getAllowedFinalityConfig();
+        console2.logBytes4(updatedAllowedFinality);
     }
 }
 
-contract Example06GetPoolMinBlockConfirmations is Script {
-    function run(
-        address localPool
-    ) external view returns (uint16 minBlockConfirmations) {
+contract Example06GetPoolAllowedFinalityConfig is Script {
+    function run(address localPool) external view returns (bytes4 allowedFinality) {
         require(localPool != address(0), "localPool cannot be zero");
 
-        minBlockConfirmations = TokenPool(localPool).getMinBlockConfirmations();
+        allowedFinality = TokenPool(localPool).getAllowedFinalityConfig();
 
-        console2.log("[INFO] Example06 (CCT 01): Read pool min block confirmations");
+        console2.log("[INFO] Example06 (CCT 01): Read pool allowed finality config");
         console2.log("[INFO] Source chain ID:", block.chainid);
         console2.log("[INFO] Local pool:", localPool);
-        console2.log("[RESULT] Min block confirmations:", minBlockConfirmations);
+        console2.logBytes4(allowedFinality);
     }
 }
 

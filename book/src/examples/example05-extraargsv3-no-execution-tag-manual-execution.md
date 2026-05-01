@@ -70,10 +70,10 @@ Script path: `script/examples/Example05.s.sol`
 
 The `ExtraArgsV3` is a structured set of delivery/execution options encoded and attached to a CCIP message.
 
-```c++
+```solidity
 struct GenericExtraArgsV3 {
     uint32 gasLimit;
-    uint16 blockConfirmations;
+    bytes4 requestedFinalityConfig;
     address[] ccvs;
     bytes[] ccvArgs;
     address executor;
@@ -83,8 +83,10 @@ struct GenericExtraArgsV3 {
 }
 ```
 
+(On-chain this struct lives in `ExtraArgsCodec` from `@chainlink/contracts-ccip`.)
+
 - `gasLimit`: gas allocated for callback execution on destination. If `0` and message data is empty, no callback executes.
-- `blockConfirmations`: confirmation depth before execution. `0` means default finality for the lane.
+- `requestedFinalityConfig`: `bytes4` finality mode + parameters per `FinalityCodec` (not a bare `uint16`). All-zero means wait for default/lane finality. For block-depth style faster-than-finality, encode with `FinalityCodec._encodeBlockDepth(uint16)` (see CCIP / `FinalityCodec` NatSpec). **Example05** and `EncodeExtraArgsOffchain.encodeV3` / `encodeV3Basic` take a `blockConfirmations` argument only as a convenience and set this field to `FinalityCodec._encodeBlockDepth(blockConfirmations)`.
 - `ccvs`: list of cross-chain verifier addresses. Empty means default verifiers.
 - `ccvArgs`: optional arguments for each CCV. Must match `ccvs` length.
 - `executor`: executor address on source chain. `address(0)` uses default executor.
@@ -95,6 +97,7 @@ struct GenericExtraArgsV3 {
 Related helpers in `script/EncodeExtraArgsOffchain.s.sol`:
 
 - `encodeV3Basic(gasLimit, blockConfirmations)` for a minimal V3 payload.
+- `encodeAllowedFinalityBlockDepthAndSafeFlag(blockDepth)` exposes `FinalityCodec._encodeBlockDepthAndSafeFlag` — use for **allowed** finality (`bytes4`) on pools/receivers/executor policy, **not** as `requestedFinalityConfig` in sender ExtraArgs (see `FinalityCodec` NatSpec: safe+depth is only valid for allowed finality).
 - `getNoExecutionAddress()` returns `Client.NO_EXECUTION_ADDRESS` for manual execution path.
 
 ## Step 1: Send Message With No-Execution-Tag

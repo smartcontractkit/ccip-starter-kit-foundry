@@ -7,7 +7,8 @@ Script path: `script/examples/Example01.s.sol`
 ## What You Will Do
 
 1. Mint 1 CCIP-BnM token to your EOA with `script/Faucet.s.sol`.
-2. Send that token from source chain to destination chain with `script/examples/Example01.s.sol`.
+2. (Optional) Read the executor allowed finality config (`FinalityCodec` `bytes4`) on the source chain.
+3. Send that token from source chain to destination chain with `script/examples/Example01.s.sol`.
 
 ## Before You Start
 
@@ -38,20 +39,19 @@ forge script script/Faucet.s.sol:Faucet \
   <CCIP_BNM_SOURCE_TOKEN_ADDRESS>
 ```
 
-## Step 2: (Optional) Check Executor Minimum Block Confirmations
+## Step 2: (Optional) Check Executor Allowed Finality
 
-Before picking a block depth for Faster Than Finality, you can verify the executor minimum:
+Before choosing a Faster Than Finality depth in `ExtraArgsV3`, you can read what finality modes the **Executor** allows. The on-chain API is **`getAllowedFinalityConfig() → bytes4`**, encoded with **`FinalityCodec`** (same family of values as `requestedFinalityConfig` in your message’s ExtraArgs).
 
-```ts
-import {Executor} from "@chainlink/contracts-ccip/contracts/executor/Executor.sol";
-Executor executor = Executor(EXECUTOR_ADDRESS);
-console2.log("Min block confirmations", executor.getMinBlockConfirmations());
+From a shell (replace RPC and address):
+
+```bash
+cast call <EXECUTOR_ADDRESS> "getAllowedFinalityConfig()(bytes4)" --rpc-url <SOURCE_CHAIN_RPC_URL>
 ```
 
 Why this matters:
 
-- If your requested `blockConfirmations` is below executor minimum, the send can revert.
-- If your requested `blockConfirmations` is greater than chain finality, default finality is used.
+- Your requested finality (derived from `blockConfirmations` in `EncodeExtraArgsOffchain` / `Example01` via **`FinalityCodec._encodeBlockDepth`**) must be **permitted** by the executor’s dynamic config; otherwise the send can revert.
 
 ## Step 3: Send Token With Faster Than Finality
 
@@ -77,7 +77,7 @@ Parameter notes:
 
 - `<AMOUNT>`: token amount in token decimals (for 18 decimals, `1e18` is 1 token).
 - `<GAS_LIMIT>`: set to `0` for token-only transfer to an EOA receiver.
-- `<BLOCK_CONFIRMATIONS_GT_ZERO>`: must be `> 0` in this Faster Than Finality example.
+- `<BLOCK_CONFIRMATIONS_GT_ZERO>`: must be `> 0` in this Faster Than Finality example; pick a depth consistent with the executor’s allowed finality from Step 2 and lane policy.
 - `<FEE_TOKEN_ADDRESS>`: Pass the LINK token address on the source chain here. If you want to pay for CCIP fees in native coin instead, pass `0x0000000000000000000000000000000000000000`
 
 ## Verify Result

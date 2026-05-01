@@ -2,7 +2,7 @@
 
 This example covers the full BurnMint CCT flow on Fuji -> Sepolia:
 
-1. Deploy BurnMint token + BurnMint pool on both chains.
+1. Deploy [`CrossChainToken`](https://github.com/smartcontractkit/chainlink-ccip/blob/develop/chains/evm/contracts/tokens/CrossChainToken.sol) + BurnMint pool on both chains.
 2. Configure pools to trust each other.
 3. Send a token transfer across the lane.
 4. Verify BurnMint behavior (burn on source, mint on destination).
@@ -30,13 +30,16 @@ Scripts used:
 
 ## Script Defaults
 
-`DeployCCTBurnMintTokenAndPool` deploys token with:
+`DeployCCTBurnMintTokenAndPool` deploys a **CrossChainToken** (via `BaseERC20.ConstructorParams`) with:
 
 - `name`: `TestToken`
 - `symbol`: `TEST`
 - `decimals`: `18`
 - `preMint`: `1_000_000 * 1e18`
 - `maxSupply`: `100_000_000 * 1e18`
+- `preMintRecipient`, `ccipAdmin`, burn/mint role admin, and AccessControl owner: the broadcasting EOA
+
+Token admin registration uses `RegistryModuleOwnerCustom.registerAdminViaGetCCIPAdmin` (CrossChainToken exposes `getCCIPAdmin()` from `BaseERC20`, not `owner()`).
 
 The deployment also uses:
 
