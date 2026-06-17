@@ -6,7 +6,10 @@
     }
   },
   "lib/chainlink-ccip": {
-    "rev": "3490f129337aa14c9c90786c244416d3fb9f79ed"
+    "tag": {
+      "name": "contracts-ccip-v2.0.0-beta.1",
+      "rev": "c6c1ef8cb300b3c08b574c2053c82e4faf46f89c"
+    }
   },
   "lib/chainlink-evm": {
     "tag": {
