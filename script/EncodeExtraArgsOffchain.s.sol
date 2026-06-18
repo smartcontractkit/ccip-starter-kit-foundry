@@ -102,13 +102,6 @@ contract EncodeExtraArgsOffchain {
         extraArgsBytes = ExtraArgsCodec._getBasicEncodedExtraArgsV3(gasLimit, finalityConfig);
     }
 
-    /// @notice Returns `FinalityCodec._encodeBlockDepthAndSafeFlag(blockDepth)` — **wait-for-safe** plus optional depth in the lower 16 bits.
-    /// @dev Per `FinalityCodec`, this encoding is for **allowed** finality (e.g. token pool `setAllowedFinalityConfig`, receiver policy),
-    ///      not for **requested** `requestedFinalityConfig` in sender ExtraArgsV3 (requested finality must be a single mode).
-    function encodeAllowedFinalityBlockDepthAndSafeFlag(uint16 blockDepth) public pure returns (bytes4) {
-        return FinalityCodec._encodeBlockDepthAndSafeFlag(blockDepth);
-    }
-
     /// @notice Get the NO_EXECUTION_ADDRESS for manual execution.
     /// @return The address that signals no automatic execution.
     function getNoExecutionAddress() public pure returns (address) {

@@ -97,7 +97,6 @@ struct GenericExtraArgsV3 {
 Related helpers in `script/EncodeExtraArgsOffchain.s.sol`:
 
 - `encodeV3Basic(gasLimit, blockConfirmations)` for a minimal V3 payload.
-- `encodeAllowedFinalityBlockDepthAndSafeFlag(blockDepth)` exposes `FinalityCodec._encodeBlockDepthAndSafeFlag` — use for **allowed** finality (`bytes4`) on pools/receivers/executor policy, **not** as `requestedFinalityConfig` in sender ExtraArgs (see `FinalityCodec` NatSpec: safe+depth is only valid for allowed finality).
 - `getNoExecutionAddress()` returns `Client.NO_EXECUTION_ADDRESS` for manual execution path.
 
 ## Step 1: Send Message With No-Execution-Tag

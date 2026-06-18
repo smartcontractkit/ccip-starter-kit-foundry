@@ -15,7 +15,7 @@ avalancheFuji = "${AVALANCHE_FUJI_RPC_URL}"
 polygonAmoy = "${POLYGON_AMOY_RPC_URL}"
 baseSepolia = "${BASE_SEPOLIA_RPC_URL}"
 
-[lint]
+[profile.lint]
 exclude_lints = [
     "mixed-case-variable",
     "pascal-case-struct",
