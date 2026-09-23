@@ -42,11 +42,7 @@ This project demonstrates a couple of basic Chainlink CCIP use cases.
 forge install
 ```
 
-and
-
-```
-npm install
-```
+This repository does not require npm dependencies for local Foundry usage.
 
 2. Compile contracts
 
@@ -180,7 +176,7 @@ There are two types of tests:
 - **Test with [CCIPLocalSimulator](https://github.com/smartcontractkit/chainlink-local/blob/main/src/ccip/CCIPLocalSimulator.sol)**: These tests are used to test the CCIP functionality in your local environment. They are located in the `test/no-fork` folder. To run these tests, run the following command:
 
   ```shell
-  forge test --no-match-contract ".*ForkTest$"
+  forge test --match-path "test/no-fork/*.t.sol"
   ```
 
 - **Test with [CCIPLocalSimulatorFork](https://github.com/smartcontractkit/chainlink-local/blob/main/src/ccip/CCIPLocalSimulatorFork.sol)**: These tests are used to test the CCIP functionality in a forked environment. They are located in the test/fork folder. To run these tests, run the following command:
