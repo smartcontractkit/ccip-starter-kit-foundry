@@ -95,7 +95,7 @@ Run:
 
 ```bash
 forge script script/examples/Example02.s.sol:DeployBasicMessageReceiverWithCCVs \
-  --rpc-url ethereumSepolia \
+  --rpc-url polygonAmoy \
   --account myAccount \
   --broadcast \
   --sig "run(address)" \
@@ -112,7 +112,7 @@ Run:
 
 ```bash
 forge script script/examples/Example02.s.sol:SetBasicMessageReceiverWithCCVsMinBlockDepth \
-  --rpc-url ethereumSepolia \
+  --rpc-url polygonAmoy \
   --account myAccount \
   --broadcast \
   --sig "run(address,uint64,uint16)" \
@@ -132,7 +132,7 @@ Run:
 
 ```bash
 forge script script/examples/Example02.s.sol:Example02 \
-  --rpc-url avalancheFuji \
+  --rpc-url ethereumSepolia \
   --account myAccount \
   --broadcast \
   --sig "run(address,uint64,address,string,uint32,uint16,address)" \
@@ -165,5 +165,5 @@ Use that ID in the CCIP Explorer:
 You can inspect receiver state on destination chain:
 
 ```bash
-cast call <BASIC_MESSAGE_RECEIVER_WITH_CCVS_ADDRESS> "latestMessage()(bytes)" --rpc-url ethereumSepolia
+cast call <BASIC_MESSAGE_RECEIVER_WITH_CCVS_ADDRESS> "latestMessage()(bytes)" --rpc-url polygonAmoy
 ```

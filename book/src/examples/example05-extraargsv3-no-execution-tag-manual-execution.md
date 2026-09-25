@@ -31,7 +31,7 @@ Script path: `script/examples/Example05.s.sol`
 >
 > ```bash
 > forge script script/examples/Example04.s.sol:DeployBasicMessageReceiver \
->   --rpc-url ethereumSepolia \
+>   --rpc-url polygonAmoy \
 >   --account myAccount \
 >   --broadcast \
 >   --sig "run(address)" \
@@ -42,7 +42,7 @@ Script path: `script/examples/Example05.s.sol`
 >
 > ```bash
 > forge script script/examples/Example02.s.sol:DeployBasicMessageReceiverWithCCVs \
->   --rpc-url ethereumSepolia \
+>   --rpc-url polygonAmoy \
 >   --account myAccount \
 >   --broadcast \
 >   --sig "run(address)" \
@@ -53,7 +53,7 @@ Script path: `script/examples/Example05.s.sol`
 >
 > ```bash
 > forge script script/examples/Example02.s.sol:SetBasicMessageReceiverWithCCVsMinBlockDepth \
->   --rpc-url ethereumSepolia \
+>   --rpc-url polygonAmoy \
 >   --account myAccount \
 >   --broadcast \
 >   --sig "run(address,uint64,uint16)" \
@@ -103,7 +103,7 @@ Related helpers in `script/EncodeExtraArgsOffchain.s.sol`:
 
 ```bash
 forge script script/examples/Example05.s.sol:Example05 \
-  --rpc-url avalancheFuji \
+  --rpc-url ethereumSepolia \
   --account myAccount \
   --broadcast \
   --sig "run(address,uint64,address,string,uint32,uint16,address)" \

@@ -1,6 +1,6 @@
 # Example 08: CCT Burn and Mint With AdvancedPoolHooks
 
-This example covers BurnMint CCT on Fuji -> Sepolia with `AdvancedPoolHooks` attached to the pool.
+This example covers BurnMint CCT on Sepolia -> Amoy with `AdvancedPoolHooks` attached to the pool.
 
 ## Token Pool Hooks Development
 
@@ -82,28 +82,7 @@ Hook deployment defaults in this example:
 >
 > For this chapter, use `FOUNDRY_PROFILE=cct` in all commands.
 
-## Step 1: Deploy Token + Hook + Pool on Fuji
-
-```bash
-FOUNDRY_PROFILE=cct forge script script/examples/Example08.s.sol:DeployCCTBurnMintTokenAndPoolWithAdvancedPoolHook \
-  --rpc-url avalancheFuji \
-  --account myAccount \
-  --broadcast \
-  --sig "run(address,address,address,address,uint256)" \
-  <FUJI_TOKEN_ADMIN_REGISTRY> \
-  <FUJI_REGISTRY_MODULE_OWNER_CUSTOM> \
-  <FUJI_ARM_PROXY> \
-  <FUJI_ROUTER> \
-  1
-```
-
-Save from logs:
-
-- `<FUJI_TOKEN_ADDRESS>`
-- `<FUJI_ADVANCED_POOL_HOOK_ADDRESS>`
-- `<FUJI_POOL_ADDRESS>`
-
-## Step 2: Deploy Token + Hook + Pool on Sepolia
+## Step 1: Deploy Token + Hook + Pool on Sepolia
 
 ```bash
 FOUNDRY_PROFILE=cct forge script script/examples/Example08.s.sol:DeployCCTBurnMintTokenAndPoolWithAdvancedPoolHook \
@@ -124,21 +103,28 @@ Save from logs:
 - `<SEPOLIA_ADVANCED_POOL_HOOK_ADDRESS>`
 - `<SEPOLIA_POOL_ADDRESS>`
 
-## Step 3: Configure Fuji Pool With Sepolia Remote
+## Step 2: Deploy Token + Hook + Pool on Amoy
 
 ```bash
-FOUNDRY_PROFILE=cct forge script script/examples/Example08.s.sol:Example08 \
-  --rpc-url avalancheFuji \
+FOUNDRY_PROFILE=cct forge script script/examples/Example08.s.sol:DeployCCTBurnMintTokenAndPoolWithAdvancedPoolHook \
+  --rpc-url polygonAmoy \
   --account myAccount \
   --broadcast \
-  --sig "run(address,uint64,address,address)" \
-  <FUJI_POOL_ADDRESS> \
-  <SEPOLIA_CHAIN_SELECTOR> \
-  <SEPOLIA_TOKEN_ADDRESS> \
-  <SEPOLIA_POOL_ADDRESS>
+  --sig "run(address,address,address,address,uint256)" \
+  <AMOY_TOKEN_ADMIN_REGISTRY> \
+  <AMOY_REGISTRY_MODULE_OWNER_CUSTOM> \
+  <AMOY_ARM_PROXY> \
+  <AMOY_ROUTER> \
+  1
 ```
 
-## Step 4: Configure Sepolia Pool With Fuji Remote
+Save from logs:
+
+- `<AMOY_TOKEN_ADDRESS>`
+- `<AMOY_ADVANCED_POOL_HOOK_ADDRESS>`
+- `<AMOY_POOL_ADDRESS>`
+
+## Step 3: Configure Sepolia Pool With Amoy Remote
 
 ```bash
 FOUNDRY_PROFILE=cct forge script script/examples/Example08.s.sol:Example08 \
@@ -147,23 +133,37 @@ FOUNDRY_PROFILE=cct forge script script/examples/Example08.s.sol:Example08 \
   --broadcast \
   --sig "run(address,uint64,address,address)" \
   <SEPOLIA_POOL_ADDRESS> \
-  <FUJI_CHAIN_SELECTOR> \
-  <FUJI_TOKEN_ADDRESS> \
-  <FUJI_POOL_ADDRESS>
+  <AMOY_CHAIN_SELECTOR> \
+  <AMOY_TOKEN_ADDRESS> \
+  <AMOY_POOL_ADDRESS>
+```
+
+## Step 4: Configure Amoy Pool With Sepolia Remote
+
+```bash
+FOUNDRY_PROFILE=cct forge script script/examples/Example08.s.sol:Example08 \
+  --rpc-url polygonAmoy \
+  --account myAccount \
+  --broadcast \
+  --sig "run(address,uint64,address,address)" \
+  <AMOY_POOL_ADDRESS> \
+  <SEPOLIA_CHAIN_SELECTOR> \
+  <SEPOLIA_TOKEN_ADDRESS> \
+  <SEPOLIA_POOL_ADDRESS>
 ```
 
 ## Step 5: Send Transfer (Reuse Example06 Sender)
 
 ```bash
 FOUNDRY_PROFILE=cct forge script script/examples/Example06.s.sol:SendCCTTokenWithExtraArgsV3DefaultFinality \
-  --rpc-url avalancheFuji \
+  --rpc-url ethereumSepolia \
   --account myAccount \
   --broadcast \
   --sig "run(address,uint64,address,address,uint256,uint32,address)" \
-  <FUJI_ROUTER> \
-  <SEPOLIA_CHAIN_SELECTOR> \
-  <RECEIVER_ON_SEPOLIA> \
-  <FUJI_TOKEN_ADDRESS> \
+  <SEPOLIA_ROUTER> \
+  <AMOY_CHAIN_SELECTOR> \
+  <RECEIVER_ON_AMOY> \
+  <SEPOLIA_TOKEN_ADDRESS> \
   <AMOUNT> \
   0 \
   <FEE_TOKEN_ADDRESS>
@@ -177,11 +177,11 @@ Add one sender address:
 
 ```bash
 FOUNDRY_PROFILE=cct forge script script/examples/Example08.s.sol:Example08UpdateAllowlist \
-  --rpc-url avalancheFuji \
+  --rpc-url ethereumSepolia \
   --account myAccount \
   --broadcast \
   --sig "run(address,address[],address[])" \
-  <FUJI_ADVANCED_POOL_HOOK_ADDRESS> \
+  <SEPOLIA_ADVANCED_POOL_HOOK_ADDRESS> \
   "[]" \
   "[<ADDRESS_TO_ADD>]"
 ```
@@ -190,11 +190,11 @@ Remove one sender address:
 
 ```bash
 FOUNDRY_PROFILE=cct forge script script/examples/Example08.s.sol:Example08UpdateAllowlist \
-  --rpc-url avalancheFuji \
+  --rpc-url ethereumSepolia \
   --account myAccount \
   --broadcast \
   --sig "run(address,address[],address[])" \
-  <FUJI_ADVANCED_POOL_HOOK_ADDRESS> \
+  <SEPOLIA_ADVANCED_POOL_HOOK_ADDRESS> \
   "[<ADDRESS_TO_REMOVE>]" \
   "[]"
 ```
@@ -204,24 +204,24 @@ FOUNDRY_PROFILE=cct forge script script/examples/Example08.s.sol:Example08Update
 Verify token->pool registration:
 
 ```bash
-cast call <FUJI_TOKEN_ADMIN_REGISTRY> "getPool(address)(address)" <FUJI_TOKEN_ADDRESS> --rpc-url avalancheFuji
 cast call <SEPOLIA_TOKEN_ADMIN_REGISTRY> "getPool(address)(address)" <SEPOLIA_TOKEN_ADDRESS> --rpc-url ethereumSepolia
+cast call <AMOY_TOKEN_ADMIN_REGISTRY> "getPool(address)(address)" <AMOY_TOKEN_ADDRESS> --rpc-url polygonAmoy
 ```
 
 Verify attached hook on each pool:
 
 ```bash
-cast call <FUJI_POOL_ADDRESS> "getAdvancedPoolHooks()(address)" --rpc-url avalancheFuji
 cast call <SEPOLIA_POOL_ADDRESS> "getAdvancedPoolHooks()(address)" --rpc-url ethereumSepolia
+cast call <AMOY_POOL_ADDRESS> "getAdvancedPoolHooks()(address)" --rpc-url polygonAmoy
 ```
 
 Verify allowlist status:
 
 ```bash
-cast call <FUJI_ADVANCED_POOL_HOOK_ADDRESS> "getAllowListEnabled()(bool)" --rpc-url avalancheFuji
-cast call <FUJI_ADVANCED_POOL_HOOK_ADDRESS> "getAllowList()(address[])" --rpc-url avalancheFuji
 cast call <SEPOLIA_ADVANCED_POOL_HOOK_ADDRESS> "getAllowListEnabled()(bool)" --rpc-url ethereumSepolia
 cast call <SEPOLIA_ADVANCED_POOL_HOOK_ADDRESS> "getAllowList()(address[])" --rpc-url ethereumSepolia
+cast call <AMOY_ADVANCED_POOL_HOOK_ADDRESS> "getAllowListEnabled()(bool)" --rpc-url polygonAmoy
+cast call <AMOY_ADVANCED_POOL_HOOK_ADDRESS> "getAllowList()(address[])" --rpc-url polygonAmoy
 ```
 
 Monitor message status with the message ID on:

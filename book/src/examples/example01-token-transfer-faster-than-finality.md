@@ -32,7 +32,7 @@ Use the faucet script on the source chain:
 
 ```bash
 forge script script/Faucet.s.sol:Faucet \
-  --rpc-url avalancheFuji \
+  --rpc-url ethereumSepolia \
   --account myAccount \
   --broadcast \
   --sig "run(address)" \
@@ -46,12 +46,23 @@ Before choosing a Faster Than Finality depth in `ExtraArgsV3`, you can read what
 From a shell (replace RPC and address):
 
 ```bash
-cast call <EXECUTOR_ADDRESS> "getAllowedFinalityConfig()(bytes4)" --rpc-url <SOURCE_CHAIN_RPC_URL>
+cast call <EXECUTOR_ADDRESS> "getAllowedFinalityConfig()(bytes4)" --rpc-url ethereumSepolia
 ```
 
 Why this matters:
 
 - Your requested finality (derived from `blockConfirmations` in `EncodeExtraArgsOffchain` / `Example01` via **`FinalityCodec._encodeBlockDepth`**) must be **permitted** by the executor’s dynamic config; otherwise the send can revert.
+
+Check the source pool, executor, and CCV finality settings before sending:
+
+```bash
+forge script script/examples/Example06.s.sol:Example06CheckFinalityGates \
+  --rpc-url ethereumSepolia \
+  --sig "run(address,uint64,address,uint16)" \
+  <SOURCE_ROUTER> <DESTINATION_CHAIN_SELECTOR> <CCIP_BNM_SOURCE_TOKEN_ADDRESS> <BLOCK_CONFIRMATIONS_GT_ZERO>
+```
+
+A quote alone does not prove `ccipSend` will succeed with a non-`IPoolV2` pool.
 
 ## Step 3: Send Token With Faster Than Finality
 
@@ -59,7 +70,7 @@ Run `Example01`:
 
 ```bash
 forge script script/examples/Example01.s.sol:Example01 \
-  --rpc-url avalancheFuji \
+  --rpc-url ethereumSepolia \
   --account myAccount \
   --broadcast \
   --sig "run(address,uint64,address,address,uint256,uint32,uint16,address)" \
@@ -77,7 +88,7 @@ Parameter notes:
 
 - `<AMOUNT>`: token amount in token decimals (for 18 decimals, `1e18` is 1 token).
 - `<GAS_LIMIT>`: set to `0` for token-only transfer to an EOA receiver.
-- `<BLOCK_CONFIRMATIONS_GT_ZERO>`: must be `> 0` in this Faster Than Finality example; pick a depth consistent with the executor’s allowed finality from Step 2 and lane policy.
+- `<BLOCK_CONFIRMATIONS_GT_ZERO>`: must be `> 0` and meet the source pool and executor minimums from Step 2.
 - `<FEE_TOKEN_ADDRESS>`: Pass the LINK token address on the source chain here. If you want to pay for CCIP fees in native coin instead, pass `0x0000000000000000000000000000000000000000`
 
 ## Verify Result

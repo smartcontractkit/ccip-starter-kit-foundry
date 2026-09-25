@@ -1,6 +1,6 @@
 # Example 03: Programmable Token Transfer (Faster Than Finality)
 
-This example sends a programmable token transfer from an EOA on Avalanche Fuji to a receiver that supports Faster Than Finality on Ethereum Sepolia:
+This example sends a programmable token transfer from an EOA on Ethereum Sepolia to a receiver that supports Faster Than Finality on Polygon Amoy:
 
 - Data payload: `"Hello, World"`
 - Tokens: `CCIP-BnM`
@@ -9,8 +9,8 @@ Script path: `script/examples/Example03.s.sol`
 
 ## What You Will Do
 
-1. Ensure a destination `BasicMessageReceiverWithCCVs` exists on Sepolia.
-2. Mint 1 `CCIP-BnM` on Fuji using `script/Faucet.s.sol`.
+1. Ensure a destination `BasicMessageReceiverWithCCVs` exists on Amoy.
+2. Mint 1 `CCIP-BnM` on Sepolia using `script/Faucet.s.sol`.
 3. Send one CCIP message containing both data and tokens.
 
 ## Receiver Compatibility Note
@@ -42,7 +42,7 @@ This chapter uses Faster Than Finality (`blockConfirmations > 0`), so destinatio
 >
 > ```bash
 > forge script script/examples/Example02.s.sol:DeployBasicMessageReceiverWithCCVs \
->   --rpc-url ethereumSepolia \
+>   --rpc-url polygonAmoy \
 >   --account myAccount \
 >   --broadcast \
 >   --sig "run(address)" \
@@ -53,7 +53,7 @@ This chapter uses Faster Than Finality (`blockConfirmations > 0`), so destinatio
 >
 > ```bash
 > forge script script/examples/Example02.s.sol:SetBasicMessageReceiverWithCCVsMinBlockDepth \
->   --rpc-url ethereumSepolia \
+>   --rpc-url polygonAmoy \
 >   --account myAccount \
 >   --broadcast \
 >   --sig "run(address,uint64,uint16)" \
@@ -62,28 +62,30 @@ This chapter uses Faster Than Finality (`blockConfirmations > 0`), so destinatio
 >   <MIN_BLOCK_DEPTH>
 > ```
 >
-> For this chapter (which sends Faster Than Finality), use `<MIN_BLOCK_DEPTH> > 0`.
+> For this Faster Than Finality example, use `<MIN_BLOCK_DEPTH> > 0` and check the source pool minimum too.
 >
 > The script argument accepts `<MIN_BLOCK_DEPTH>` (a `uint16` passed to `BasicMessageReceiverWithCCVs.setMinBlockDepth`). On-chain, the receiver does not return that integer directly to CCIP: `getCCVsAndFinalityConfig` sets `allowedFinalityConfig` to `FinalityCodec._encodeBlockDepth(minBlockDepth)` — the same `bytes4` finality encoding CCIP 2.0 uses elsewhere for allowed finality (depth `0` means wait for full/default finality).
 >
 > Save the receiver address from the `[RESULT]` log and use it in Step 2 below.
 
-## Step 1: Get 1 CCIP-BnM Token on Fuji
+## Step 1: Get 1 CCIP-BnM Token on Sepolia
+
+Use the token and finality check from [Example 01](example01-token-transfer-faster-than-finality.md):
 
 ```bash
 forge script script/Faucet.s.sol:Faucet \
-  --rpc-url avalancheFuji \
+  --rpc-url ethereumSepolia \
   --account myAccount \
   --broadcast \
   --sig "run(address)" \
-  <CCIP_BNM_FUJI_ADDRESS>
+  <CCIP_BNM_SOURCE_TOKEN_ADDRESS>
 ```
 
 ## Step 2: Send Hello World + CCIP-BnM
 
 ```bash
 forge script script/examples/Example03.s.sol:Example03 \
-  --rpc-url avalancheFuji \
+  --rpc-url ethereumSepolia \
   --account myAccount \
   --broadcast \
   --sig "run(address,uint64,address,string,address,uint256,uint32,uint16,address)" \
@@ -91,7 +93,7 @@ forge script script/examples/Example03.s.sol:Example03 \
   <DESTINATION_CHAIN_SELECTOR> \
   <BASIC_MESSAGE_RECEIVER_WITH_CCVS_ADDRESS> \
   "Hello, World" \
-  <CCIP_BNM_FUJI_ADDRESS> \
+  <CCIP_BNM_SOURCE_TOKEN_ADDRESS> \
   <AMOUNT> \
   <GAS_LIMIT> \
   <BLOCK_CONFIRMATIONS_GT_ZERO> \
@@ -102,8 +104,7 @@ Parameter notes:
 
 - `<AMOUNT>` uses token decimals (`1e18` is 1 token for 18-decimal tokens).
 - `<GAS_LIMIT>` must be `> 0` because the receiver contract callback handles data.
-- `<BLOCK_CONFIRMATIONS_GT_ZERO>` must be `> 0` for Faster Than Finality.
-- `<BLOCK_CONFIRMATIONS_GT_ZERO>` should be greater than or equal to `<MIN_BLOCK_DEPTH>` (the depth you stored on the receiver; CCIP compares it against your message’s `requestedFinalityConfig` after both sides use `FinalityCodec` encoding).
+- `<BLOCK_CONFIRMATIONS_GT_ZERO>` must meet the source pool and receiver minimums.
 - Executor may enforce a minimum block confirmation value and revert if too low.
 - If requested confirmations exceed chain finality, default finality is used.
 - `<FEE_TOKEN_ADDRESS>`: Pass the LINK token address on the source chain here. If you want to pay for CCIP fees in native coin instead, pass `0x0000000000000000000000000000000000000000`
@@ -114,10 +115,10 @@ Parameter notes:
 
 - https://ccip.chain.link
 
-Optional receiver checks on Sepolia:
+Optional receiver checks on Amoy:
 
 ```bash
-cast call <BASIC_MESSAGE_RECEIVER_WITH_CCVS_ADDRESS> "latestMessage()(bytes)" --rpc-url ethereumSepolia
-cast call <BASIC_MESSAGE_RECEIVER_WITH_CCVS_ADDRESS> "latestSender()(address)" --rpc-url ethereumSepolia
-cast call <BASIC_MESSAGE_RECEIVER_WITH_CCVS_ADDRESS> "latestSourceChainSelector()(uint64)" --rpc-url ethereumSepolia
+cast call <BASIC_MESSAGE_RECEIVER_WITH_CCVS_ADDRESS> "latestMessage()(bytes)" --rpc-url polygonAmoy
+cast call <BASIC_MESSAGE_RECEIVER_WITH_CCVS_ADDRESS> "latestSender()(address)" --rpc-url polygonAmoy
+cast call <BASIC_MESSAGE_RECEIVER_WITH_CCVS_ADDRESS> "latestSourceChainSelector()(uint64)" --rpc-url polygonAmoy
 ```
