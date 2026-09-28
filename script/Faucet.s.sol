@@ -1,26 +1,20 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.24;
+pragma solidity ^0.8.0;
 
-import "forge-std/Script.sol";
-import "./Helper.sol";
+import {Script, console2} from "forge-std/Script.sol";
 
-interface ICCIPToken {
+interface BurnMintERC20WithDrip {
+    // Gives one full token to any given address.
     function drip(address to) external;
 }
 
-contract Faucet is Script, Helper {
-    function run(SupportedNetworks network) external {
-        uint256 senderPrivateKey = vm.envUint("PRIVATE_KEY");
-        vm.startBroadcast(senderPrivateKey);
-        address senderAddress = vm.addr(senderPrivateKey);
+contract Faucet is Script {
+    function run(address ccipBnM) external {
+        vm.startBroadcast();
 
-        (address ccipBnm, address ccipLnm) = getDummyTokensFromNetwork(network);
-
-        ICCIPToken(ccipBnm).drip(senderAddress);
-
-        if (network == SupportedNetworks.ETHEREUM_SEPOLIA) {
-            ICCIPToken(ccipLnm).drip(senderAddress);
-        }
+        (, address broadcaster,) = vm.readCallers();
+        BurnMintERC20WithDrip(ccipBnM).drip(broadcaster);
+        console2.log("[INFO] Minting 1 CCIP-BnM token (", ccipBnM, ") to address:", broadcaster);
 
         vm.stopBroadcast();
     }

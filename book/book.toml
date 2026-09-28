@@ -1,0 +1,7 @@
+[book]
+title = "Chainlink CCIP Starter Kit V2 (Foundry)"
+language = "en"
+src = "src"
+
+[build]
+build-dir = "book"
