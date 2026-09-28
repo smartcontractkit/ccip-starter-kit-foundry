@@ -17,7 +17,8 @@
     "viem": "^2.39.1"
   },
   "overrides": {
-    "bigint-buffer": "npm:@trufflesuite/bigint-buffer@1.1.10"
+    "bigint-buffer": "npm:@trufflesuite/bigint-buffer@1.1.10",
+    "toml": "^5.0.0"
   },
   "devDependencies": {
     "@types/node": "^24.5.2",
