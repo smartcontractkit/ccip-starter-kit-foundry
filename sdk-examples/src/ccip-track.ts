@@ -1,4 +1,4 @@
-import { EVMChain, getMessagesForSender } from '@chainlink/ccip-sdk'
+import { EVMChain } from '@chainlink/ccip-sdk'
 import { inspect } from 'node:util'
 import { getArg, hasFlag, resolveRpcUrl } from './helpers.js'
 
@@ -50,7 +50,8 @@ function summaryOfRequest(request: any): Record<string, unknown> {
     request?.message?.blockConfirmations ??
     request?.message?.extraArgs?.blockConfirmations ??
     request?.message?.finality
-  const finalityThresholdInt = asNonNegativeInt(finalityThreshold)
+  // SDK 1.x reports default finality as 'finalized' rather than 0.
+  const finalityThresholdInt = finalityThreshold === 'finalized' ? 0 : asNonNegativeInt(finalityThreshold)
 
   const transactionSpeed =
     finalityThresholdInt === undefined
@@ -167,7 +168,9 @@ async function main(): Promise<void> {
   const startBlock = parseNonNegativeInt('--start-block', getArg('--start-block') ?? '0', 0)
 
   let count = 0
-  for await (const request of getMessagesForSender(chain, sender!, { startBlock })) {
+  // SDK 1.x removed getMessagesForSender; scan the range and filter by sender instead.
+  for await (const request of chain.getMessagesInRange({ startBlock })) {
+    if (request.message.sender.toLowerCase() !== sender!.toLowerCase()) continue
     printSummary(`request ${count + 1}:`, request)
     count++
     if (count >= limit) break

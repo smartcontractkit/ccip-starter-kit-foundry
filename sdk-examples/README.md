@@ -4,6 +4,8 @@ This directory contains TypeScript examples built with `@chainlink/ccip-sdk`.
 
 ## Install
 
+Requires Node.js 24 or later (`@chainlink/ccip-sdk` 1.x uses syntax Node 22 cannot run).
+
 From repo root:
 
 ```bash

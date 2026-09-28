@@ -3,13 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
   "scripts": {
     "ccip-send": "node --import tsx src/ccip-send.ts",
     "ccip-track": "node --import tsx src/ccip-track.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@chainlink/ccip-sdk": "^0.97.0",
+    "@chainlink/ccip-sdk": "^1.14.0",
     "dotenv": "^16.6.1",
     "viem": "^2.39.1"
   },

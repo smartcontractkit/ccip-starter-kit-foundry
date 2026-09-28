@@ -30,6 +30,8 @@ for await (const msg of getMessagesForSender(source, sender, { startBlock })) {
 
 ## Prerequisites
 
+Requires Node.js 24 or later (`@chainlink/ccip-sdk` 1.x uses syntax Node 22 cannot run).
+
 From repo root:
 
 ```bash

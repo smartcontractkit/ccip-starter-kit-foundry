@@ -93,7 +93,8 @@ async function main(): Promise<void> {
     feeToken,
     extraArgs: {
       gasLimit,
-      blockConfirmations,
+      // SDK 1.x: 'finalized' = default finality; 1..65535 = Fast Transfers block depth.
+      finality: blockConfirmations === 0 ? 'finalized' : blockConfirmations,
     },
   }
 
