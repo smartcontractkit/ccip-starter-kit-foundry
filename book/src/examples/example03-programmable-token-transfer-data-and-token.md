@@ -1,6 +1,6 @@
-# Example 03: Programmable Token Transfer (Faster Than Finality)
+# Example 03: Programmable Token Transfer with Fast Transfers (FTF)
 
-This example sends a programmable token transfer from an EOA on Ethereum Sepolia to a receiver that supports Faster Than Finality on Polygon Amoy:
+This example sends a programmable token transfer from an EOA on Ethereum Sepolia to a receiver that supports Fast Transfers on Polygon Amoy:
 
 - Data payload: `"Hello, World"`
 - Tokens: `CCIP-BnM`
@@ -15,7 +15,7 @@ Script path: `script/examples/Example03.s.sol`
 
 ## Receiver Compatibility Note
 
-This chapter uses Faster Than Finality (`blockConfirmations > 0`), so destination receiver should return a non-zero minimum block depth.
+This chapter uses Fast Transfers (`blockConfirmations > 0`), so destination receiver should return a non-zero minimum block depth.
 
 - If your receiver is default-finality-only, this message can fail on destination.
 - Deploy `BasicMessageReceiverWithCCVs` before running this chapter.
@@ -62,7 +62,7 @@ This chapter uses Faster Than Finality (`blockConfirmations > 0`), so destinatio
 >   <MIN_BLOCK_DEPTH>
 > ```
 >
-> For this Faster Than Finality example, use `<MIN_BLOCK_DEPTH> > 0` and check the source pool minimum too.
+> For this Fast Transfers example, use `<MIN_BLOCK_DEPTH> > 0` and check the source pool minimum too.
 >
 > The script argument accepts `<MIN_BLOCK_DEPTH>` (a `uint16` passed to `BasicMessageReceiverWithCCVs.setMinBlockDepth`). On-chain, the receiver does not return that integer directly to CCIP: `getCCVsAndFinalityConfig` sets `allowedFinalityConfig` to `FinalityCodec._encodeBlockDepth(minBlockDepth)` — the same `bytes4` finality encoding CCIP 2.0 uses elsewhere for allowed finality (depth `0` means wait for full/default finality).
 >

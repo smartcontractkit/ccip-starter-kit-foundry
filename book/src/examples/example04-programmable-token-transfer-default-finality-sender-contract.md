@@ -7,7 +7,7 @@ This example sends a programmable token transfer from Ethereum Sepolia to Polygo
 - Finality mode: default finality (`blockConfirmations = 0`)
 
 Because this chapter uses default finality, the baseline `BasicMessageReceiver` is sufficient on destination.
-If you want the Faster Than Finality variant (`blockConfirmations > 0`), use Example03 with `BasicMessageReceiverWithCCVs`.
+If you want the Fast Transfers (FTF) variant (`blockConfirmations > 0`), use Example03 with `BasicMessageReceiverWithCCVs`.
 
 Scripts used:
 

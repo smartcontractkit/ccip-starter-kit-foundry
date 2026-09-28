@@ -16,9 +16,9 @@ This chapter shows how to run the SDK script for the three message shapes used i
 
 The script lives in `sdk-examples/src/ccip-send.ts`.
 
-## Receiver Compatibility for Faster Than Finality
+## Receiver Compatibility for Fast Transfers (FTF)
 
-When using `--block-confirmations > 0` (Faster Than Finality), receiver compatibility matters for message modes that execute receiver callbacks.
+When using `--block-confirmations > 0` (Fast Transfers), receiver compatibility matters for message modes that execute receiver callbacks.
 
 | Mode | `--block-confirmations 0` | `--block-confirmations > 0` |
 |---|---|---|
@@ -67,7 +67,7 @@ For actual sends (non-`--dry-run`), set `USER_KEY` (or `PRIVATE_KEY`) in the roo
 
 ## 1) Data-Only
 
-Faster Than Finality (`blockConfirmations=1`):
+Fast Transfers (`blockConfirmations=1`):
 
 ```bash
 npm --prefix sdk-examples run ccip-send -- \

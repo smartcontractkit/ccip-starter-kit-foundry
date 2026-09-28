@@ -1,6 +1,6 @@
-# Example 02: Hello World to BasicMessageReceiverWithCCVs (Faster Than Finality)
+# Example 02: Hello World to BasicMessageReceiverWithCCVs with Fast Transfers (FTF)
 
-This example deploys a destination `BasicMessageReceiverWithCCVs` contract and sends a Hello World data message from an EOA using Faster Than Finality (`blockConfirmations > 0`).
+This example deploys a destination `BasicMessageReceiverWithCCVs` contract and sends a Hello World data message from an EOA using Fast Transfers (`blockConfirmations > 0`).
 
 Scripts used:
 
@@ -85,7 +85,7 @@ The receiver controls two independent dimensions:
 - `requiredCCVs` and `optionalCCVs` define additional verifiers required for acceptance.
 - `allowedFinalityConfig` defines which requested finality modes are accepted (see `FinalityCodec` in chainlink-ccip). A zero value (`WAIT_FOR_FINALITY_FLAG`) means only fully finalized messages are accepted.
 
-You can combine these independently (for example, add verifiers while requiring full finality, or allow faster-than-finality modes when policy allows).
+You can combine these independently (for example, add verifiers while requiring full finality, or allow Fast Transfers when policy allows).
 
 In this starter kit, `src/BasicMessageReceiverWithCCVs.sol` adds configurable verifier sets and stores a per-chain minimum block depth, which it exposes via `FinalityCodec._encodeBlockDepth` in `getCCVsAndFinalityConfig`.
 
@@ -124,7 +124,7 @@ forge script script/examples/Example02.s.sol:SetBasicMessageReceiverWithCCVsMinB
 For this chapter, use `<MIN_BLOCK_DEPTH> = 1`.
 
 - `0` means deafault finality-only behavior.
-- `> 0` enables Faster Than Finality with that minimum depth.
+- `> 0` enables Fast Transfers with that minimum depth.
 
 ## Step 3: Send Hello World Data Message from EOA
 
@@ -148,7 +148,7 @@ forge script script/examples/Example02.s.sol:Example02 \
 Parameter notes:
 
 - `<GAS_LIMIT>` must be `> 0` because the destination receiver callback needs gas.
-- `<BLOCK_CONFIRMATIONS_GT_ZERO>` must be `> 0` for Faster Than Finality.
+- `<BLOCK_CONFIRMATIONS_GT_ZERO>` must be `> 0` for Fast Transfers.
 - `<BLOCK_CONFIRMATIONS_GT_ZERO>` should be greater than or equal to `<MIN_BLOCK_DEPTH>`.
 - Executor may enforce a minimum block confirmations value and revert if too low.
 - If requested confirmations exceed chain finality, default finality is used.

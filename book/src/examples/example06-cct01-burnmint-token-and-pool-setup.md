@@ -4,7 +4,7 @@ This example covers the full BurnMint CCT flow on Sepolia -> Amoy:
 
 1. Deploy [`CrossChainToken`](https://github.com/smartcontractkit/chainlink-ccip/blob/develop/chains/evm/contracts/tokens/CrossChainToken.sol) + BurnMint pool on both chains.
 2. Configure pools to trust each other.
-3. Opt the pools into Faster Than Finality (this is what makes the token "FTF enabled").
+3. Opt the pools into Fast Transfers (FTF) (this is what makes the token "FTF enabled").
 4. Send a token transfer across the lane.
 5. Verify BurnMint behavior (burn on source, mint on destination).
 
@@ -130,7 +130,7 @@ FOUNDRY_PROFILE=cct forge script script/examples/Example06.s.sol:Example06 \
   <SEPOLIA_POOL_ADDRESS>
 ```
 
-## Step 5: Enable Faster Than Finality on Both Pools
+## Step 5: Enable Fast Transfers on Both Pools
 
 New pools allow full finality only (`0x00000000`). FTF is a pool setting; configure both pools:
 
@@ -157,7 +157,7 @@ FOUNDRY_PROFILE=cct forge script script/examples/Example06.s.sol:Example06GetPoo
   <AMOY_POOL_ADDRESS>
 ```
 
-`0` disables FTF; depth values `1`–`65535` set the minimum. The staged wait-for-safe flag is not usable
+`0x00000000` disables FTF; values `0x00000001`–`0x0000ffff` set the minimum block depth. The staged wait-for-safe flag is not usable
 on this lane.
 
 ## Step 6: Check Finality Gates

@@ -1,6 +1,6 @@
-# Example 01: Token Transfer + Faster Than Finality
+# Example 01: Token Transfer + Fast Transfers (FTF)
 
-This example sends one token transfer message using `ExtraArgsV3` with Faster Than Finality (`blockConfirmations > 0`).
+This example sends one token transfer message using `ExtraArgsV3` with Fast Transfers (`blockConfirmations > 0`).
 
 Script path: `script/examples/Example01.s.sol`
 
@@ -41,7 +41,7 @@ forge script script/Faucet.s.sol:Faucet \
 
 ## Step 2: (Optional) Check Executor Allowed Finality
 
-Before choosing a Faster Than Finality depth in `ExtraArgsV3`, you can read what finality modes the **Executor** allows. The on-chain API is **`getAllowedFinalityConfig() → bytes4`**, encoded with **`FinalityCodec`** (same family of values as `requestedFinalityConfig` in your message’s ExtraArgs).
+Before choosing a Fast Transfers depth in `ExtraArgsV3`, you can read what finality modes the **Executor** allows. The on-chain API is **`getAllowedFinalityConfig() → bytes4`**, encoded with **`FinalityCodec`** (same family of values as `requestedFinalityConfig` in your message’s ExtraArgs).
 
 From a shell (replace RPC and address):
 
@@ -64,7 +64,7 @@ forge script script/examples/Example06.s.sol:Example06CheckFinalityGates \
 
 A quote alone does not prove `ccipSend` will succeed with a non-`IPoolV2` pool.
 
-## Step 3: Send Token With Faster Than Finality
+## Step 3: Send Token With Fast Transfers
 
 Run `Example01`:
 
