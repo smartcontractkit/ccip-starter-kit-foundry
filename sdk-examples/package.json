@@ -16,6 +16,9 @@
     "dotenv": "^16.6.1",
     "viem": "^2.39.1"
   },
+  "overrides": {
+    "bigint-buffer": "npm:@trufflesuite/bigint-buffer@1.1.10"
+  },
   "devDependencies": {
     "@types/node": "^24.5.2",
     "tsx": "^4.20.6",
