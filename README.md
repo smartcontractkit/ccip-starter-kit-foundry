@@ -6,6 +6,12 @@
 
 Reference starter kit for learning and testing **CCIP v2** with Foundry scripts, Solidity contracts, and small SDK examples.
 
+Examples 01–08 use Ethereum Sepolia → Polygon Amoy as their primary CCIP 2.0 lane.
+[Example 01](book/src/examples/example01-token-transfer-faster-than-finality.md), Example 03, and
+Example 04 use faucet-issued CCIP-BnM.
+[Examples 06–08](book/src/examples/example06-cct01-burnmint-token-and-pool-setup.md) teach custom
+token and pool deployment. The legacy chapters retain their older-lane demonstrations.
+
 ## Start Here
 
 The primary documentation for this repo lives in the book: 
@@ -32,7 +38,7 @@ cp .env.example .env
 
 Set at least:
 
-- `AVALANCHE_FUJI_RPC_URL`
 - `ETHEREUM_SEPOLIA_RPC_URL`
+- `POLYGON_AMOY_RPC_URL`
 
 Then follow the book chapters for exact run commands.

@@ -39,17 +39,17 @@ export function resolveRpcUrl(flagName: '--source-rpc-url' | '--dest-rpc-url'): 
 
   const fromEnv =
     flagName === '--source-rpc-url'
-      ? getEnvFirst(['CCIP_SOURCE_RPC_URL', 'AVALANCHE_FUJI_RPC_URL'])
-      : getEnvFirst(['CCIP_DEST_RPC_URL', 'ETHEREUM_SEPOLIA_RPC_URL'])
+      ? getEnvFirst(['CCIP_SOURCE_RPC_URL', 'ETHEREUM_SEPOLIA_RPC_URL'])
+      : getEnvFirst(['CCIP_DEST_RPC_URL', 'POLYGON_AMOY_RPC_URL'])
   if (fromEnv) return fromEnv
 
   if (flagName === '--source-rpc-url') {
     throw new Error(
-      'Missing source RPC URL. Pass --source-rpc-url or set CCIP_SOURCE_RPC_URL (fallback AVALANCHE_FUJI_RPC_URL).',
+      'Missing source RPC URL. Pass --source-rpc-url or set CCIP_SOURCE_RPC_URL (fallback ETHEREUM_SEPOLIA_RPC_URL).',
     )
   }
   throw new Error(
-    'Missing destination RPC URL. Pass --dest-rpc-url or set CCIP_DEST_RPC_URL (fallback ETHEREUM_SEPOLIA_RPC_URL).',
+    'Missing destination RPC URL. Pass --dest-rpc-url or set CCIP_DEST_RPC_URL (fallback POLYGON_AMOY_RPC_URL).',
   )
 }
 

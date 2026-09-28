@@ -43,7 +43,7 @@ npm --prefix sdk-examples install
 - `--source-rpc-url <url>` flag, or
 - `.env`:
   - `CCIP_SOURCE_RPC_URL`
-  - fallback: `AVALANCHE_FUJI_RPC_URL`
+  - fallback: `ETHEREUM_SEPOLIA_RPC_URL`
 
 ```bash
 source .env
@@ -55,7 +55,7 @@ Use a source tx hash from your Foundry run (for example `Example01`-`Example08`)
 
 ```bash
 npm --prefix sdk-examples run ccip-track -- \
-  --source-rpc-url "$AVALANCHE_FUJI_RPC_URL" \
+  --source-rpc-url "$ETHEREUM_SEPOLIA_RPC_URL" \
   --tx-hash <SOURCE_TX_HASH> 
 ```
 
@@ -63,7 +63,7 @@ npm --prefix sdk-examples run ccip-track -- \
 
 ```bash
 npm --prefix sdk-examples run ccip-track -- \
-  --source-rpc-url "$AVALANCHE_FUJI_RPC_URL" \
+  --source-rpc-url "$ETHEREUM_SEPOLIA_RPC_URL" \
   --message-id <MESSAGE_ID>
 ```
 
@@ -73,7 +73,7 @@ Output prints the same concise SDK summary for that message ID.
 
 ```bash
 npm --prefix sdk-examples run ccip-track -- \
-  --source-rpc-url "$AVALANCHE_FUJI_RPC_URL" \
+  --source-rpc-url "$ETHEREUM_SEPOLIA_RPC_URL" \
   --limit 10 \
   --sender <SENDER_ADDRESS>
 ```

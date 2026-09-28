@@ -61,7 +61,7 @@ ccip-cli show <MESSAGE_ID> \
 ```
 
 `<MESSAGE_ID>` is the CCIP message ID.  
-`<SOURCE_CHAIN_SELECTOR>` is the source CCIP chain selector (example: Avalanche Fuji `14767482510784806043`).
+`<SOURCE_CHAIN_SELECTOR>` is the source CCIP chain selector.
 
 ## Send Parity (CLI)
 
@@ -81,7 +81,7 @@ ccip-cli send -s <SOURCE_CHAIN> -d <DEST_CHAIN> -r <SOURCE_ROUTER> \
 ```
 
 `<SOURCE_CHAIN>` and `<DEST_CHAIN>` can be chain ID, chain selector, or chain name.  
-Chain ID examples: Avalanche Fuji `43113`, Ethereum Sepolia `11155111`.  
+Chain ID examples: Ethereum Sepolia `11155111`, Polygon Amoy `80002`.  
 `<SOURCE_ROUTER>` is the source-chain router for the selected lane.
 
 ### 2) Token-only

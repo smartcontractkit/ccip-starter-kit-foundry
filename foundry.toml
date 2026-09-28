@@ -3,7 +3,8 @@ src = "src"
 out = "out"
 libs = ["lib"]
 solc_version = '0.8.26'
-evm_version = 'paris'
+# Deployed CCIP 2.0 contracts use opcodes unavailable to Paris script simulations.
+evm_version = 'cancun'
 
 [profile.cct]
 optimizer = true
@@ -15,7 +16,7 @@ avalancheFuji = "${AVALANCHE_FUJI_RPC_URL}"
 polygonAmoy = "${POLYGON_AMOY_RPC_URL}"
 baseSepolia = "${BASE_SEPOLIA_RPC_URL}"
 
-[profile.lint]
+[profile.lint.lint]
 exclude_lints = [
     "mixed-case-variable",
     "pascal-case-struct",
