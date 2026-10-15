@@ -5,10 +5,19 @@ libs = ["lib"]
 solc_version = '0.8.26'
 # Deployed CCIP 2.0 contracts use opcodes unavailable to Paris script simulations.
 evm_version = 'cancun'
+# Fork tests need RPC URLs and pinned blocks, so `forge test` skips them. Run them with FOUNDRY_PROFILE=fork.
+no_match_path = 'test/fork/**'
 
 [profile.cct]
 optimizer = true
 optimizer_runs = 200
+
+# Fork tests (test/fork): pool deployment needs the optimizer, same as the cct profile.
+[profile.fork]
+optimizer = true
+optimizer_runs = 200
+no_match_path = 'test/none/**'
+match_path = 'test/fork/**'
 
 [rpc_endpoints]
 ethereumSepolia = "${ETHEREUM_SEPOLIA_RPC_URL}"

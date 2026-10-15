@@ -13,7 +13,8 @@ Keep the disclaimer headers on example contracts and scripts.
 - `script/examples/`: CCIP 2.0 example scripts (`Example01`–`Example08`) and `Legacy01`–`Legacy02`. Core learning path.
 - `script/EncodeExtraArgsOffchain.s.sol`: ExtraArgs V1/V2/V3 encoding helper used by the examples.
 - `src/`: `BasicMessageSender`, `BasicMessageReceiver`, `BasicMessageReceiverWithCCVs`, `utils/Withdraw`.
-- `test/`: Foundry tests on the Chainlink Local V3 no-fork simulator (see below).
+- `test/`: Foundry tests on the Chainlink Local V3 no-fork simulator (see below). `test/fork/`: fork tests for
+  Examples 06–08, excluded from plain `forge test`.
 - `book/src/`: mdBook chapters, one per example. Build output (`book/book`) is gitignored.
 - `sdk-examples/`: TypeScript CCIP SDK demos (Node >= 24), separate from the Foundry project.
 - `lib/`: git submodules. Versions are pinned in `foundry.lock`; import paths are in `remappings.txt`.
@@ -64,7 +65,19 @@ Scripts need RPC URLs: `cp .env.example .env` and set the endpoints (at minimum 
 - Local mode is single-chain with no token pools, no CCV verifiers (so no quorum check), and no executor or manual
   execution. It does enforce the CCIP 2.0 finality rules, one token per message, and receiver CCV config validation.
   Do not assert behavior Local does not model; note the limitation in the test instead.
-- Examples 06–08 (CCT token/pool setup) are not covered yet; they would need fork tests.
+- Examples 06–08 (CCT token/pool setup) are covered by fork tests in `test/fork/` (Sepolia -> Amoy). They run the real
+  scripts against pinned forks through `CCIPLocalSimulatorFork`, need Foundry >= 1.5.1, and are excluded from plain
+  `forge test`. Run them manually with `FOUNDRY_PROFILE=fork forge test -j 1`; there is no CI job. Contracts or scripts
+  created in a fork test are per-fork: make them persistent (`_persistent` in `test/fork/utils/CCTForkTest.sol`)
+  before using them on another fork.
+- Fork pins: `DEFAULT_SEPOLIA_FORK_BLOCK` and `DEFAULT_AMOY_FORK_BLOCK` in `test/fork/utils/CCTForkTest.sol` are
+  committed so runs are reproducible; `ETHEREUM_SEPOLIA_FORK_BLOCK` / `POLYGON_AMOY_FORK_BLOCK` override them for a run.
+  Pinned state never sees testnet upgrades, so green tests only prove the examples against that snapshot.
+- Re-pinning: do it when the book's lane/CCV/finality behavior changes, when a pinned block can no longer be served
+  (non-archive RPC), and on every `@chainlink/contracts-ccip` or `@chainlink/local` bump. Steps: run the fork profile
+  with the two override env vars set to the latest blocks (`cast block-number --rpc-url ...`); if all tests pass, put those
+  block numbers into the two constants and commit them; if not, the live lane drifted: fix the tests or the examples
+  and the book first.
 - Prefer specific `vm.expectRevert(<selector or message>)` over bare `vm.expectRevert()`.
 
 ## Working rules
