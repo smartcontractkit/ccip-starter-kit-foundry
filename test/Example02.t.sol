@@ -61,6 +61,38 @@ contract Example02Test is LocalSimulatorTest {
         assertEq(receiver.latestMessageId(), messageId);
     }
 
+    /// @dev Local mode has no CCV verifiers, so it cannot check quorum; it does read the receiver's CCV config
+    ///      (duplicates, optional threshold) and its finality. This checks a receiver configured with required and
+    ///      optional CCVs is still accepted by that router-side validation and keeps gating on min block depth.
+    function test_deliversMessageWhenReceiverHasCCVConfigApplied() public {
+        address[] memory required = new address[](1);
+        required[0] = makeAddr("requiredCCV");
+        address[] memory optional = new address[](2);
+        optional[0] = makeAddr("optionalCCV1");
+        optional[1] = makeAddr("optionalCCV2");
+        BasicMessageReceiverWithCCVs.CCVConfigArgs[] memory configs =
+            new BasicMessageReceiverWithCCVs.CCVConfigArgs[](1);
+        configs[0] = BasicMessageReceiverWithCCVs.CCVConfigArgs({
+            requiredCCVs: required, optionalCCVs: optional, sourceChainSelector: chainSelector, optionalThreshold: 1
+        });
+        vm.prank(broadcaster);
+        receiver.applyCCVConfigUpdates(configs);
+        _setMinBlockDepth(3);
+
+        bytes32 messageId = _send(3);
+
+        assertEq(receiver.latestMessageId(), messageId);
+
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                FinalityCodec.InvalidRequestedFinality.selector,
+                FinalityCodec._encodeBlockDepth(2),
+                FinalityCodec._encodeBlockDepth(3)
+            )
+        );
+        _send(2);
+    }
+
     function test_revertsWhenConfirmationsAreBelowMinBlockDepth() public {
         _setMinBlockDepth(3);
 
