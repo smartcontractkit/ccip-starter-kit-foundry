@@ -17,6 +17,12 @@
       "rev": "86aa5a1d34b20eda8d18fe6eb0e4882948e545ba"
     }
   },
+  "lib/chainlink-local": {
+    "tag": {
+      "name": "v0.3.1",
+      "rev": "af2b3da7e84e141695389739bb137680d0942d1c"
+    }
+  },
   "lib/forge-std": {
     "tag": {
       "name": "v1.14.0",
