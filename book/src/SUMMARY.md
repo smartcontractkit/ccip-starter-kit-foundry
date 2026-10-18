@@ -12,6 +12,8 @@
 - [Example 06: CCT Burn and Mint](./examples/example06-cct01-burnmint-token-and-pool-setup.md)
 - [Example 07: CCT Lock and Release](./examples/example07-cct02-lockrelease-token-and-pool-setup.md)
 - [Example 08: CCT Burn and Mint With AdvancedPoolHooks](./examples/example08-cct03-burnmint-with-advanced-pool-hooks.md)
+- [Example 09: Pool-Based CCVs on AdvancedPoolHooks](./examples/example09-cct04-pool-based-ccvs-on-advanced-pool-hooks.md)
+- [Example 10: Policy Engine on AdvancedPoolHooks](./examples/example10-cct05-policy-engine-on-advanced-pool-hooks.md)
 
 # CCIP API
 - [Using the CCIP API](./tools/using-the-api.md)
