@@ -29,7 +29,8 @@ mdbook serve book --open
 - `src`: sender/receiver contracts used by examples
 - `book/src`: step-by-step tutorial chapters
 - `sdk-examples`: minimal CCIP SDK demos
-- `test/`: testing suite powered by Chainlink Local V3
+- `test/`: testing suite powered by Chainlink Local V3 (no RPC needed)
+- `test/fork/`: fork tests for Examples 06–08 (manual run, needs RPC URLs and pinned blocks, see below)
 
 ## Minimal Setup
 
@@ -43,3 +44,25 @@ Set at least:
 - `POLYGON_AMOY_RPC_URL`
 
 Then follow the book chapters for exact run commands. 
+
+## Fork Tests (Examples 06–08)
+
+`forge test` runs the no-fork Chainlink Local tests only. The CCT examples (06–08) deploy tokens and pools and register
+them in the live TokenAdminRegistry, so their tests run the real scripts against pinned forks of Ethereum Sepolia and
+Polygon Amoy. They are run manually; there is no CI job for them.
+
+Requirements: Foundry >= 1.5.1 and RPC URLs for both chains. The forks are pinned to blocks committed in
+`test/fork/utils/CCTForkTest.sol` (`DEFAULT_SEPOLIA_FORK_BLOCK`, `DEFAULT_AMOY_FORK_BLOCK`), so a fresh clone runs the same
+chain state. Pinned blocks need an archive RPC once they fall out of a provider's recent-state window.
+
+```bash
+FOUNDRY_PROFILE=fork forge test -j 1 -vv
+```
+
+To run against a different block, for example the latest one to check whether the live lane has drifted:
+
+```bash
+ETHEREUM_SEPOLIA_FORK_BLOCK=$(cast block-number --rpc-url $ETHEREUM_SEPOLIA_RPC_URL) \
+POLYGON_AMOY_FORK_BLOCK=$(cast block-number --rpc-url $POLYGON_AMOY_RPC_URL) \
+FOUNDRY_PROFILE=fork forge test -j 1 -vv
+```
