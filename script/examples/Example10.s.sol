@@ -43,7 +43,7 @@ contract Example10DetachPolicyEngine is Script {
 }
 
 /// @notice Deploys the minimal example engine from `src/ExamplePolicyEngine.sol`.
-/// @dev For production-grade policy engines, use Chainlink ACE (https://chainlink.tech/ace).
+/// @dev For production-grade policy engines, use Chainlink ACE (https://docs.chain.link/ace).
 contract Example10DeployExamplePolicyEngine is Script {
     function run() external returns (address policyEngine) {
         console2.log("[INFO] Example10 (CCT 05): Deploy the minimal example policy engine");

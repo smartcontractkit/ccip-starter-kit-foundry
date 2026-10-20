@@ -18,7 +18,7 @@ import {Ownable, Ownable2Step} from "@openzeppelin/contracts@5.3.0/access/Ownabl
 ///      `payload.data`, so this engine decodes the transfer amount from the hook call and enforces a
 ///      simple cap. The remaining interface methods are stubbed out empty, as this engine has a
 ///      single built-in policy. For production-grade policy engines, use Chainlink ACE
-///      (https://chainlink.tech/ace).
+///      (https://docs.chain.link/ace).
 contract ExamplePolicyEngine is IPolicyEngine, Ownable2Step {
     error NotAttached(address target);
     error AlreadyAttached(address target);

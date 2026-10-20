@@ -13,7 +13,7 @@ The hook passes its own `preflightCheck`/`postflightCheck` calldata (minus the s
 
 The engine is called locally on each chain, so the source and destination engines are independent instances — unlike pool-required CCVs, they do not need to share an address.
 
-For production-grade policy engines, use Chainlink ACE (https://chainlink.tech/ace). This example attaches an existing engine by address and uses a minimal example engine (`src/ExamplePolicyEngine.sol`) that enforces a simple transfer-amount cap.
+For production-grade policy engines, use [Chainlink ACE](https://docs.chain.link/ace). This example attaches an existing engine by address and uses a minimal example engine (`src/ExamplePolicyEngine.sol`) that enforces a simple transfer-amount cap. To use a real ACE policy engine instead of the example engine, see [Use a real ACE policy engine](#use-a-real-ace-policy-engine) below.
 
 ## What This Example Covers
 
@@ -66,7 +66,7 @@ Save from the logs:
 
 - `<SEPOLIA_POLICY_ENGINE_ADDRESS>`
 
-The example engine's default cap is `10 ether`, and only its owner (the deploying account) can change it with `setCap`. To use an existing ACE policy engine instead, skip this step and pass its address to Step 3.
+The example engine's default cap is `10 ether`, and only its owner (the deploying account) can change it with `setCap`. To use a real ACE policy engine instead, skip this step and follow [Use a real ACE policy engine](#use-a-real-ace-policy-engine) below, then pass the ACE engine's onchain address to Step 3.
 
 ## Step 3: Attach the Engine to the Sepolia Hook
 
@@ -138,6 +138,17 @@ The hook calls the engine's `detach()`. Transfers are no longer policy-checked.
 ## Optional: Destination-Side Engine
 
 Attach an engine to the Amoy hook too (deploy a second engine on Amoy, then attach it to `<AMOY_ADVANCED_POOL_HOOK_ADDRESS>`). A destination-side rejection does not revert the send — the message is sent, but its execution on Amoy fails; check the message status on https://ccip.chain.link.
+
+## Use a real ACE policy engine
+
+The example engine exists so this chapter runs without any Platform setup. For real policy enforcement, use Chainlink ACE: it provides managed policy engines, a built-in `CCIP-AdvancedPoolHooks` contract type with a pre-built extractor for the hook calldata, and policies you configure in the [Chainlink Platform](https://app.chain.link). You need an ACE-enabled organization on the Platform and a completed [ACE account setup](https://docs.chain.link/ace/getting-started/account-setup) first. The flow below summarizes the [Protect CCIP Token Pools with ACE](https://docs.chain.link/ace/guides/policy-manager/ccip-token-pools) guide, which has the complete Platform walkthrough.
+
+1. **Create a policy engine** in the Platform's Policy Manager, including every EVM chain where you want to enforce policies (see [Create a policy engine](https://docs.chain.link/ace/guides/policy-manager/manage-engines)). Wait until the engine is **Active**, then copy its onchain address for each chain.
+2. **Attach the hook to the engine** with Step 3 above, passing the ACE engine's onchain address for that chain. The hook's `attach()` call is detected on-chain by ACE, which automatically adds the hook as a target under the engine. Do not register the hook manually as a second target.
+3. **Verify the detected target**: in the Platform, open the engine's **Contracts** tab, find the target matching your hook's address, and assign it the built-in `CCIP-AdvancedPoolHooks` contract type. It ships with `preflightCheck` and `postflightCheck` and their pre-built extractor, so no custom contract type or extractor is needed.
+4. **Create a policy instance and protect a hook function**: create the policy under the same engine and chain as the hook function you want to protect, then create a target protection selecting `preflightCheck` (source-side) or `postflightCheck` (destination-side), mapping policy parameters to the extractor's outputs (for example `from`, `to`, `amount_post_fee`).
+
+One mapping gotcha from the ACE guide: the hook sets the payload sender to `msg.sender`, which is the Token Pool, not the user who initiated the transfer. To evaluate the user, map the extracted `from` output to the policy parameter.
 
 ## Step 7: Verify Hook and Engine State
 
