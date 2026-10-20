@@ -4,7 +4,6 @@ pragma solidity 0.8.26;
 import {Script, console2} from "forge-std/Script.sol";
 
 import {AdvancedPoolHooks} from "@chainlink/contracts-ccip/contracts/pools/AdvancedPoolHooks.sol";
-import {IPolicyEngine} from "@chainlink/policy-management/interfaces/IPolicyEngine.sol";
 
 import {ExamplePolicyEngine} from "../../src/ExamplePolicyEngine.sol";
 

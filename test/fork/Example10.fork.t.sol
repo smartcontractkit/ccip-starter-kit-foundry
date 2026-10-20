@@ -58,6 +58,8 @@ contract Example10ForkTest is AdvancedPoolHooksForkTest {
         attachEngineScript.run(sepoliaHook, engine);
 
         // Lower the cap below the transfer amount: the source-side preflight check rejects the send.
+        // The engine is owned by the broadcaster (the script deployer), so prank as it to set the cap.
+        vm.prank(broadcaster);
         ExamplePolicyEngine(engine).setCap(TRANSFER_AMOUNT / 2);
 
         vm.expectPartialRevert(ExamplePolicyEngine.AmountExceedsCap.selector);
@@ -82,6 +84,7 @@ contract Example10ForkTest is AdvancedPoolHooksForkTest {
         vm.selectFork(amoyFork);
         address destinationEngine = deployEngineScript.run();
         attachEngineScript.run(amoyHook, destinationEngine);
+        vm.prank(broadcaster);
         ExamplePolicyEngine(destinationEngine).setCap(TRANSFER_AMOUNT / 2);
 
         vm.selectFork(sepoliaFork);
@@ -104,6 +107,7 @@ contract Example10ForkTest is AdvancedPoolHooksForkTest {
         vm.selectFork(sepoliaFork);
         address engine = deployEngineScript.run();
         attachEngineScript.run(sepoliaHook, engine);
+        vm.prank(broadcaster);
         ExamplePolicyEngine(engine).setCap(TRANSFER_AMOUNT / 2);
 
         detachEngineScript.run(sepoliaHook);

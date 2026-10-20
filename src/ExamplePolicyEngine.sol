@@ -4,6 +4,7 @@ pragma solidity 0.8.26;
 import {IPolicyEngine} from "@chainlink/policy-management/interfaces/IPolicyEngine.sol";
 import {IAdvancedPoolHooks} from "@chainlink/contracts-ccip/contracts/interfaces/IAdvancedPoolHooks.sol";
 import {Pool} from "@chainlink/contracts-ccip/contracts/libraries/Pool.sol";
+import {Ownable, Ownable2Step} from "@openzeppelin/contracts@5.3.0/access/Ownable2Step.sol";
 
 /**
  * THIS IS AN EXAMPLE CONTRACT THAT USES HARDCODED VALUES FOR CLARITY.
@@ -18,7 +19,7 @@ import {Pool} from "@chainlink/contracts-ccip/contracts/libraries/Pool.sol";
 ///      simple cap. The remaining interface methods are stubbed out empty, as this engine has a
 ///      single built-in policy. For production-grade policy engines, use Chainlink ACE
 ///      (https://chainlink.tech/ace).
-contract ExamplePolicyEngine is IPolicyEngine {
+contract ExamplePolicyEngine is IPolicyEngine, Ownable2Step {
     error NotAttached(address target);
     error AlreadyAttached(address target);
     error AmountExceedsCap(uint256 amount, uint256 cap);
@@ -28,7 +29,7 @@ contract ExamplePolicyEngine is IPolicyEngine {
     uint256 internal s_cap;
     mapping(address target => bool attached) internal s_attached;
 
-    constructor() {
+    constructor() Ownable(msg.sender) {
         s_cap = 10 ether;
     }
 
@@ -61,7 +62,7 @@ contract ExamplePolicyEngine is IPolicyEngine {
     // ----------------------------------------------------------------
 
     /// @notice Sets the maximum transfer amount this engine allows.
-    function setCap(uint256 newCap) external {
+    function setCap(uint256 newCap) external onlyOwner {
         emit CapUpdated(s_cap, newCap);
         s_cap = newCap;
     }
@@ -89,8 +90,7 @@ contract ExamplePolicyEngine is IPolicyEngine {
 
         uint256 amount;
         if (payload.selector == IAdvancedPoolHooks.preflightCheck.selector) {
-            (,,, uint256 amountPostFee) =
-                abi.decode(payload.data, (Pool.LockOrBurnInV1, bytes4, bytes, uint256));
+            (,,, uint256 amountPostFee) = abi.decode(payload.data, (Pool.LockOrBurnInV1, bytes4, bytes, uint256));
             amount = amountPostFee;
         } else if (payload.selector == IAdvancedPoolHooks.postflightCheck.selector) {
             (, uint256 localAmount,) = abi.decode(payload.data, (Pool.ReleaseOrMintInV1, uint256, bytes4));

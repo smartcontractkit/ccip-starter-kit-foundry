@@ -66,7 +66,7 @@ Save from the logs:
 
 - `<SEPOLIA_POLICY_ENGINE_ADDRESS>`
 
-The example engine's default cap is `10 ether`. To use an existing ACE policy engine instead, skip this step and pass its address to Step 3.
+The example engine's default cap is `10 ether`, and only its owner (the deploying account) can change it with `setCap`. To use an existing ACE policy engine instead, skip this step and pass its address to Step 3.
 
 ## Step 3: Attach the Engine to the Sepolia Hook
 
