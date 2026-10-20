@@ -6,10 +6,10 @@
 
 Reference starter kit for learning and testing **CCIP v2** with Foundry scripts, Solidity contracts, and small SDK examples.
 
-Examples 01–08 use Ethereum Sepolia → Polygon Amoy as their primary CCIP 2.0 lane.
+Examples 01–10 use Ethereum Sepolia → Polygon Amoy as their primary CCIP 2.0 lane.
 [Example 01](book/src/examples/example01-token-transfer-faster-than-finality.md), Example 03, and
 Example 04 use faucet-issued CCIP-BnM.
-[Examples 06–08](book/src/examples/example06-cct01-burnmint-token-and-pool-setup.md) teach custom
+[Examples 06–10](book/src/examples/example06-cct01-burnmint-token-and-pool-setup.md) teach custom
 token and pool deployment. The legacy chapters retain their older-lane demonstrations.
 
 ## Start Here
@@ -30,7 +30,7 @@ mdbook serve book --open
 - `book/src`: step-by-step tutorial chapters
 - `sdk-examples`: minimal CCIP SDK demos
 - `test/`: testing suite powered by Chainlink Local V3 (no RPC needed)
-- `test/fork/`: fork tests for Examples 06–08 (manual run, needs RPC URLs and pinned blocks, see below)
+- `test/fork/`: fork tests for Examples 06–10 (manual run, needs RPC URLs and pinned blocks, see below)
 
 ## Minimal Setup
 
@@ -45,9 +45,9 @@ Set at least:
 
 Then follow the book chapters for exact run commands. 
 
-## Fork Tests (Examples 06–08)
+## Fork Tests (Examples 06–10)
 
-`forge test` runs the no-fork Chainlink Local tests only. The CCT examples (06–08) deploy tokens and pools and register
+`forge test` runs the no-fork Chainlink Local tests only. The CCT examples (06–10) deploy tokens and pools and register
 them in the live TokenAdminRegistry, so their tests run the real scripts against pinned forks of Ethereum Sepolia and
 Polygon Amoy. They are run manually; there is no CI job for them.
 

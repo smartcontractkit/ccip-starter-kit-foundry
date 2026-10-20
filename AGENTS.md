@@ -10,11 +10,12 @@ Keep the disclaimer headers on example contracts and scripts.
 
 ## Layout
 
-- `script/examples/`: CCIP 2.0 example scripts (`Example01`–`Example08`) and `Legacy01`–`Legacy02`. Core learning path.
+- `script/examples/`: CCIP 2.0 example scripts (`Example01`–`Example10`) and `Legacy01`–`Legacy02`. Core learning path.
 - `script/EncodeExtraArgsOffchain.s.sol`: ExtraArgs V1/V2/V3 encoding helper used by the examples.
-- `src/`: `BasicMessageSender`, `BasicMessageReceiver`, `BasicMessageReceiverWithCCVs`, `utils/Withdraw`.
+- `src/`: `BasicMessageSender`, `BasicMessageReceiver`, `BasicMessageReceiverWithCCVs`, `ExamplePolicyEngine`,
+  `utils/Withdraw`.
 - `test/`: Foundry tests on the Chainlink Local V3 no-fork simulator (see below). `test/fork/`: fork tests for
-  Examples 06–08, excluded from plain `forge test`.
+  Examples 06–10, excluded from plain `forge test`.
 - `book/src/`: mdBook chapters, one per example. Build output (`book/book`) is gitignored.
 - `sdk-examples/`: TypeScript CCIP SDK demos (Node >= 24), separate from the Foundry project.
 - `lib/`: git submodules. Versions are pinned in `foundry.lock`; import paths are in `remappings.txt`.
@@ -65,7 +66,7 @@ Scripts need RPC URLs: `cp .env.example .env` and set the endpoints (at minimum 
 - Local mode is single-chain with no token pools, no CCV verifiers (so no quorum check), and no executor or manual
   execution. It does enforce the CCIP 2.0 finality rules, one token per message, and receiver CCV config validation.
   Do not assert behavior Local does not model; note the limitation in the test instead.
-- Examples 06–08 (CCT token/pool setup) are covered by fork tests in `test/fork/` (Sepolia -> Amoy). They run the real
+- Examples 06–10 (CCT token/pool setup) are covered by fork tests in `test/fork/` (Sepolia -> Amoy). They run the real
   scripts against pinned forks through `CCIPLocalSimulatorFork`, need Foundry >= 1.5.1, and are excluded from plain
   `forge test`. Run them manually with `FOUNDRY_PROFILE=fork forge test -j 1`; there is no CI job. Contracts or scripts
   created in a fork test are per-fork: make them persistent (`_persistent` in `test/fork/utils/CCTForkTest.sol`)

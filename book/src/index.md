@@ -37,5 +37,5 @@ If a variable is missing in `.env`, commands using the corresponding alias will 
 
 Always pull the latest values from the [CCIP Directory](https://docs.chain.link/ccip/directory/) before running examples.
 
-Examples 01–08 use Sepolia → Amoy. Examples 01, 03, and 04 use faucet-issued CCIP-BnM;
-Examples 06–08 deploy custom tokens. Verify the lane's `OnRamp 2.0.0` before sending.
+Examples 01–10 use Sepolia → Amoy. Examples 01, 03, and 04 use faucet-issued CCIP-BnM;
+Examples 06–10 deploy custom tokens. Verify the lane's `OnRamp 2.0.0` before sending.
