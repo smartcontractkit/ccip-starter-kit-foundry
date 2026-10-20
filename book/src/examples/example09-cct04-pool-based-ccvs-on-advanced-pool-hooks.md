@@ -36,7 +36,12 @@ Scripts used:
 
 > **Note on real CCVs**
 >
-> This starter kit does not deploy a real CCV. To try pool-based CCVs end to end on the live testnets you need a real CCV deployed at the same address on both chains (for example a Chainlink Data Streams-based CCV). The book steps below assume you have `<CCV_ADDRESS>` available on both chains.
+> This starter kit does not deploy a real CCV. To try pool-based CCVs end to end on the live testnets, deploy your own CCV with the [CCV starter kit](https://docs.chain.link/ccip/ccv-starter-kit) and use its resolver address as `<CCV_ADDRESS>` below. The short version:
+>
+> 1. **On-chain contracts, on both chains** — use the [on-chain contracts kit](https://github.com/smartcontractkit/chainlink-ccv-starter-kit-contracts) to deploy the CREATE2 factory, the `VersionedVerifierResolver`, and the committee verifier, then apply the lane and signature config. The kit's [full flow](https://github.com/smartcontractkit/chainlink-ccv-starter-kit-contracts/blob/main/docs/src/full-flow.md) walks the exact `make` commands; the resolver lands at the same address on both chains by construction (`make deployments-check` asserts the parity).
+> 2. **Off-chain cell** — use the [off-chain kit](https://github.com/smartcontractkit/chainlink-ccv-starter-kit) to run the verifier and aggregator that actually attest messages (a Helm chart in Kubernetes, or the [local docker-compose stack](https://github.com/smartcontractkit/chainlink-ccv-starter-kit/tree/main/local) for testing). Without a running cell, the CCV exists on-chain but never attests, so messages requiring it will not execute.
+>
+> Use the **resolver** address (not the committee verifier implementation) as `<CCV_ADDRESS>`: a pool that lists the implementation address reverts during the fee quote.
 
 ## Before You Start
 
@@ -114,6 +119,16 @@ FOUNDRY_PROFILE=cct forge script script/examples/Example06.s.sol:SendCCTTokenWit
 ```
 
 The source OnRamp now consults `<CCV_ADDRESS>` outbound, and the destination OffRamp verifies the message with the same address before minting.
+
+> **Note on execution with a self-run CCV**
+>
+> Until your CCV is onboarded into the CCIP indexer, the default executor cannot fetch its attestation, so the message sits at `UNTOUCHED` after it is sent. Execute it yourself with the [CCIP CLI](https://docs.chain.link/ccip/tools/cli/) (1.14.0 or later), reading the attestation directly from your own aggregator:
+>
+> ```bash
+> ccip-cli manual-exec <SOURCE_TX_HASH> --verifiers grpcs://<YOUR_AGGREGATOR_HOST>:443
+> ```
+>
+> See [Test your setup](https://docs.chain.link/ccip/ccv-starter-kit/evm/test-your-setup) in the CCV starter kit docs for the full walkthrough.
 
 ## Step 5: Adjust the Threshold Amount
 
