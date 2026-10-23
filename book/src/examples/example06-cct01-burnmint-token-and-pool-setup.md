@@ -33,6 +33,19 @@ Scripts used:
 >
 > This chapter assumes `--account myAccount`.
 
+## Chapter Parameters
+
+Set the parameters for this chapter. The defaults work as they are; change a value only if you want something different.
+
+```bash
+export RECEIVER=$MY_EOA          # destination EOA on Amoy
+export AMOUNT=1000000000000000000  # 1 token (18 decimals)
+export GAS_LIMIT=0               # token-only transfer to an EOA
+export FEE_TOKEN=0x0000000000000000000000000000000000000000  # native fee; use $SEPOLIA_LINK to pay in LINK
+export BLOCK_CONFIRMATIONS=1     # Fast Transfers depth, must be > 0
+export ALLOWED_FINALITY_CONFIG=0x00000001  # pool minimum block depth (Step 5)
+```
+
 ## Script Defaults
 
 `DeployCCTBurnMintTokenAndPool` deploys a **CrossChainToken** (via `BaseERC20.ConstructorParams`) with:
@@ -72,16 +85,18 @@ FOUNDRY_PROFILE=cct forge script script/examples/Example06.s.sol:DeployCCTBurnMi
   --account myAccount \
   --broadcast \
   --sig "run(address,address,address,address)" \
-  <SEPOLIA_TOKEN_ADMIN_REGISTRY> \
-  <SEPOLIA_REGISTRY_MODULE_OWNER_CUSTOM> \
-  <SEPOLIA_ARM_PROXY> \
-  <SEPOLIA_ROUTER>
+  $SEPOLIA_TOKEN_ADMIN_REGISTRY \
+  $SEPOLIA_REGISTRY_MODULE_OWNER_CUSTOM \
+  $SEPOLIA_ARM_PROXY \
+  $SEPOLIA_ROUTER
 ```
 
-Save from logs:
+Copy these from the logs and export them:
 
-- `<SEPOLIA_TOKEN_ADDRESS>`
-- `<SEPOLIA_POOL_ADDRESS>`
+```bash
+export SEPOLIA_TOKEN_ADDRESS=0x...
+export SEPOLIA_POOL_ADDRESS=0x...
+```
 
 ## Step 2: Deploy Token + Pool on Amoy (destination)
 
@@ -91,16 +106,18 @@ FOUNDRY_PROFILE=cct forge script script/examples/Example06.s.sol:DeployCCTBurnMi
   --account myAccount \
   --broadcast \
   --sig "run(address,address,address,address)" \
-  <AMOY_TOKEN_ADMIN_REGISTRY> \
-  <AMOY_REGISTRY_MODULE_OWNER_CUSTOM> \
-  <AMOY_ARM_PROXY> \
-  <AMOY_ROUTER>
+  $AMOY_TOKEN_ADMIN_REGISTRY \
+  $AMOY_REGISTRY_MODULE_OWNER_CUSTOM \
+  $AMOY_ARM_PROXY \
+  $AMOY_ROUTER
 ```
 
-Save from logs:
+Copy these from the logs and export them:
 
-- `<AMOY_TOKEN_ADDRESS>`
-- `<AMOY_POOL_ADDRESS>`
+```bash
+export AMOY_TOKEN_ADDRESS=0x...
+export AMOY_POOL_ADDRESS=0x...
+```
 
 ## Step 3: Configure Sepolia Pool With Amoy Remote
 
@@ -110,10 +127,10 @@ FOUNDRY_PROFILE=cct forge script script/examples/Example06.s.sol:Example06 \
   --account myAccount \
   --broadcast \
   --sig "run(address,uint64,address,address)" \
-  <SEPOLIA_POOL_ADDRESS> \
-  <AMOY_CHAIN_SELECTOR> \
-  <AMOY_TOKEN_ADDRESS> \
-  <AMOY_POOL_ADDRESS>
+  $SEPOLIA_POOL_ADDRESS \
+  $AMOY_CHAIN_SELECTOR \
+  $AMOY_TOKEN_ADDRESS \
+  $AMOY_POOL_ADDRESS
 ```
 
 ## Step 4: Configure Amoy Pool With Sepolia Remote
@@ -124,10 +141,10 @@ FOUNDRY_PROFILE=cct forge script script/examples/Example06.s.sol:Example06 \
   --account myAccount \
   --broadcast \
   --sig "run(address,uint64,address,address)" \
-  <AMOY_POOL_ADDRESS> \
-  <SEPOLIA_CHAIN_SELECTOR> \
-  <SEPOLIA_TOKEN_ADDRESS> \
-  <SEPOLIA_POOL_ADDRESS>
+  $AMOY_POOL_ADDRESS \
+  $SEPOLIA_CHAIN_SELECTOR \
+  $SEPOLIA_TOKEN_ADDRESS \
+  $SEPOLIA_POOL_ADDRESS
 ```
 
 ## Step 5: Enable Fast Transfers on Both Pools
@@ -140,21 +157,21 @@ FOUNDRY_PROFILE=cct forge script script/examples/Example06.s.sol:Example06SetPoo
   --account myAccount \
   --broadcast \
   --sig "run(address,bytes4)" \
-  <SEPOLIA_POOL_ADDRESS> \
-  <ALLOWED_FINALITY_CONFIG>
+  $SEPOLIA_POOL_ADDRESS \
+  $ALLOWED_FINALITY_CONFIG
 ```
 
-Repeat on Amoy with `--rpc-url polygonAmoy` and `<AMOY_POOL_ADDRESS>`. Read back each pool:
+Repeat on Amoy with `--rpc-url polygonAmoy` and `$AMOY_POOL_ADDRESS`. Read back each pool:
 
 ```bash
 FOUNDRY_PROFILE=cct forge script script/examples/Example06.s.sol:Example06GetPoolAllowedFinalityConfig \
   --rpc-url ethereumSepolia \
   --sig "run(address)" \
-  <SEPOLIA_POOL_ADDRESS>
+  $SEPOLIA_POOL_ADDRESS
 FOUNDRY_PROFILE=cct forge script script/examples/Example06.s.sol:Example06GetPoolAllowedFinalityConfig \
   --rpc-url polygonAmoy \
   --sig "run(address)" \
-  <AMOY_POOL_ADDRESS>
+  $AMOY_POOL_ADDRESS
 ```
 
 `0x00000000` disables FTF; values `0x00000001`–`0x0000ffff` set the minimum block depth. The staged wait-for-safe flag is not usable
@@ -168,10 +185,10 @@ The read-only check reports the pool, executor, and CCV settings before an FTF s
 FOUNDRY_PROFILE=cct forge script script/examples/Example06.s.sol:Example06CheckFinalityGates \
   --rpc-url ethereumSepolia \
   --sig "run(address,uint64,address,uint16)" \
-  <SEPOLIA_ROUTER> \
-  <AMOY_CHAIN_SELECTOR> \
-  <SEPOLIA_TOKEN_ADDRESS> \
-  <BLOCK_CONFIRMATIONS_GT_ZERO>
+  $SEPOLIA_ROUTER \
+  $AMOY_CHAIN_SELECTOR \
+  $SEPOLIA_TOKEN_ADDRESS \
+  $BLOCK_CONFIRMATIONS
 ```
 
 A `getFee` quote alone does not prove `ccipSend` will succeed for a non-`IPoolV2` pool.
@@ -184,23 +201,21 @@ FOUNDRY_PROFILE=cct forge script script/examples/Example06.s.sol:SendCCTTokenWit
   --account myAccount \
   --broadcast \
   --sig "run(address,uint64,address,address,uint256,uint32,address)" \
-  <SEPOLIA_ROUTER> \
-  <AMOY_CHAIN_SELECTOR> \
-  <RECEIVER_ON_AMOY> \
-  <SEPOLIA_TOKEN_ADDRESS> \
-  <AMOUNT> \
-  <GAS_LIMIT> \
-  <FEE_TOKEN_ADDRESS>
+  $SEPOLIA_ROUTER \
+  $AMOY_CHAIN_SELECTOR \
+  $RECEIVER \
+  $SEPOLIA_TOKEN_ADDRESS \
+  $AMOUNT \
+  $GAS_LIMIT \
+  $FEE_TOKEN
 ```
 
 Parameter notes:
 
-- `<AMOUNT>` uses token decimals (`1e18` is 1 token for 18-decimal token).
-- For token-only transfer to EOA receiver, use `<GAS_LIMIT>` = `0`.
+- `$AMOUNT` uses token decimals (`1e18` is 1 token for 18-decimal token).
+- For token-only transfer to EOA receiver, use `$GAS_LIMIT` = `0`.
 - This sender uses `ExtraArgsV3` with `blockConfirmations = 0` (default finality).
-- `<FEE_TOKEN_ADDRESS>`:
-  - native fee: `0x0000000000000000000000000000000000000000`
-  - LINK fee: LINK token address on Sepolia (the source chain)
+- `$FEE_TOKEN`: native fee by default. For a LINK fee, run `export FEE_TOKEN=$SEPOLIA_LINK`.
 
 For the FTF version, use the existing custom-finality sender after Steps 5 and 6:
 
@@ -210,8 +225,8 @@ FOUNDRY_PROFILE=cct forge script script/examples/Example06.s.sol:SendCCTTokenWit
   --account myAccount \
   --broadcast \
   --sig "run(address,uint64,address,address,uint256,uint32,uint16,address)" \
-  <SEPOLIA_ROUTER> <AMOY_CHAIN_SELECTOR> <RECEIVER_ON_AMOY> \
-  <SEPOLIA_TOKEN_ADDRESS> <AMOUNT> <GAS_LIMIT> <BLOCK_CONFIRMATIONS_GT_ZERO> <FEE_TOKEN_ADDRESS>
+  $SEPOLIA_ROUTER $AMOY_CHAIN_SELECTOR $RECEIVER \
+  $SEPOLIA_TOKEN_ADDRESS $AMOUNT $GAS_LIMIT $BLOCK_CONFIRMATIONS $FEE_TOKEN
 ```
 
 ## Step 8: Verify BurnMint Behavior
@@ -219,26 +234,26 @@ FOUNDRY_PROFILE=cct forge script script/examples/Example06.s.sol:SendCCTTokenWit
 Verify token->pool registration:
 
 ```bash
-cast call <SEPOLIA_TOKEN_ADMIN_REGISTRY> "getPool(address)(address)" <SEPOLIA_TOKEN_ADDRESS> --rpc-url ethereumSepolia
-cast call <AMOY_TOKEN_ADMIN_REGISTRY> "getPool(address)(address)" <AMOY_TOKEN_ADDRESS> --rpc-url polygonAmoy
+cast call $SEPOLIA_TOKEN_ADMIN_REGISTRY "getPool(address)(address)" $SEPOLIA_TOKEN_ADDRESS --rpc-url ethereumSepolia
+cast call $AMOY_TOKEN_ADMIN_REGISTRY "getPool(address)(address)" $AMOY_TOKEN_ADDRESS --rpc-url polygonAmoy
 ```
 
 Verify remote lane mapping:
 
 ```bash
-cast call <SEPOLIA_POOL_ADDRESS> "getRemoteToken(uint64)(bytes)" <AMOY_CHAIN_SELECTOR> --rpc-url ethereumSepolia
-cast call <SEPOLIA_POOL_ADDRESS> "getRemotePools(uint64)(bytes[])" <AMOY_CHAIN_SELECTOR> --rpc-url ethereumSepolia
-cast call <AMOY_POOL_ADDRESS> "getRemoteToken(uint64)(bytes)" <SEPOLIA_CHAIN_SELECTOR> --rpc-url polygonAmoy
-cast call <AMOY_POOL_ADDRESS> "getRemotePools(uint64)(bytes[])" <SEPOLIA_CHAIN_SELECTOR> --rpc-url polygonAmoy
+cast call $SEPOLIA_POOL_ADDRESS "getRemoteToken(uint64)(bytes)" $AMOY_CHAIN_SELECTOR --rpc-url ethereumSepolia
+cast call $SEPOLIA_POOL_ADDRESS "getRemotePools(uint64)(bytes[])" $AMOY_CHAIN_SELECTOR --rpc-url ethereumSepolia
+cast call $AMOY_POOL_ADDRESS "getRemoteToken(uint64)(bytes)" $SEPOLIA_CHAIN_SELECTOR --rpc-url polygonAmoy
+cast call $AMOY_POOL_ADDRESS "getRemotePools(uint64)(bytes[])" $SEPOLIA_CHAIN_SELECTOR --rpc-url polygonAmoy
 ```
 
 Verify balances and supplies after transfer finalizes:
 
 ```bash
-cast call <SEPOLIA_TOKEN_ADDRESS> "balanceOf(address)(uint256)" <SOURCE_EOA_ADDRESS> --rpc-url ethereumSepolia
-cast call <AMOY_TOKEN_ADDRESS> "balanceOf(address)(uint256)" <RECEIVER_ON_AMOY> --rpc-url polygonAmoy
-cast call <SEPOLIA_TOKEN_ADDRESS> "totalSupply()(uint256)" --rpc-url ethereumSepolia
-cast call <AMOY_TOKEN_ADDRESS> "totalSupply()(uint256)" --rpc-url polygonAmoy
+cast call $SEPOLIA_TOKEN_ADDRESS "balanceOf(address)(uint256)" $MY_EOA --rpc-url ethereumSepolia
+cast call $AMOY_TOKEN_ADDRESS "balanceOf(address)(uint256)" $RECEIVER --rpc-url polygonAmoy
+cast call $SEPOLIA_TOKEN_ADDRESS "totalSupply()(uint256)" --rpc-url ethereumSepolia
+cast call $AMOY_TOKEN_ADDRESS "totalSupply()(uint256)" --rpc-url polygonAmoy
 ```
 
 Monitor message status with the message ID on:

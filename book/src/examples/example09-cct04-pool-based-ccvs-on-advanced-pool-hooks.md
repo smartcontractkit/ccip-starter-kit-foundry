@@ -36,12 +36,12 @@ Scripts used:
 
 > **Note on real CCVs**
 >
-> This starter kit does not deploy a real CCV. To try pool-based CCVs end to end on the live testnets, deploy your own CCV with the [CCV starter kit](https://docs.chain.link/ccip/ccv-starter-kit) and use its resolver address as `<CCV_ADDRESS>` below. The short version:
+> This starter kit does not deploy a real CCV. To try pool-based CCVs end to end on the live testnets, deploy your own CCV with the [CCV starter kit](https://docs.chain.link/ccip/ccv-starter-kit) and use its resolver address as `$CCV_ADDRESS` below. The short version:
 >
 > 1. **On-chain contracts, on both chains** — use the [on-chain contracts kit](https://github.com/smartcontractkit/chainlink-ccv-starter-kit-contracts) to deploy the CREATE2 factory, the `VersionedVerifierResolver`, and the committee verifier, then apply the lane and signature config. The kit's [full flow](https://github.com/smartcontractkit/chainlink-ccv-starter-kit-contracts/blob/main/docs/src/full-flow.md) walks the exact `make` commands; the resolver lands at the same address on both chains by construction (`make deployments-check` asserts the parity).
 > 2. **Off-chain cell** — use the [off-chain kit](https://github.com/smartcontractkit/chainlink-ccv-starter-kit) to run the verifier and aggregator that actually attest messages (a Helm chart in Kubernetes, or the [local docker-compose stack](https://github.com/smartcontractkit/chainlink-ccv-starter-kit/tree/main/local) for testing). Without a running cell, the CCV exists on-chain but never attests, so messages requiring it will not execute.
 >
-> Use the **resolver** address (not the committee verifier implementation) as `<CCV_ADDRESS>`: a pool that lists the implementation address reverts during the fee quote.
+> Use the **resolver** address (not the committee verifier implementation) as `$CCV_ADDRESS`: a pool that lists the implementation address reverts during the fee quote.
 
 ## Before You Start
 
@@ -58,16 +58,33 @@ Scripts used:
 >
 > This chapter assumes `--account myAccount`.
 
+## Chapter Parameters
+
+Set the parameters for this chapter. Everything except `CCV_ADDRESS` has a working default.
+
+```bash
+export RECEIVER=$MY_EOA          # destination EOA on Amoy
+export AMOUNT=1000000000000000000  # 1 token (18 decimals)
+export FEE_TOKEN=0x0000000000000000000000000000000000000000  # native fee; use $SEPOLIA_LINK to pay in LINK
+export CCV_ADDRESS=0x...            # your CCV resolver address, the same on both chains (see the note above)
+```
+
 ## Step 1: Deploy Token + Hook + Pool on Both Chains
 
-Follow Example 08 steps 1-4 to deploy the token, hook and pool on both chains and link the lanes. Save from the logs:
+Follow Example 08 steps 1-4 to deploy the token, hook and pool on both chains and link the lanes. If you ran them in this terminal, these variables are already exported. Otherwise copy them from the logs:
 
-- `<SEPOLIA_TOKEN_ADDRESS>`, `<SEPOLIA_ADVANCED_POOL_HOOK_ADDRESS>`, `<SEPOLIA_POOL_ADDRESS>`
-- `<AMOY_TOKEN_ADDRESS>`, `<AMOY_ADVANCED_POOL_HOOK_ADDRESS>`, `<AMOY_POOL_ADDRESS>`
+```bash
+export SEPOLIA_TOKEN_ADDRESS=0x...
+export SEPOLIA_ADVANCED_POOL_HOOK_ADDRESS=0x...
+export SEPOLIA_POOL_ADDRESS=0x...
+export AMOY_TOKEN_ADDRESS=0x...
+export AMOY_ADVANCED_POOL_HOOK_ADDRESS=0x...
+export AMOY_POOL_ADDRESS=0x...
+```
 
 ## Step 2: Set Pool CCV Config on Sepolia
 
-Require `<CCV_ADDRESS>` for both outbound and inbound traffic to Amoy:
+Require `$CCV_ADDRESS` for both outbound and inbound traffic to Amoy:
 
 ```bash
 FOUNDRY_PROFILE=cct forge script script/examples/Example09.s.sol:Example09SetPoolCCVConfig \
@@ -75,17 +92,17 @@ FOUNDRY_PROFILE=cct forge script script/examples/Example09.s.sol:Example09SetPoo
   --account myAccount \
   --broadcast \
   --sig "run(address,uint64,address[],address[],address[],address[])" \
-  <SEPOLIA_ADVANCED_POOL_HOOK_ADDRESS> \
-  <AMOY_CHAIN_SELECTOR> \
-  "[<CCV_ADDRESS>]" \
+  $SEPOLIA_ADVANCED_POOL_HOOK_ADDRESS \
+  $AMOY_CHAIN_SELECTOR \
+  "[$CCV_ADDRESS]" \
   "[]" \
-  "[<CCV_ADDRESS>]" \
+  "[$CCV_ADDRESS]" \
   "[]"
 ```
 
 ## Step 3: Set Pool CCV Config on Amoy
 
-Require the same `<CCV_ADDRESS>` for traffic to Sepolia:
+Require the same `$CCV_ADDRESS` for traffic to Sepolia:
 
 ```bash
 FOUNDRY_PROFILE=cct forge script script/examples/Example09.s.sol:Example09SetPoolCCVConfig \
@@ -93,11 +110,11 @@ FOUNDRY_PROFILE=cct forge script script/examples/Example09.s.sol:Example09SetPoo
   --account myAccount \
   --broadcast \
   --sig "run(address,uint64,address[],address[],address[],address[])" \
-  <AMOY_ADVANCED_POOL_HOOK_ADDRESS> \
-  <SEPOLIA_CHAIN_SELECTOR> \
-  "[<CCV_ADDRESS>]" \
+  $AMOY_ADVANCED_POOL_HOOK_ADDRESS \
+  $SEPOLIA_CHAIN_SELECTOR \
+  "[$CCV_ADDRESS]" \
   "[]" \
-  "[<CCV_ADDRESS>]" \
+  "[$CCV_ADDRESS]" \
   "[]"
 ```
 
@@ -109,23 +126,24 @@ FOUNDRY_PROFILE=cct forge script script/examples/Example06.s.sol:SendCCTTokenWit
   --account myAccount \
   --broadcast \
   --sig "run(address,uint64,address,address,uint256,uint32,address)" \
-  <SEPOLIA_ROUTER> \
-  <AMOY_CHAIN_SELECTOR> \
-  <RECEIVER_ON_AMOY> \
-  <SEPOLIA_TOKEN_ADDRESS> \
-  <AMOUNT> \
+  $SEPOLIA_ROUTER \
+  $AMOY_CHAIN_SELECTOR \
+  $RECEIVER \
+  $SEPOLIA_TOKEN_ADDRESS \
+  $AMOUNT \
   0 \
-  <FEE_TOKEN_ADDRESS>
+  $FEE_TOKEN
 ```
 
-The source OnRamp now consults `<CCV_ADDRESS>` outbound, and the destination OffRamp verifies the message with the same address before minting.
+The source OnRamp now consults `$CCV_ADDRESS` outbound, and the destination OffRamp verifies the message with the same address before minting.
 
 > **Note on execution with a self-run CCV**
 >
 > Until your CCV is onboarded into the CCIP indexer, the default executor cannot fetch its attestation, so the message sits at `UNTOUCHED` after it is sent. Execute it yourself with the [CCIP CLI](https://docs.chain.link/ccip/tools/cli/) (1.14.0 or later), reading the attestation directly from your own aggregator:
 >
 > ```bash
-> ccip-cli manual-exec <SOURCE_TX_HASH> --verifiers grpcs://<YOUR_AGGREGATOR_HOST>:443
+> export SOURCE_TX_HASH=0x...   # transaction hash of your send
+> ccip-cli manual-exec $SOURCE_TX_HASH --verifiers grpcs://<YOUR_AGGREGATOR_HOST>:443
 > ```
 >
 > See [Test your setup](https://docs.chain.link/ccip/ccv-starter-kit/evm/test-your-setup) in the CCV starter kit docs for the full walkthrough.
@@ -140,7 +158,7 @@ FOUNDRY_PROFILE=cct forge script script/examples/Example09.s.sol:Example09SetThr
   --account myAccount \
   --broadcast \
   --sig "run(address,uint256)" \
-  <SEPOLIA_ADVANCED_POOL_HOOK_ADDRESS> \
+  $SEPOLIA_ADVANCED_POOL_HOOK_ADDRESS \
   10000000000000000000000
 ```
 
@@ -152,11 +170,11 @@ FOUNDRY_PROFILE=cct forge script script/examples/Example09.s.sol:Example09SetThr
   --account myAccount \
   --broadcast \
   --sig "run(address,uint256)" \
-  <AMOY_ADVANCED_POOL_HOOK_ADDRESS> \
+  $AMOY_ADVANCED_POOL_HOOK_ADDRESS \
   10000000000000000000000
 ```
 
-To use threshold CCVs, set a config with non-empty threshold lists, for example base `[<CCV_ADDRESS>]` and threshold `[<SECOND_CCV_ADDRESS>]` (duplicates across lists are rejected).
+To use threshold CCVs, set a config with non-empty threshold lists, for example base `[$CCV_ADDRESS]` and threshold `[$SECOND_CCV_ADDRESS]` (`export SECOND_CCV_ADDRESS=0x...` first) (duplicates across lists are rejected).
 
 ## Step 6: Clear the CCV Config
 
@@ -168,8 +186,8 @@ FOUNDRY_PROFILE=cct forge script script/examples/Example09.s.sol:Example09SetPoo
   --account myAccount \
   --broadcast \
   --sig "run(address,uint64,address[],address[],address[],address[])" \
-  <SEPOLIA_ADVANCED_POOL_HOOK_ADDRESS> \
-  <AMOY_CHAIN_SELECTOR> \
+  $SEPOLIA_ADVANCED_POOL_HOOK_ADDRESS \
+  $AMOY_CHAIN_SELECTOR \
   "[]" \
   "[]" \
   "[]" \
@@ -181,15 +199,15 @@ FOUNDRY_PROFILE=cct forge script script/examples/Example09.s.sol:Example09SetPoo
 Verify the stored CCV config:
 
 ```bash
-cast call <SEPOLIA_ADVANCED_POOL_HOOK_ADDRESS> "getCCVConfig(uint64)((address[],address[],address[],address[]))" <AMOY_CHAIN_SELECTOR> --rpc-url ethereumSepolia
-cast call <AMOY_ADVANCED_POOL_HOOK_ADDRESS> "getCCVConfig(uint64)((address[],address[],address[],address[]))" <SEPOLIA_CHAIN_SELECTOR> --rpc-url polygonAmoy
+cast call $SEPOLIA_ADVANCED_POOL_HOOK_ADDRESS "getCCVConfig(uint64)((address[],address[],address[],address[]))" $AMOY_CHAIN_SELECTOR --rpc-url ethereumSepolia
+cast call $AMOY_ADVANCED_POOL_HOOK_ADDRESS "getCCVConfig(uint64)((address[],address[],address[],address[]))" $SEPOLIA_CHAIN_SELECTOR --rpc-url polygonAmoy
 ```
 
 Verify the threshold amount:
 
 ```bash
-cast call <SEPOLIA_ADVANCED_POOL_HOOK_ADDRESS> "getThresholdAmount()(uint256)" --rpc-url ethereumSepolia
-cast call <AMOY_ADVANCED_POOL_HOOK_ADDRESS> "getThresholdAmount()(uint256)" --rpc-url polygonAmoy
+cast call $SEPOLIA_ADVANCED_POOL_HOOK_ADDRESS "getThresholdAmount()(uint256)" --rpc-url ethereumSepolia
+cast call $AMOY_ADVANCED_POOL_HOOK_ADDRESS "getThresholdAmount()(uint256)" --rpc-url polygonAmoy
 ```
 
 Monitor message status with the message ID on:

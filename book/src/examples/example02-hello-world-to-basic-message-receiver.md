@@ -29,6 +29,17 @@ Scripts used:
 >
 > This chapter assumes `--account myAccount`.
 
+## Chapter Parameters
+
+Set the parameters for this chapter. The defaults work as they are; change a value only if you want something different.
+
+```bash
+export GAS_LIMIT=200000          # the receiver callback needs gas
+export BLOCK_CONFIRMATIONS=1     # Fast Transfers depth, must be > 0
+export MIN_BLOCK_DEPTH=1         # receiver minimum, must be <= BLOCK_CONFIRMATIONS
+export FEE_TOKEN=0x0000000000000000000000000000000000000000  # native fee; use $SEPOLIA_LINK to pay in LINK
+```
+
 ## Receiver Contract Context
 
 ### Pre-v2.0
@@ -99,10 +110,14 @@ forge script script/examples/Example02.s.sol:DeployBasicMessageReceiverWithCCVs 
   --account myAccount \
   --broadcast \
   --sig "run(address)" \
-  <DESTINATION_ROUTER>
+  $AMOY_ROUTER
 ```
 
-Save the deployed address as `<BASIC_MESSAGE_RECEIVER_WITH_CCVS_ADDRESS>`.
+Copy the deployed address from the `[RESULT]` log and export it:
+
+```bash
+export BASIC_MESSAGE_RECEIVER_WITH_CCVS_ADDRESS=0x...
+```
 
 By default, this receiver starts with `minBlockDepth = 0` (default finality only) for all source chains.
 
@@ -116,12 +131,12 @@ forge script script/examples/Example02.s.sol:SetBasicMessageReceiverWithCCVsMinB
   --account myAccount \
   --broadcast \
   --sig "run(address,uint64,uint16)" \
-  <BASIC_MESSAGE_RECEIVER_WITH_CCVS_ADDRESS> \
-  <SOURCE_CHAIN_SELECTOR> \
-  <MIN_BLOCK_DEPTH>
+  $BASIC_MESSAGE_RECEIVER_WITH_CCVS_ADDRESS \
+  $SEPOLIA_CHAIN_SELECTOR \
+  $MIN_BLOCK_DEPTH
 ```
 
-For this chapter, use `<MIN_BLOCK_DEPTH> = 1`.
+This chapter uses `MIN_BLOCK_DEPTH=1` (set in Chapter Parameters).
 
 - `0` means deafault finality-only behavior.
 - `> 0` enables Fast Transfers with that minimum depth.
@@ -136,23 +151,23 @@ forge script script/examples/Example02.s.sol:Example02 \
   --account myAccount \
   --broadcast \
   --sig "run(address,uint64,address,string,uint32,uint16,address)" \
-  <SOURCE_ROUTER> \
-  <DESTINATION_CHAIN_SELECTOR> \
-  <BASIC_MESSAGE_RECEIVER_WITH_CCVS_ADDRESS> \
+  $SEPOLIA_ROUTER \
+  $AMOY_CHAIN_SELECTOR \
+  $BASIC_MESSAGE_RECEIVER_WITH_CCVS_ADDRESS \
   "Hello, World" \
-  <GAS_LIMIT> \
-  <BLOCK_CONFIRMATIONS_GT_ZERO> \
-  <FEE_TOKEN_ADDRESS>
+  $GAS_LIMIT \
+  $BLOCK_CONFIRMATIONS \
+  $FEE_TOKEN
 ```
 
 Parameter notes:
 
-- `<GAS_LIMIT>` must be `> 0` because the destination receiver callback needs gas.
-- `<BLOCK_CONFIRMATIONS_GT_ZERO>` must be `> 0` for Fast Transfers.
-- `<BLOCK_CONFIRMATIONS_GT_ZERO>` should be greater than or equal to `<MIN_BLOCK_DEPTH>`.
+- `$GAS_LIMIT` must be `> 0` because the destination receiver callback needs gas.
+- `$BLOCK_CONFIRMATIONS` must be `> 0` for Fast Transfers.
+- `$BLOCK_CONFIRMATIONS` should be greater than or equal to `$MIN_BLOCK_DEPTH`.
 - Executor may enforce a minimum block confirmations value and revert if too low.
 - If requested confirmations exceed chain finality, default finality is used.
-- `<FEE_TOKEN_ADDRESS>`: Pass the LINK token address on the source chain here. If you want to pay for CCIP fees in native coin instead, pass `0x0000000000000000000000000000000000000000`
+- `$FEE_TOKEN`: native coin by default (`0x0000000000000000000000000000000000000000`). To pay CCIP fees in LINK instead, run `export FEE_TOKEN=$SEPOLIA_LINK`.
 
 ## Verify Result
 
@@ -165,5 +180,5 @@ Use that ID in the CCIP Explorer:
 You can inspect receiver state on destination chain:
 
 ```bash
-cast call <BASIC_MESSAGE_RECEIVER_WITH_CCVS_ADDRESS> "latestMessage()(bytes)" --rpc-url polygonAmoy
+cast call $BASIC_MESSAGE_RECEIVER_WITH_CCVS_ADDRESS "latestMessage()(bytes)" --rpc-url polygonAmoy
 ```

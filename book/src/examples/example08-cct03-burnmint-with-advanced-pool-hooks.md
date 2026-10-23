@@ -53,6 +53,16 @@ Scripts used:
 >
 > This chapter assumes `--account myAccount`.
 
+## Chapter Parameters
+
+Set the parameters for this chapter. The defaults work as they are; change a value only if you want something different.
+
+```bash
+export RECEIVER=$MY_EOA          # destination EOA on Amoy
+export AMOUNT=1000000000000000000  # 1 token (18 decimals)
+export FEE_TOKEN=0x0000000000000000000000000000000000000000  # native fee; use $SEPOLIA_LINK to pay in LINK
+```
+
 ## Script Defaults
 
 `DeployCCTBurnMintTokenAndPoolWithAdvancedPoolHook` deploys **CrossChainToken** with the same token defaults as Example 06 (`BaseERC20.ConstructorParams` + `registerAdminViaGetCCIPAdmin`):
@@ -90,18 +100,20 @@ FOUNDRY_PROFILE=cct forge script script/examples/Example08.s.sol:DeployCCTBurnMi
   --account myAccount \
   --broadcast \
   --sig "run(address,address,address,address,uint256)" \
-  <SEPOLIA_TOKEN_ADMIN_REGISTRY> \
-  <SEPOLIA_REGISTRY_MODULE_OWNER_CUSTOM> \
-  <SEPOLIA_ARM_PROXY> \
-  <SEPOLIA_ROUTER> \
+  $SEPOLIA_TOKEN_ADMIN_REGISTRY \
+  $SEPOLIA_REGISTRY_MODULE_OWNER_CUSTOM \
+  $SEPOLIA_ARM_PROXY \
+  $SEPOLIA_ROUTER \
   1
 ```
 
-Save from logs:
+Copy these from the logs and export them:
 
-- `<SEPOLIA_TOKEN_ADDRESS>`
-- `<SEPOLIA_ADVANCED_POOL_HOOK_ADDRESS>`
-- `<SEPOLIA_POOL_ADDRESS>`
+```bash
+export SEPOLIA_TOKEN_ADDRESS=0x...
+export SEPOLIA_ADVANCED_POOL_HOOK_ADDRESS=0x...
+export SEPOLIA_POOL_ADDRESS=0x...
+```
 
 ## Step 2: Deploy Token + Hook + Pool on Amoy
 
@@ -111,18 +123,20 @@ FOUNDRY_PROFILE=cct forge script script/examples/Example08.s.sol:DeployCCTBurnMi
   --account myAccount \
   --broadcast \
   --sig "run(address,address,address,address,uint256)" \
-  <AMOY_TOKEN_ADMIN_REGISTRY> \
-  <AMOY_REGISTRY_MODULE_OWNER_CUSTOM> \
-  <AMOY_ARM_PROXY> \
-  <AMOY_ROUTER> \
+  $AMOY_TOKEN_ADMIN_REGISTRY \
+  $AMOY_REGISTRY_MODULE_OWNER_CUSTOM \
+  $AMOY_ARM_PROXY \
+  $AMOY_ROUTER \
   1
 ```
 
-Save from logs:
+Copy these from the logs and export them:
 
-- `<AMOY_TOKEN_ADDRESS>`
-- `<AMOY_ADVANCED_POOL_HOOK_ADDRESS>`
-- `<AMOY_POOL_ADDRESS>`
+```bash
+export AMOY_TOKEN_ADDRESS=0x...
+export AMOY_ADVANCED_POOL_HOOK_ADDRESS=0x...
+export AMOY_POOL_ADDRESS=0x...
+```
 
 ## Step 3: Configure Sepolia Pool With Amoy Remote
 
@@ -132,10 +146,10 @@ FOUNDRY_PROFILE=cct forge script script/examples/Example08.s.sol:Example08 \
   --account myAccount \
   --broadcast \
   --sig "run(address,uint64,address,address)" \
-  <SEPOLIA_POOL_ADDRESS> \
-  <AMOY_CHAIN_SELECTOR> \
-  <AMOY_TOKEN_ADDRESS> \
-  <AMOY_POOL_ADDRESS>
+  $SEPOLIA_POOL_ADDRESS \
+  $AMOY_CHAIN_SELECTOR \
+  $AMOY_TOKEN_ADDRESS \
+  $AMOY_POOL_ADDRESS
 ```
 
 ## Step 4: Configure Amoy Pool With Sepolia Remote
@@ -146,10 +160,10 @@ FOUNDRY_PROFILE=cct forge script script/examples/Example08.s.sol:Example08 \
   --account myAccount \
   --broadcast \
   --sig "run(address,uint64,address,address)" \
-  <AMOY_POOL_ADDRESS> \
-  <SEPOLIA_CHAIN_SELECTOR> \
-  <SEPOLIA_TOKEN_ADDRESS> \
-  <SEPOLIA_POOL_ADDRESS>
+  $AMOY_POOL_ADDRESS \
+  $SEPOLIA_CHAIN_SELECTOR \
+  $SEPOLIA_TOKEN_ADDRESS \
+  $SEPOLIA_POOL_ADDRESS
 ```
 
 ## Step 5: Send Transfer (Reuse Example06 Sender)
@@ -160,13 +174,13 @@ FOUNDRY_PROFILE=cct forge script script/examples/Example06.s.sol:SendCCTTokenWit
   --account myAccount \
   --broadcast \
   --sig "run(address,uint64,address,address,uint256,uint32,address)" \
-  <SEPOLIA_ROUTER> \
-  <AMOY_CHAIN_SELECTOR> \
-  <RECEIVER_ON_AMOY> \
-  <SEPOLIA_TOKEN_ADDRESS> \
-  <AMOUNT> \
+  $SEPOLIA_ROUTER \
+  $AMOY_CHAIN_SELECTOR \
+  $RECEIVER \
+  $SEPOLIA_TOKEN_ADDRESS \
+  $AMOUNT \
   0 \
-  <FEE_TOKEN_ADDRESS>
+  $FEE_TOKEN
 ```
 
 ## Optional: Update Hook Allowlist
@@ -176,26 +190,28 @@ Use this if you want to add or remove senders in the allowlist after deployment.
 Add one sender address:
 
 ```bash
+export ADDRESS_TO_ADD=0x...
 FOUNDRY_PROFILE=cct forge script script/examples/Example08.s.sol:Example08UpdateAllowlist \
   --rpc-url ethereumSepolia \
   --account myAccount \
   --broadcast \
   --sig "run(address,address[],address[])" \
-  <SEPOLIA_ADVANCED_POOL_HOOK_ADDRESS> \
+  $SEPOLIA_ADVANCED_POOL_HOOK_ADDRESS \
   "[]" \
-  "[<ADDRESS_TO_ADD>]"
+  "[$ADDRESS_TO_ADD]"
 ```
 
 Remove one sender address:
 
 ```bash
+export ADDRESS_TO_REMOVE=0x...
 FOUNDRY_PROFILE=cct forge script script/examples/Example08.s.sol:Example08UpdateAllowlist \
   --rpc-url ethereumSepolia \
   --account myAccount \
   --broadcast \
   --sig "run(address,address[],address[])" \
-  <SEPOLIA_ADVANCED_POOL_HOOK_ADDRESS> \
-  "[<ADDRESS_TO_REMOVE>]" \
+  $SEPOLIA_ADVANCED_POOL_HOOK_ADDRESS \
+  "[$ADDRESS_TO_REMOVE]" \
   "[]"
 ```
 
@@ -204,24 +220,24 @@ FOUNDRY_PROFILE=cct forge script script/examples/Example08.s.sol:Example08Update
 Verify token->pool registration:
 
 ```bash
-cast call <SEPOLIA_TOKEN_ADMIN_REGISTRY> "getPool(address)(address)" <SEPOLIA_TOKEN_ADDRESS> --rpc-url ethereumSepolia
-cast call <AMOY_TOKEN_ADMIN_REGISTRY> "getPool(address)(address)" <AMOY_TOKEN_ADDRESS> --rpc-url polygonAmoy
+cast call $SEPOLIA_TOKEN_ADMIN_REGISTRY "getPool(address)(address)" $SEPOLIA_TOKEN_ADDRESS --rpc-url ethereumSepolia
+cast call $AMOY_TOKEN_ADMIN_REGISTRY "getPool(address)(address)" $AMOY_TOKEN_ADDRESS --rpc-url polygonAmoy
 ```
 
 Verify attached hook on each pool:
 
 ```bash
-cast call <SEPOLIA_POOL_ADDRESS> "getAdvancedPoolHooks()(address)" --rpc-url ethereumSepolia
-cast call <AMOY_POOL_ADDRESS> "getAdvancedPoolHooks()(address)" --rpc-url polygonAmoy
+cast call $SEPOLIA_POOL_ADDRESS "getAdvancedPoolHooks()(address)" --rpc-url ethereumSepolia
+cast call $AMOY_POOL_ADDRESS "getAdvancedPoolHooks()(address)" --rpc-url polygonAmoy
 ```
 
 Verify allowlist status:
 
 ```bash
-cast call <SEPOLIA_ADVANCED_POOL_HOOK_ADDRESS> "getAllowListEnabled()(bool)" --rpc-url ethereumSepolia
-cast call <SEPOLIA_ADVANCED_POOL_HOOK_ADDRESS> "getAllowList()(address[])" --rpc-url ethereumSepolia
-cast call <AMOY_ADVANCED_POOL_HOOK_ADDRESS> "getAllowListEnabled()(bool)" --rpc-url polygonAmoy
-cast call <AMOY_ADVANCED_POOL_HOOK_ADDRESS> "getAllowList()(address[])" --rpc-url polygonAmoy
+cast call $SEPOLIA_ADVANCED_POOL_HOOK_ADDRESS "getAllowListEnabled()(bool)" --rpc-url ethereumSepolia
+cast call $SEPOLIA_ADVANCED_POOL_HOOK_ADDRESS "getAllowList()(address[])" --rpc-url ethereumSepolia
+cast call $AMOY_ADVANCED_POOL_HOOK_ADDRESS "getAllowListEnabled()(bool)" --rpc-url polygonAmoy
+cast call $AMOY_ADVANCED_POOL_HOOK_ADDRESS "getAllowList()(address[])" --rpc-url polygonAmoy
 ```
 
 Monitor message status with the message ID on:
