@@ -30,6 +30,17 @@ Scripts used:
 >
 > This chapter assumes `--account myAccount`.
 
+## Chapter Parameters
+
+Set the parameters for this chapter. The defaults work as they are; change a value only if you want something different.
+
+```bash
+export RECEIVER=$MY_EOA          # destination EOA on Amoy
+export AMOUNT=1000000000000000000  # 1 token (18 decimals)
+export FEE_TOKEN=0x0000000000000000000000000000000000000000  # native fee; use $SEPOLIA_LINK to pay in LINK
+export LIQUIDITY_AMOUNT=10000000000000000000  # 10 tokens for the Amoy lock box (Step 5)
+```
+
 ## Script Defaults
 
 `DeployCCTLockReleaseTokenAndPool` deploys a **CrossChainToken** (same defaults as Example 06) for the underlying ERC-20, with:
@@ -68,17 +79,19 @@ FOUNDRY_PROFILE=cct forge script script/examples/Example07.s.sol:DeployCCTLockRe
   --account myAccount \
   --broadcast \
   --sig "run(address,address,address,address)" \
-  <SEPOLIA_TOKEN_ADMIN_REGISTRY> \
-  <SEPOLIA_REGISTRY_MODULE_OWNER_CUSTOM> \
-  <SEPOLIA_ARM_PROXY> \
-  <SEPOLIA_ROUTER>
+  $SEPOLIA_TOKEN_ADMIN_REGISTRY \
+  $SEPOLIA_REGISTRY_MODULE_OWNER_CUSTOM \
+  $SEPOLIA_ARM_PROXY \
+  $SEPOLIA_ROUTER
 ```
 
-Save from logs:
+Copy these from the logs and export them:
 
-- `<SEPOLIA_TOKEN_ADDRESS>`
-- `<SEPOLIA_LOCKBOX_ADDRESS>`
-- `<SEPOLIA_POOL_ADDRESS>`
+```bash
+export SEPOLIA_TOKEN_ADDRESS=0x...
+export SEPOLIA_LOCKBOX_ADDRESS=0x...
+export SEPOLIA_POOL_ADDRESS=0x...
+```
 
 ## Step 2: Deploy Token + Lock Box + Pool on Amoy
 
@@ -88,17 +101,19 @@ FOUNDRY_PROFILE=cct forge script script/examples/Example07.s.sol:DeployCCTLockRe
   --account myAccount \
   --broadcast \
   --sig "run(address,address,address,address)" \
-  <AMOY_TOKEN_ADMIN_REGISTRY> \
-  <AMOY_REGISTRY_MODULE_OWNER_CUSTOM> \
-  <AMOY_ARM_PROXY> \
-  <AMOY_ROUTER>
+  $AMOY_TOKEN_ADMIN_REGISTRY \
+  $AMOY_REGISTRY_MODULE_OWNER_CUSTOM \
+  $AMOY_ARM_PROXY \
+  $AMOY_ROUTER
 ```
 
-Save from logs:
+Copy these from the logs and export them:
 
-- `<AMOY_TOKEN_ADDRESS>`
-- `<AMOY_LOCKBOX_ADDRESS>`
-- `<AMOY_POOL_ADDRESS>`
+```bash
+export AMOY_TOKEN_ADDRESS=0x...
+export AMOY_LOCKBOX_ADDRESS=0x...
+export AMOY_POOL_ADDRESS=0x...
+```
 
 ## Step 3: Configure Sepolia Pool With Amoy Remote
 
@@ -108,10 +123,10 @@ FOUNDRY_PROFILE=cct forge script script/examples/Example07.s.sol:Example07 \
   --account myAccount \
   --broadcast \
   --sig "run(address,uint64,address,address)" \
-  <SEPOLIA_POOL_ADDRESS> \
-  <AMOY_CHAIN_SELECTOR> \
-  <AMOY_TOKEN_ADDRESS> \
-  <AMOY_POOL_ADDRESS>
+  $SEPOLIA_POOL_ADDRESS \
+  $AMOY_CHAIN_SELECTOR \
+  $AMOY_TOKEN_ADDRESS \
+  $AMOY_POOL_ADDRESS
 ```
 
 ## Step 4: Configure Amoy Pool With Sepolia Remote
@@ -122,10 +137,10 @@ FOUNDRY_PROFILE=cct forge script script/examples/Example07.s.sol:Example07 \
   --account myAccount \
   --broadcast \
   --sig "run(address,uint64,address,address)" \
-  <AMOY_POOL_ADDRESS> \
-  <SEPOLIA_CHAIN_SELECTOR> \
-  <SEPOLIA_TOKEN_ADDRESS> \
-  <SEPOLIA_POOL_ADDRESS>
+  $AMOY_POOL_ADDRESS \
+  $SEPOLIA_CHAIN_SELECTOR \
+  $SEPOLIA_TOKEN_ADDRESS \
+  $SEPOLIA_POOL_ADDRESS
 ```
 
 ## Step 5: Fund Destination Lock Box Liquidity
@@ -138,9 +153,9 @@ FOUNDRY_PROFILE=cct forge script script/examples/Example07.s.sol:FundCCTLockBoxL
   --account myAccount \
   --broadcast \
   --sig "run(address,address,uint256)" \
-  <AMOY_TOKEN_ADDRESS> \
-  <AMOY_LOCKBOX_ADDRESS> \
-  <LIQUIDITY_AMOUNT>
+  $AMOY_TOKEN_ADDRESS \
+  $AMOY_LOCKBOX_ADDRESS \
+  $LIQUIDITY_AMOUNT
 ```
 
 If you also want Amoy -> Sepolia transfers, fund Sepolia lock box too with the same script.
@@ -153,48 +168,46 @@ FOUNDRY_PROFILE=cct forge script script/examples/Example06.s.sol:SendCCTTokenWit
   --account myAccount \
   --broadcast \
   --sig "run(address,uint64,address,address,uint256,uint32,address)" \
-  <SEPOLIA_ROUTER> \
-  <AMOY_CHAIN_SELECTOR> \
-  <RECEIVER_ON_AMOY> \
-  <SEPOLIA_TOKEN_ADDRESS> \
-  <AMOUNT> \
+  $SEPOLIA_ROUTER \
+  $AMOY_CHAIN_SELECTOR \
+  $RECEIVER \
+  $SEPOLIA_TOKEN_ADDRESS \
+  $AMOUNT \
   0 \
-  <FEE_TOKEN_ADDRESS>
+  $FEE_TOKEN
 ```
 
 Parameter notes:
 
-- `<AMOUNT>` uses token decimals (`1e18` is 1 token for 18-decimal token).
+- `$AMOUNT` uses token decimals (`1e18` is 1 token for 18-decimal token).
 - `gasLimit` is set to `0` in this command because this is token-only transfer to an EOA receiver.
 - This sender uses `ExtraArgsV3` with `blockConfirmations = 0` (default finality).
-- `<FEE_TOKEN_ADDRESS>`:
-  - native fee: `0x0000000000000000000000000000000000000000`
-  - LINK fee: LINK token address on Sepolia
+- `$FEE_TOKEN`: native fee by default. For a LINK fee, run `export FEE_TOKEN=$SEPOLIA_LINK`.
 
 ## Step 7: Verify LockRelease Behavior
 
 Verify token->pool registration:
 
 ```bash
-cast call <SEPOLIA_TOKEN_ADMIN_REGISTRY> "getPool(address)(address)" <SEPOLIA_TOKEN_ADDRESS> --rpc-url ethereumSepolia
-cast call <AMOY_TOKEN_ADMIN_REGISTRY> "getPool(address)(address)" <AMOY_TOKEN_ADDRESS> --rpc-url polygonAmoy
+cast call $SEPOLIA_TOKEN_ADMIN_REGISTRY "getPool(address)(address)" $SEPOLIA_TOKEN_ADDRESS --rpc-url ethereumSepolia
+cast call $AMOY_TOKEN_ADMIN_REGISTRY "getPool(address)(address)" $AMOY_TOKEN_ADDRESS --rpc-url polygonAmoy
 ```
 
 Verify remote lane mapping:
 
 ```bash
-cast call <SEPOLIA_POOL_ADDRESS> "getRemoteToken(uint64)(bytes)" <AMOY_CHAIN_SELECTOR> --rpc-url ethereumSepolia
-cast call <SEPOLIA_POOL_ADDRESS> "getRemotePools(uint64)(bytes[])" <AMOY_CHAIN_SELECTOR> --rpc-url ethereumSepolia
-cast call <AMOY_POOL_ADDRESS> "getRemoteToken(uint64)(bytes)" <SEPOLIA_CHAIN_SELECTOR> --rpc-url polygonAmoy
-cast call <AMOY_POOL_ADDRESS> "getRemotePools(uint64)(bytes[])" <SEPOLIA_CHAIN_SELECTOR> --rpc-url polygonAmoy
+cast call $SEPOLIA_POOL_ADDRESS "getRemoteToken(uint64)(bytes)" $AMOY_CHAIN_SELECTOR --rpc-url ethereumSepolia
+cast call $SEPOLIA_POOL_ADDRESS "getRemotePools(uint64)(bytes[])" $AMOY_CHAIN_SELECTOR --rpc-url ethereumSepolia
+cast call $AMOY_POOL_ADDRESS "getRemoteToken(uint64)(bytes)" $SEPOLIA_CHAIN_SELECTOR --rpc-url polygonAmoy
+cast call $AMOY_POOL_ADDRESS "getRemotePools(uint64)(bytes[])" $SEPOLIA_CHAIN_SELECTOR --rpc-url polygonAmoy
 ```
 
 Verify lock box balances and receiver balance after transfer finalizes:
 
 ```bash
-cast call <SEPOLIA_TOKEN_ADDRESS> "balanceOf(address)(uint256)" <SEPOLIA_LOCKBOX_ADDRESS> --rpc-url ethereumSepolia
-cast call <AMOY_TOKEN_ADDRESS> "balanceOf(address)(uint256)" <AMOY_LOCKBOX_ADDRESS> --rpc-url polygonAmoy
-cast call <AMOY_TOKEN_ADDRESS> "balanceOf(address)(uint256)" <RECEIVER_ON_AMOY> --rpc-url polygonAmoy
+cast call $SEPOLIA_TOKEN_ADDRESS "balanceOf(address)(uint256)" $SEPOLIA_LOCKBOX_ADDRESS --rpc-url ethereumSepolia
+cast call $AMOY_TOKEN_ADDRESS "balanceOf(address)(uint256)" $AMOY_LOCKBOX_ADDRESS --rpc-url polygonAmoy
+cast call $AMOY_TOKEN_ADDRESS "balanceOf(address)(uint256)" $RECEIVER --rpc-url polygonAmoy
 ```
 
 Monitor message status with the message ID on:

@@ -21,6 +21,15 @@ Scripts used:
 3. Mint 1 `CCIP-BnM` on Sepolia.
 4. Quote fee, fund sender contract with that exact fee amount, then send data+token.
 
+## Chapter Parameters
+
+Set the parameters for this chapter. The defaults work as they are; change a value only if you want something different.
+
+```bash
+export AMOUNT=1000000000000000000  # 1 token (18 decimals)
+export GAS_LIMIT=200000          # the receiver callback handles data
+```
+
 ## Before You Start
 
 > **Important: Keystore first**
@@ -46,10 +55,14 @@ Scripts used:
 >   --account myAccount \
 >   --broadcast \
 >   --sig "run(address)" \
->   <DESTINATION_ROUTER>
+>   $AMOY_ROUTER
 > ```
 >
-> Save the receiver address from the `[RESULT]` log and use it in Step 3.
+> Copy the receiver address from the `[RESULT]` log and export it for Step 3:
+>
+> ```bash
+> export BASIC_MESSAGE_RECEIVER_ADDRESS=0x...
+> ```
 
 ## Step 1: Deploy `BasicMessageSender` on Sepolia
 
@@ -59,11 +72,15 @@ forge script script/examples/Example04.s.sol:DeployBasicMessageSender \
   --account myAccount \
   --broadcast \
   --sig "run(address,address)" \
-  <SOURCE_ROUTER> \
-  <LINK_TOKEN_ON_SOURCE_CHAIN>
+  $SEPOLIA_ROUTER \
+  $SEPOLIA_LINK
 ```
 
-Save the deployed sender address from the `[RESULT]` log.
+Copy the deployed sender address from the `[RESULT]` log and export it:
+
+```bash
+export BASIC_MESSAGE_SENDER_ADDRESS=0x...
+```
 
 ## Step 2: Get 1 CCIP-BnM Token on Sepolia
 
@@ -75,7 +92,7 @@ forge script script/Faucet.s.sol:Faucet \
   --account myAccount \
   --broadcast \
   --sig "run(address)" \
-  <CCIP_BNM_SOURCE_TOKEN_ADDRESS>
+  $SEPOLIA_CCIP_BNM
 ```
 
 ## Step 3: Send Hello World + CCIP-BnM Through Sender Contract
@@ -86,21 +103,21 @@ forge script script/examples/Example04.s.sol:Example04 \
   --account myAccount \
   --broadcast \
   --sig "run(address,address,uint64,address,string,address,uint256,uint32)" \
-  <DEPLOYED_BASIC_MESSAGE_SENDER_ADDRESS> \
-  <SOURCE_ROUTER> \
-  <DESTINATION_CHAIN_SELECTOR> \
-  <DEPLOYED_BASIC_MESSAGE_RECEIVER_ADDRESS> \
+  $BASIC_MESSAGE_SENDER_ADDRESS \
+  $SEPOLIA_ROUTER \
+  $AMOY_CHAIN_SELECTOR \
+  $BASIC_MESSAGE_RECEIVER_ADDRESS \
   "Hello, World" \
-  <CCIP_BNM_SOURCE_TOKEN_ADDRESS> \
-  <AMOUNT> \
-  <GAS_LIMIT>
+  $SEPOLIA_CCIP_BNM \
+  $AMOUNT \
+  $GAS_LIMIT
 ```
 
 Parameter notes:
 
 - This example always uses default finality by setting `blockConfirmations = 0` in the script.
-- `<AMOUNT>` uses token decimals (`1e18` is 1 token for 18-decimal tokens).
-- `<GAS_LIMIT>` must be `> 0` because the receiver contract callback handles data.
+- `$AMOUNT` uses token decimals (`1e18` is 1 token for 18-decimal tokens).
+- `$GAS_LIMIT` must be `> 0` because the receiver contract callback handles data.
 - The script first quotes the fee, then funds sender contract with that exact amount before calling `send`.
 - If fee conditions change between quote and send, rerun the script to re-quote and retry.
 
@@ -113,7 +130,7 @@ Parameter notes:
 Optional receiver checks on Amoy:
 
 ```bash
-cast call <DEPLOYED_BASIC_MESSAGE_RECEIVER_ADDRESS> "latestMessage()(bytes)" --rpc-url polygonAmoy
-cast call <DEPLOYED_BASIC_MESSAGE_RECEIVER_ADDRESS> "latestSender()(address)" --rpc-url polygonAmoy
-cast call <DEPLOYED_BASIC_MESSAGE_RECEIVER_ADDRESS> "latestSourceChainSelector()(uint64)" --rpc-url polygonAmoy
+cast call $BASIC_MESSAGE_RECEIVER_ADDRESS "latestMessage()(bytes)" --rpc-url polygonAmoy
+cast call $BASIC_MESSAGE_RECEIVER_ADDRESS "latestSender()(address)" --rpc-url polygonAmoy
+cast call $BASIC_MESSAGE_RECEIVER_ADDRESS "latestSourceChainSelector()(uint64)" --rpc-url polygonAmoy
 ```

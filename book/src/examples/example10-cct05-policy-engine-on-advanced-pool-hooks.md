@@ -46,12 +46,27 @@ Scripts used:
 >
 > This chapter assumes `--account myAccount`.
 
+## Chapter Parameters
+
+Set the parameters for this chapter. The defaults work as they are; change a value only if you want something different.
+
+```bash
+export RECEIVER=$MY_EOA          # destination EOA on Amoy
+export FEE_TOKEN=0x0000000000000000000000000000000000000000  # native fee; use $SEPOLIA_LINK to pay in LINK
+```
+
 ## Step 1: Deploy Token + Hook + Pool on Both Chains
 
-Follow Example 08 steps 1-4 to deploy the token, hook and pool on both chains and link the lanes. Save from the logs:
+Follow Example 08 steps 1-4 to deploy the token, hook and pool on both chains and link the lanes. If you ran them in this terminal, these variables are already exported. Otherwise copy them from the logs:
 
-- `<SEPOLIA_TOKEN_ADDRESS>`, `<SEPOLIA_ADVANCED_POOL_HOOK_ADDRESS>`, `<SEPOLIA_POOL_ADDRESS>`
-- `<AMOY_TOKEN_ADDRESS>`, `<AMOY_ADVANCED_POOL_HOOK_ADDRESS>`, `<AMOY_POOL_ADDRESS>`
+```bash
+export SEPOLIA_TOKEN_ADDRESS=0x...
+export SEPOLIA_ADVANCED_POOL_HOOK_ADDRESS=0x...
+export SEPOLIA_POOL_ADDRESS=0x...
+export AMOY_TOKEN_ADDRESS=0x...
+export AMOY_ADVANCED_POOL_HOOK_ADDRESS=0x...
+export AMOY_POOL_ADDRESS=0x...
+```
 
 ## Step 2: Deploy the Example Policy Engine on Sepolia
 
@@ -62,9 +77,11 @@ FOUNDRY_PROFILE=cct forge script script/examples/Example10.s.sol:Example10Deploy
   --broadcast
 ```
 
-Save from the logs:
+Copy the engine address from the logs and export it:
 
-- `<SEPOLIA_POLICY_ENGINE_ADDRESS>`
+```bash
+export SEPOLIA_POLICY_ENGINE_ADDRESS=0x...
+```
 
 The example engine's default cap is `10 ether`, and only its owner (the deploying account) can change it with `setCap`. To use a real ACE policy engine instead, skip this step and follow [Use a real ACE policy engine](#use-a-real-ace-policy-engine) below, then pass the ACE engine's onchain address to Step 3.
 
@@ -76,8 +93,8 @@ FOUNDRY_PROFILE=cct forge script script/examples/Example10.s.sol:Example10Attach
   --account myAccount \
   --broadcast \
   --sig "run(address,address)" \
-  <SEPOLIA_ADVANCED_POOL_HOOK_ADDRESS> \
-  <SEPOLIA_POLICY_ENGINE_ADDRESS>
+  $SEPOLIA_ADVANCED_POOL_HOOK_ADDRESS \
+  $SEPOLIA_POLICY_ENGINE_ADDRESS
 ```
 
 The hook calls the engine's `attach()`, which records the hook as an attached target.
@@ -90,13 +107,13 @@ FOUNDRY_PROFILE=cct forge script script/examples/Example06.s.sol:SendCCTTokenWit
   --account myAccount \
   --broadcast \
   --sig "run(address,uint64,address,address,uint256,uint32,address)" \
-  <SEPOLIA_ROUTER> \
-  <AMOY_CHAIN_SELECTOR> \
-  <RECEIVER_ON_AMOY> \
-  <SEPOLIA_TOKEN_ADDRESS> \
+  $SEPOLIA_ROUTER \
+  $AMOY_CHAIN_SELECTOR \
+  $RECEIVER \
+  $SEPOLIA_TOKEN_ADDRESS \
   1000000000000000000 \
   0 \
-  <FEE_TOKEN_ADDRESS>
+  $FEE_TOKEN
 ```
 
 `1 ether` is within the `10 ether` cap, so the engine allows the transfer.
@@ -111,13 +128,13 @@ FOUNDRY_PROFILE=cct forge script script/examples/Example06.s.sol:SendCCTTokenWit
   --account myAccount \
   --broadcast \
   --sig "run(address,uint64,address,address,uint256,uint32,address)" \
-  <SEPOLIA_ROUTER> \
-  <AMOY_CHAIN_SELECTOR> \
-  <RECEIVER_ON_AMOY> \
-  <SEPOLIA_TOKEN_ADDRESS> \
+  $SEPOLIA_ROUTER \
+  $AMOY_CHAIN_SELECTOR \
+  $RECEIVER \
+  $SEPOLIA_TOKEN_ADDRESS \
   11000000000000000000 \
   0 \
-  <FEE_TOKEN_ADDRESS>
+  $FEE_TOKEN
 ```
 
 The source-side `preflightCheck` calls the engine, which reverts with `AmountExceedsCap`, and the send reverts.
@@ -130,14 +147,14 @@ FOUNDRY_PROFILE=cct forge script script/examples/Example10.s.sol:Example10Detach
   --account myAccount \
   --broadcast \
   --sig "run(address)" \
-  <SEPOLIA_ADVANCED_POOL_HOOK_ADDRESS>
+  $SEPOLIA_ADVANCED_POOL_HOOK_ADDRESS
 ```
 
 The hook calls the engine's `detach()`. Transfers are no longer policy-checked.
 
 ## Optional: Destination-Side Engine
 
-Attach an engine to the Amoy hook too (deploy a second engine on Amoy, then attach it to `<AMOY_ADVANCED_POOL_HOOK_ADDRESS>`). A destination-side rejection does not revert the send — the message is sent, but its execution on Amoy fails; check the message status on https://ccip.chain.link.
+Attach an engine to the Amoy hook too (deploy a second engine on Amoy, then attach it to `$AMOY_ADVANCED_POOL_HOOK_ADDRESS`). A destination-side rejection does not revert the send — the message is sent, but its execution on Amoy fails; check the message status on https://ccip.chain.link.
 
 ## Use a real ACE policy engine
 
@@ -155,19 +172,19 @@ One mapping gotcha from the ACE guide: the hook sets the payload sender to `msg.
 Verify the attached engine:
 
 ```bash
-cast call <SEPOLIA_ADVANCED_POOL_HOOK_ADDRESS> "getPolicyEngine()(address)" --rpc-url ethereumSepolia
+cast call $SEPOLIA_ADVANCED_POOL_HOOK_ADDRESS "getPolicyEngine()(address)" --rpc-url ethereumSepolia
 ```
 
 Verify the engine records the hook as attached:
 
 ```bash
-cast call <SEPOLIA_POLICY_ENGINE_ADDRESS> "isAttached(address)(bool)" <SEPOLIA_ADVANCED_POOL_HOOK_ADDRESS> --rpc-url ethereumSepolia
+cast call $SEPOLIA_POLICY_ENGINE_ADDRESS "isAttached(address)(bool)" $SEPOLIA_ADVANCED_POOL_HOOK_ADDRESS --rpc-url ethereumSepolia
 ```
 
 Verify the cap:
 
 ```bash
-cast call <SEPOLIA_POLICY_ENGINE_ADDRESS> "getCap()(uint256)" --rpc-url ethereumSepolia
+cast call $SEPOLIA_POLICY_ENGINE_ADDRESS "getCap()(uint256)" --rpc-url ethereumSepolia
 ```
 
 Monitor message status with the message ID on:

@@ -67,6 +67,16 @@ For actual sends (non-`--dry-run`), set `USER_KEY` (or `PRIVATE_KEY`) in the roo
   - fallback: `ETHEREUM_SEPOLIA_RPC_URL`, `POLYGON_AMOY_RPC_URL`
 
 
+## Variables
+
+The commands below use the variables from your `.env` (see [Environment Variables](../index.md#environment-variables)); load them with `set -a; source .env; set +a`. Set the message parameters once:
+
+```bash
+export RECEIVER=$MY_EOA          # token-only: destination EOA on Amoy
+export BLOCK_CONFIRMATIONS=1     # token modes: > 0 for Fast Transfers
+export BASIC_MESSAGE_RECEIVER_WITH_CCVS_ADDRESS=0x...  # data modes: the Amoy receiver from Example 02 / 03
+```
+
 ## 1) Data-Only
 
 Fast Transfers (`blockConfirmations=1`):
@@ -76,8 +86,8 @@ npm --prefix sdk-examples run ccip-send -- \
   --mode data \
   --source-rpc-url "$ETHEREUM_SEPOLIA_RPC_URL" \
   --dest-rpc-url "$POLYGON_AMOY_RPC_URL" \
-  --router <SOURCE_ROUTER> \
-  --receiver <RECEIVER> \
+  --router $SEPOLIA_ROUTER \
+  --receiver $BASIC_MESSAGE_RECEIVER_WITH_CCVS_ADDRESS \
   --block-confirmations 1
 ```
 
@@ -88,8 +98,8 @@ npm --prefix sdk-examples run ccip-send -- \
   --mode data \
   --source-rpc-url "$ETHEREUM_SEPOLIA_RPC_URL" \
   --dest-rpc-url "$POLYGON_AMOY_RPC_URL" \
-  --router <SOURCE_ROUTER> \
-  --receiver <RECEIVER> \
+  --router $SEPOLIA_ROUTER \
+  --receiver $BASIC_MESSAGE_RECEIVER_WITH_CCVS_ADDRESS \
   --block-confirmations 0
 ```
 
@@ -102,11 +112,11 @@ npm --prefix sdk-examples run ccip-send -- \
   --mode token \
   --source-rpc-url "$ETHEREUM_SEPOLIA_RPC_URL" \
   --dest-rpc-url "$POLYGON_AMOY_RPC_URL" \
-  --router <SOURCE_ROUTER> \
-  --receiver <RECEIVER> \
-  --token <SEPOLIA_CCIP_BNM_TOKEN> \
+  --router $SEPOLIA_ROUTER \
+  --receiver $RECEIVER \
+  --token $SEPOLIA_CCIP_BNM \
   --amount 1 \
-  --block-confirmations <BLOCK_CONFIRMATIONS_GT_ZERO>
+  --block-confirmations $BLOCK_CONFIRMATIONS
 ```
 
 ## 3) Token + Data
@@ -118,12 +128,12 @@ npm --prefix sdk-examples run ccip-send -- \
   --mode token-data \
   --source-rpc-url "$ETHEREUM_SEPOLIA_RPC_URL" \
   --dest-rpc-url "$POLYGON_AMOY_RPC_URL" \
-  --router <SOURCE_ROUTER> \
-  --receiver <RECEIVER> \
-  --token <SEPOLIA_CCIP_BNM_TOKEN> \
+  --router $SEPOLIA_ROUTER \
+  --receiver $BASIC_MESSAGE_RECEIVER_WITH_CCVS_ADDRESS \
+  --token $SEPOLIA_CCIP_BNM \
   --amount 1 \
   --data "hello + token" \
-  --block-confirmations <BLOCK_CONFIRMATIONS_GT_ZERO>
+  --block-confirmations $BLOCK_CONFIRMATIONS
 ```
 
 ## If You Need Testnet Tokens
@@ -136,5 +146,5 @@ forge script script/Faucet.s.sol:Faucet \
   --account myAccount \
   --broadcast \
   --sig "run(address)" \
-  <SEPOLIA_CCIP_BNM_TOKEN>
+  $SEPOLIA_CCIP_BNM
 ```

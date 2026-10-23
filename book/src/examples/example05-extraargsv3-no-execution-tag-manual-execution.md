@@ -10,6 +10,17 @@ Script path: `script/examples/Example05.s.sol`
 2. Send a CCIP data message with `ExtraArgsV3` no-execution-tag.
 3. Observe pending execution in CCIP Explorer and execute manually.
 
+## Chapter Parameters
+
+Set the parameters for this chapter. The defaults work as they are; change a value only if you want something different.
+
+```bash
+export GAS_LIMIT=200000          # the receiver callback needs gas
+export BLOCK_CONFIRMATIONS=0     # 0 = default finality, > 0 = Fast Transfers
+export MIN_BLOCK_DEPTH=1         # only used if you deploy the CCVs receiver for Fast Transfers
+export FEE_TOKEN=0x0000000000000000000000000000000000000000  # native fee; use $SEPOLIA_LINK to pay in LINK
+```
+
 ## Before You Start
 
 > **Important: Keystore first**
@@ -35,10 +46,15 @@ Script path: `script/examples/Example05.s.sol`
 >   --account myAccount \
 >   --broadcast \
 >   --sig "run(address)" \
->   <DESTINATION_ROUTER>
+>   $AMOY_ROUTER
 > ```
 >
-> Use this for default finality (`blockConfirmations = 0`). Save this as `<BASIC_MESSAGE_RECEIVER_ADDRESS>`.
+> Use this for default finality (`blockConfirmations = 0`). Copy the address from the `[RESULT]` log and export it:
+>
+> ```bash
+> export BASIC_MESSAGE_RECEIVER_ADDRESS=0x...
+> export RECEIVER=$BASIC_MESSAGE_RECEIVER_ADDRESS
+> ```
 >
 > ```bash
 > forge script script/examples/Example02.s.sol:DeployBasicMessageReceiverWithCCVs \
@@ -46,7 +62,7 @@ Script path: `script/examples/Example05.s.sol`
 >   --account myAccount \
 >   --broadcast \
 >   --sig "run(address)" \
->   <DESTINATION_ROUTER>
+>   $AMOY_ROUTER
 > ```
 >
 > If you use Fast Transfers (`blockConfirmations > 0`), configure min block depth for your source chain:
@@ -57,14 +73,19 @@ Script path: `script/examples/Example05.s.sol`
 >   --account myAccount \
 >   --broadcast \
 >   --sig "run(address,uint64,uint16)" \
->   <BASIC_MESSAGE_RECEIVER_WITH_CCVS_ADDRESS> \
->   <SOURCE_CHAIN_SELECTOR> \
->   <MIN_BLOCK_DEPTH>
+>   $BASIC_MESSAGE_RECEIVER_WITH_CCVS_ADDRESS \
+>   $SEPOLIA_CHAIN_SELECTOR \
+>   $MIN_BLOCK_DEPTH
 > ```
 >
-> Use `<MIN_BLOCK_DEPTH> > 0` for Fast Transfers.
+> `MIN_BLOCK_DEPTH` must be `> 0` for Fast Transfers.
 >
-> Use this for Fast Transfers (`blockConfirmations > 0`). Save this as `<BASIC_MESSAGE_RECEIVER_WITH_CCVS_ADDRESS>`.
+> Use this for Fast Transfers (`blockConfirmations > 0`). Copy the address of the `DeployBasicMessageReceiverWithCCVs` deployment from the `[RESULT]` log and export it before running the min block depth command above:
+>
+> ```bash
+> export BASIC_MESSAGE_RECEIVER_WITH_CCVS_ADDRESS=0x...
+> export RECEIVER=$BASIC_MESSAGE_RECEIVER_WITH_CCVS_ADDRESS
+> ```
 
 ## Understanding ExtraArgsV3
 
@@ -107,22 +128,22 @@ forge script script/examples/Example05.s.sol:Example05 \
   --account myAccount \
   --broadcast \
   --sig "run(address,uint64,address,string,uint32,uint16,address)" \
-  <SOURCE_ROUTER> \
-  <DESTINATION_CHAIN_SELECTOR> \
-  <BASIC_MESSAGE_RECEIVER_ADDRESS_OR_BASIC_MESSAGE_RECEIVER_WITH_CCVS_ADDRESS> \
+  $SEPOLIA_ROUTER \
+  $AMOY_CHAIN_SELECTOR \
+  $RECEIVER \
   "Hello, World" \
-  <GAS_LIMIT> \
-  <BLOCK_CONFIRMATIONS> \
-  <FEE_TOKEN_ADDRESS>
+  $GAS_LIMIT \
+  $BLOCK_CONFIRMATIONS \
+  $FEE_TOKEN
 ```
 
 Parameter notes:
 
-- `<GAS_LIMIT>` must be `> 0` because the receiver callback needs gas.
-- `<BLOCK_CONFIRMATIONS>` can be `0` (default finality) or `> 0`.
-- If `<BLOCK_CONFIRMATIONS> > 0`, destination receiver must accept Fast Transfers (`minBlockDepth > 0`) for this source chain.
-- If `<BLOCK_CONFIRMATIONS> = 0`, a default-finality receiver is sufficient.
-- `<FEE_TOKEN_ADDRESS>`: Pass the LINK token address on the source chain here. If you want to pay for CCIP fees in native coin instead, pass `0x0000000000000000000000000000000000000000`
+- `$GAS_LIMIT` must be `> 0` because the receiver callback needs gas.
+- `$BLOCK_CONFIRMATIONS` can be `0` (default finality) or `> 0`.
+- If `$BLOCK_CONFIRMATIONS > 0`, destination receiver must accept Fast Transfers (`minBlockDepth > 0`) for this source chain.
+- If `$BLOCK_CONFIRMATIONS = 0`, a default-finality receiver is sufficient.
+- `$FEE_TOKEN`: native coin by default (`0x0000000000000000000000000000000000000000`). To pay CCIP fees in LINK instead, run `export FEE_TOKEN=$SEPOLIA_LINK`.
 - This example sets executor to `NO_EXECUTION_ADDRESS`, so execution is not automatic.
 
 ## Verify Result

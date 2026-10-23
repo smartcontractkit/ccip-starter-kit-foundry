@@ -48,7 +48,9 @@ npm --prefix sdk-examples install
   - fallback: `ETHEREUM_SEPOLIA_RPC_URL`
 
 ```bash
-source .env
+set -a; source .env; set +a
+export SOURCE_TX_HASH=0x...   # from your send logs
+export MESSAGE_ID=0x...       # from your send logs
 ```
 
 ## 1) Track by Source Transaction Hash
@@ -58,7 +60,7 @@ Use a source tx hash from your Foundry run (for example `Example01`-`Example08`)
 ```bash
 npm --prefix sdk-examples run ccip-track -- \
   --source-rpc-url "$ETHEREUM_SEPOLIA_RPC_URL" \
-  --tx-hash <SOURCE_TX_HASH> 
+  --tx-hash $SOURCE_TX_HASH 
 ```
 
 ## 2) Track by Message ID
@@ -66,7 +68,7 @@ npm --prefix sdk-examples run ccip-track -- \
 ```bash
 npm --prefix sdk-examples run ccip-track -- \
   --source-rpc-url "$ETHEREUM_SEPOLIA_RPC_URL" \
-  --message-id <MESSAGE_ID>
+  --message-id $MESSAGE_ID
 ```
 
 Output prints the same concise SDK summary for that message ID.
@@ -77,7 +79,7 @@ Output prints the same concise SDK summary for that message ID.
 npm --prefix sdk-examples run ccip-track -- \
   --source-rpc-url "$ETHEREUM_SEPOLIA_RPC_URL" \
   --limit 10 \
-  --sender <SENDER_ADDRESS>
+  --sender $MY_EOA
 ```
 
 Arguments:
